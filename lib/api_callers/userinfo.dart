@@ -158,7 +158,7 @@ Future<User> loginUser(
   Map<String, dynamic> validUsername =  await getUserInfo(userName);
   if (validUsername.containsKey('Payload')) {
     String accountNumber =  validUsername['Payload']['account_number'];
-
+    
     return fetchUserAccount(accountNumber, password, transactionPin);
 
   }else {

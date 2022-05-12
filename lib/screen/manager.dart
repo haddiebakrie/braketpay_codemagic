@@ -53,6 +53,7 @@ class _ManagerState extends State<Manager> {
       Contracts(user: widget.user, pin: widget.pin),
       History(user: widget.user, pin: widget.pin),
       Merchant(user: widget.user, pin: widget.pin),
+      Merchant(user: widget.user, pin: widget.pin),
       // Text('HI'),
       // Contracts(),
       // Contracts(),
