@@ -1,13 +1,19 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/uix/listitemseparated.dart';
 import 'package:convert/convert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../classes/user.dart';
+import '../uix/roundbutton.dart';
+import './userqr.dart';
+import './login.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key, required this.user, required this.pin}) : super(key: key);
@@ -19,13 +25,15 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  Brakey brakey = Get.put(Brakey());
+  bool isDark = false;
     final RoundedLoadingButtonController _loginButtonController =
       RoundedLoadingButtonController();
   late var byte = hex.decode(widget.user.payload!.qrCode ?? '');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(title: const Text('Profile'), centerTitle: true, elevation: 0),
         body: Container(
             height: double.infinity,
@@ -69,11 +77,11 @@ class _ProfileState extends State<Profile> {
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       margin: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey.withOpacity(0.2),
                               spreadRadius: 3,
                               blurRadius: 10,
                               offset: const Offset(0, 0),
@@ -82,10 +90,33 @@ class _ProfileState extends State<Profile> {
                       padding: const EdgeInsets.all(5),
                       child: Column(children: [
                         ListTile(
-                          trailing: const Icon(Icons.qr_code_2, color: Colors.deepOrange),
+                          trailing:Column(
+                            children: [
+                              SizedBox(
+                                height: 40,
+                                child: IconButton(
+                                      icon: const Icon(CupertinoIcons.qrcode),
+                                      color: Theme.of(context).primaryColor,
+                                      iconSize: 25,
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () { 
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => UserQR())
+                                        );
+                                        
+                                      }),
+                              ),
+                                    const Text('scan me', style: TextStyle(fontWeight: FontWeight.bold)),
+                            ],
+                          ),
                           horizontalTitleGap: 10,
-                          title: Text('@${widget.user.payload!.fullname!.split(' ')[0]}'),
-                            subtitle: Text('${widget.user.payload!.accountNumber}'),
+                          title: Text('@${widget.user.payload!.username}'),
+                            subtitle: Row(
+                              children: [
+                                Text('${widget.user.payload!.accountNumber} '),
+                                Icon(CupertinoIcons.doc_on_doc_fill, size: 15, color: Theme.of(context).primaryColor)
+                              ],
+                            ),
                           leading: Container(
                             decoration: BoxDecoration(
                                 color: Theme.of(context).primaryColor,
@@ -96,7 +127,10 @@ class _ProfileState extends State<Profile> {
                                 icon: const Icon(IconlyBold.profile),
                                 color: Colors.white,
                                 iconSize: 20,
-                                onPressed: () {
+                                onPressed: () { 
+                                  // Navigator.of(context).push(
+                                  //   MaterialPageRoute(builder: (context) => UserQR())
+                                  // );
                                   
                                 }),
                           ),
@@ -113,11 +147,11 @@ class _ProfileState extends State<Profile> {
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       margin: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          color: Get.isDarkMode ? Colors.black : Colors.white ,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey.withOpacity(0.2),
                               spreadRadius: 3,
                               blurRadius: 10,
                               offset: const Offset(0, 0),
@@ -131,21 +165,29 @@ class _ProfileState extends State<Profile> {
                                   fontSize: 20,
                                   fontWeight:
                                       FontWeight.w300),),
-                                ListTile(title: const Text('Dark mode'), trailing: Switch(value: false, onChanged: (a) => {} )),
+                                ListTile(title: const Text('Dark mode'), trailing: Switch(value: isDark, onChanged: (a) => {
+                                  print(Get.isDarkMode),
+                                  print(a),
+                                  setState(() {
+                                    isDark = !isDark;
+                                  }),
+                                  brakey.logoutUser(),
+                                  Get.changeTheme(ThemeData.dark())})),
                                 ListTile(title: const Text('Disable screenshot'),subtitle: const Text('Prevent screenshot while using BraketPay'),  trailing: Switch(value: true, onChanged: (a) => {} ))
                             ]
                           ),
                           ),
                 const SizedBox(height:20),
-                RoundedLoadingButton(controller: _loginButtonController, 
-                color: Colors.black,
-                onPressed: (
+                RoundButton(
+                // controller: _loginButtonController, 
+                width: double.infinity,
+                color1: Colors.black,
+                color2: Colors.black,
+                onTap: (
                 ) {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-
-                }, child: const Text('Logout'))
+                  Get.offUntil(MaterialPageRoute(builder: (context) => const Login(showOnboarding: true), maintainState: false), (route) => false);
+                  brakey.logoutUser();
+                }, text: 'Logout')
                 ],
               ),
             )));
