@@ -3,6 +3,11 @@ import 'package:braketpay/classes/transaction.dart';
 import 'package:braketpay/screen/createproduct.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/createservice.dart';
+import 'package:braketpay/screen/profile.dart';
+import 'package:braketpay/screen/qrcodescanner.dart';
+import 'package:braketpay/screen/savings.dart';
+import 'package:braketpay/screen/transfer.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:braketpay/screen/utilities.dart';
 import 'package:braketpay/uix/transactioncard.dart';
 import 'package:braketpay/uix/walletcard.dart';
@@ -11,15 +16,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../api_callers/contracts.dart';
 import '../classes/product_contract.dart';
 import '../uix/contractlistcard.dart';
 import '../uix/contractmodeselect.dart';
+import '../uix/roundbutton.dart';
 import '../uix/utilitybutton.dart';
+import '../utils.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key, required this.user, required this.pin}) : super(key: key);
+  const Home({Key? key, required this.user, required this.pin}) : super(key: key);
 
   final User user;
   final String pin;
@@ -36,6 +44,7 @@ class _HomeState extends State<Home> {
   late Future<List<dynamic>> _transactions = fetchTransactions(widget.user.payload!.accountNumber ?? "",
     widget.user.payload!.password ?? "",
     widget.pin);
+  final _refreshKey = GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +64,16 @@ class _HomeState extends State<Home> {
                 icon: const Icon(IconlyBold.profile),
                 color: Theme.of(context).primaryColor,
                 iconSize: 20,
-                onPressed: () {}),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => 
+                        Profile(user: widget.user, pin: widget.pin)
+
+                    )
+                  );
+
+                }),
           ),
         ),
         actions: [
@@ -66,10 +84,10 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Hi, ${widget.user.payload!.fullname?.split(' ')[0]}',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             Text(
                 '@${widget.user.payload!.fullname?.split(' ')[1].toLowerCase()}',
-                style: TextStyle(fontSize: 14))
+                style: const TextStyle(fontSize: 14))
           ],
         ),
       ),
@@ -82,18 +100,36 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: WalletCard(
+                    onTapSend: () {
+                      Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SendMoney(user: widget.user, pin: widget.pin)));
+                    },
                       balance: widget.user.payload!.accountBalance.toString(),
                       title: 'Refferal Bonus'),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: WalletCard(
+                    onTapSend: () {
+                      Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SendMoney(user: widget.user, pin: widget.pin)));
+                    },
                       balance: widget.user.payload!.accountBalance.toString(),
                       title: 'Braket Wallet'),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: WalletCard(
+                    onTapSend: () {
+                      Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SendMoney(user: widget.user, pin: widget.pin)));
+                    },
                       balance: widget.user.payload!.accountBalance.toString(),
                       title: 'Braket Savings'),
                 )
@@ -107,8 +143,8 @@ class _HomeState extends State<Home> {
             )),
         Expanded(
           child: Container(
-              padding: EdgeInsets.only(top: 10),
-              margin: EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 20),
               width: double.infinity,
               decoration: const BoxDecoration(
                   color: Colors.white,
@@ -116,6 +152,7 @@ class _HomeState extends State<Home> {
                       topLeft: Radius.circular(29),
                       topRight: Radius.circular(20))),
               child: RefreshIndicator(
+                key: _refreshKey,
                 onRefresh: () async {
                   final contracts = await fetchContracts(
                       widget.user.payload!.accountNumber ?? "",
@@ -129,8 +166,8 @@ class _HomeState extends State<Home> {
                   });
                 },
                 child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     itemCount: 5,
                     itemBuilder: (context, index) {
                       if (index == 0) {
@@ -146,31 +183,42 @@ class _HomeState extends State<Home> {
                         );
                       } else if (index == 1) {
                         return Container(
-                          margin: EdgeInsets.only(top: 10),
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 3,
-                                  blurRadius: 10,
-                                  offset: const Offset(
-                                      0, 0), // changes position of shadow
-                                ),
-                              ]),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          // decoration: BoxDecoration(
+                          //     color: Colors.white,
+                          //     borderRadius:
+                          //         const BorderRadius.all(Radius.circular(10)),
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     color: Colors.grey.withOpacity(0.2),
+                              //     spreadRadius: 3,
+                              //     blurRadius: 10,
+                              //     offset: const Offset(
+                              //         0, 0), // changes position of shadow
+                              //   ),
+                              // ]),
                           height: 115,
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 UtilityButton(
                                     url: 'assets/saving-money (1).png', text: 'Savings',
-                                    
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (BuildContext context) => Savings(user: widget.user, pin: widget.pin)));
+                                    },
                                     ),
                                 UtilityButton(
-                                    url: 'assets/qr-code (3).png', text: 'QR Scan'),
+                                    url: 'assets/qr-code (3).png', text: 'QR Scan',
+                                    onTap: () async {
+                                    PermissionStatus status = await getCameraPermission();
+                                    if (status.isGranted) {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (BuildContext context) => QRScanner(user: widget.user, pin: widget.pin)));
+                                    }
+
+                                    }
+                                    ),
                                 UtilityButton(
                                     url: 'assets/pay (1).png', text: 'Utilities',
                                     onTap: () {
@@ -182,7 +230,7 @@ class _HomeState extends State<Home> {
                         );
                       } else if (index == 4) {
                         return Container(
-                            margin: EdgeInsets.only(top: 10),
+                            margin: const EdgeInsets.only(top: 10),
                             height: 320,
                             decoration: const BoxDecoration(
                                 color: Colors.blueAccent,
@@ -215,11 +263,11 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                                margin: EdgeInsets.all(10),
-                                child: Text('Recent contracts',
+                                margin: const EdgeInsets.all(10),
+                                child: const Text('Recent contracts',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w700))),
-                            Container(
+                            SizedBox(
                               height: 420,
                               child: FutureBuilder<List>(
                                 future: _contracts,
@@ -238,22 +286,30 @@ class _HomeState extends State<Home> {
                                               color: Colors.white,
                                             ),
                                             child: Center(
-                                                child: Text(
-                                                    "Loading your Contracts!")));
+                                                child: Column(
+                                                  children: const [
+                                                    Padding(
+                                                      padding: EdgeInsets.all(15.0),
+                                                      child: CircularProgressIndicator(color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                        "Loading your Contracts..."),
+                                                  ],
+                                                )));
                                       }
                                     case ConnectionState.done:
                                       {
                                         if (snapshot.hasData) {
-                                          return snapshot.data!.length > 0 ? ListView.builder(
+                                          return snapshot.data!.isNotEmpty ? ListView.builder(
                                               physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: snapshot.data!.length > 0 ? snapshot.data!.length : 0,
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount: snapshot.data!.isNotEmpty ? snapshot.data!.length : 0,
                                               itemBuilder: (context, index) {
                                                 ProductContract product =
                                                     snapshot.data![index];
                                                 return ContractListCard(
                                                     product: product, pin: widget.pin, user: widget.user);
-                                              }) : Center(child: Text('You have not created any contract!'),);
+                                              }) : const Center(child: Text('You have not created any contract!'),);
                                         } else if (snapshot.hasError) {
                                           return Container(
                                               decoration: const BoxDecoration(
@@ -267,9 +323,19 @@ class _HomeState extends State<Home> {
                                               child: Center(
                                                   child: Column(
                                                     children: [
-                                                      Icon(Icons.wifi_off_rounded),
-                                                      Text(
-                                                          "No internet access\nCoudn't Load Contract History!"),
+                                                      Image.asset('assets/sammy-no-connection.gif', width: 150),
+                                                      const Text(
+                                                          "No internet access\nCoudn't Load Contract History!", textAlign: TextAlign.center),
+                                                    RoundButton(
+                                                        text: 'Retry',
+                                                        color1: Colors.black,
+                                                        color2: Colors.black,
+                                                        onTap: () {
+                                                          _refreshKey.currentState!.show();
+                                                        }
+                                                        
+                                                      )
+                                                    
                                                     ],
                                                   )));
                                         }
@@ -290,11 +356,11 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                                margin: EdgeInsets.all(10),
-                                child: Text('Recent Transactions',
+                                margin: const EdgeInsets.all(10),
+                                child: const Text('Recent Transactions',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w700))),
-                            Container(
+                            SizedBox(
                               height: 420,
                               child: FutureBuilder<List>(
                                 future: _transactions,
@@ -313,22 +379,30 @@ class _HomeState extends State<Home> {
                                               color: Colors.white,
                                             ),
                                             child: Center(
-                                                child: Text(
-                                                    "Loading your Transactions!")));
+                                                child: Column(
+                                                  children: const [
+                                                    Padding(
+                                                      padding: EdgeInsets.all(15.0),
+                                                      child: CircularProgressIndicator(color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                        "Loading your Transactions..."),
+                                                  ],
+                                                )));
                                       }
                                     case ConnectionState.done:
                                       {
                                         if (snapshot.hasData) {
-                                          return snapshot.data!.length > 0 ? ListView.builder(
+                                          return snapshot.data!.isNotEmpty ? ListView.builder(
                                               physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: snapshot.data!.length > 0 ? snapshot.data!.length : 0,
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount: snapshot.data!.isNotEmpty ? snapshot.data!.length : 0,
                                               itemBuilder: (context, index) {
                                                 Transaction transaction =
                                                     snapshot.data![index];
                                                 return TransactionListCard(
                                                     transaction: transaction, user: widget.user);
-                                              }) : Center(child: Text('You have not made any transactions yet!'),);
+                                              }) : const Center(child: Text('You have not made any transactions yet!'),);
                                         } else if (snapshot.hasError) {
                                           return Container(
                                               decoration: const BoxDecoration(
@@ -342,9 +416,18 @@ class _HomeState extends State<Home> {
                                               child: Center(
                                                   child: Column(
                                                     children: [
-                                                      Icon(Icons.wifi_off_rounded),
-                                                      Text(
-                                                          "No internet access\nCoudn't Load Transaction History!"),
+                                                      Image.asset('assets/sammy-no-connection.gif', width: 150),
+                                                      const Text(
+                                                          "No internet access\nCoudn't Load Transaction History!", textAlign: TextAlign.center),
+                                                    RoundButton(
+                                                        text: 'Retry',
+                                                        color1: Colors.black,
+                                                        color2: Colors.black,
+                                                        onTap: () {
+                                                          _refreshKey.currentState!.show();
+                                                        }
+                                                        
+                                                      )
                                                     ],
                                                   )));
                                         }

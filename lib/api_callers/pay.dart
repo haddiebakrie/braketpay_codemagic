@@ -320,3 +320,43 @@ Future<Map<String, dynamic>> getCableTVOwner(
     return {'Message': "Can't verify card number, Check your Internet connection (Tap to retry)."};
     }
 }
+
+
+
+Future<Map<String, dynamic>> getBanks(
+  String email,
+  String password, 
+  String bank, 
+  String bankCode, 
+  String accountNumber, 
+  ) async {
+  String param = Uri(queryParameters: {
+    "email_address": email,
+    "password": password,
+    "fetch_type": bank,
+    "bank_code": bankCode,
+    "bank_acc_number": accountNumber,
+      
+    }).query;
+    try {
+    final response = await get(
+      Uri.parse('https://api.braketpay.com/bank_list?$param'),
+      );
+      print(param);
+      print(response.body);
+    if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+      Map<String, dynamic> payloads = jsonDecode(response.body);
+    return payloads;
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    return {'Message': "Check your Internet connection (Tap to retry)."};
+  }
+
+    } catch (e) {
+      print(e);
+    return {'Message': "Check your Internet connection (Tap to retry)."};
+    }
+}

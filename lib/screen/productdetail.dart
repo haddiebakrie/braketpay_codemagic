@@ -28,53 +28,166 @@ class _ProductDetailState extends State<ProductDetail> {
             elevation: 0,
             centerTitle: true,
             title: Text(widget.contract.payload!.terms!.contractTitle ?? '')),
-        bottomSheet: !widget.contract
-                .isContractCreator(widget.user.payload!.walletAddress ?? '')
-            ? Visibility(
-                visible: widget.contract.payload!.privilledges != null
-                    ? true
-                    : false,
-                child: Container(
-                    height: 70,
-                    padding: EdgeInsets.symmetric(horizontal: 5),
-                    child: widget.contract.payload!.states!.approvalState == 'Not Approved' ? Row(children: [
-                      Expanded(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 255, 48, 48),
-                              ),
-                              child: TextButton(
-                                  child: Text(
-                                    'Terminate',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  onPressed: () {
-                                    rejectContract();
-
-                                  }))),
-                      SizedBox(width: 10),
-                      Expanded(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 0, 168, 50),
-                              ),
-                              child: TextButton(
-                                  child: Text(
-                                    'Accept',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  onPressed: () {
-                                    approveContract();
-                                  }))),
-                    ]) : Container(
-
-                        child: Center(child: Text('This contract has been closed'))
-
-                    ))
-              )
-            : Container(
+        bottomSheet: widget.contract.payload!.states!.approvalState ==
+                'Rejected' || widget.contract.payload!.states!.closingState == 'Closed'
+            ? SizedBox(
                 height: 70,
-              ),
+                child:
+                    const Center(child: Text('This contract has been closed')))
+            : !widget.contract
+                    .isContractCreator(widget.user.payload!.walletAddress ?? '')
+                ? Visibility(
+                    visible: widget.contract.payload!.privilledges != null
+                        ? true
+                        : false,
+                    child: Container(
+                        height: 70,
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: widget.contract.payload!.states!.approvalState ==
+                                'Not approved'
+                            ? Row(children: [
+                                Expanded(
+                                    child: Container(
+                                        decoration: const BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 255, 48, 48),
+                                        ),
+                                        child: TextButton(
+                                            child: const Text(
+                                              'Reject',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            onPressed: () {
+                                              rejectContract();
+                                            }))),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                    child: Container(
+                                        decoration: const BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 0, 168, 50),
+                                        ),
+                                        child: TextButton(
+                                            child: const Text(
+                                              'Accept',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            onPressed: () {
+                                              approveContract();
+                                            }))),
+                              ])
+                            : !widget.contract.isProvider(
+                                    widget.user.payload!.fullname ?? '')
+                                ? Row(children: [
+                                    Expanded(
+                                        child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  255, 255, 48, 48),
+                                            ),
+                                            child: TextButton(
+                                                child: const Text(
+                                                  'Terminate',
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                onPressed: () {
+                                                  rejectContract();
+                                                }))),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                        child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  255, 0, 168, 50),
+                                            ),
+                                            child: TextButton(
+                                                child: const Text(
+                                                  'Confirm',
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                onPressed: () {
+                                                  confirmContract();
+                                                }))),
+                                  ])
+                                : Row(children: [
+                                    Expanded(
+                                        child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  255, 255, 48, 48),
+                                            ),
+                                            child: TextButton(
+                                                child: const Text(
+                                                  'Terminate',
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                onPressed: () {
+                                                  rejectContract();
+                                                }))),
+                                  ])))
+                : Container(
+                    height: 70,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: !widget.contract
+                            .isProvider(widget.user.payload!.fullname ?? '')
+                        ? 
+                        widget.contract.payload!.states!.approvalState ==
+                                'Not approved'
+                            ? 
+                            SizedBox(
+                              height: 70,
+                              child:
+                                  Center(child: Text('This contract has not been approved by the ${widget.contract.isProvider(widget.user.payload!.fullname??'') ? "Buyer" : "Seller"}')))
+                            :
+                        Row(children: [
+                            Expanded(
+                                child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 255, 48, 48),
+                                    ),
+                                    child: TextButton(
+                                        child: const Text(
+                                          'Terminate',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        onPressed: () {
+                                          buyerRejectContract();
+                                        }))),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 0, 168, 50),
+                                    ),
+                                    child: TextButton(
+                                        child: const Text(
+                                          'Confirm',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        onPressed: () {
+                                          confirmContract();
+                                        }))),
+                          ])
+                        : Row(children: [
+                            Expanded(
+                                child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 255, 48, 48),
+                                    ),
+                                    child: TextButton(
+                                        child: const Text(
+                                          'Terminate',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        onPressed: () {
+                                          rejectContract();
+                                        }))),
+                          ])),
         body: Container(
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.vertical(
@@ -84,29 +197,29 @@ class _ProductDetailState extends State<ProductDetail> {
           child: PageView(controller: _controller, children: [
             Stack(children: [
               Container(
-                  margin: EdgeInsets.only(left: 30),
+                  margin: const EdgeInsets.only(left: 30),
                   height: double.infinity,
                   width: 2,
                   color: Colors.grey),
               ListView(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 50),
+                    margin: const EdgeInsets.only(bottom: 50),
                     child: Column(children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             color: Colors.white,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: [
+                              children: const [
                                 Icon(
                                   Icons.calendar_month_rounded,
                                   color: Colors.deepOrange,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.all(8.0),
                                   child: Text('Date',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -116,10 +229,11 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.symmetric(horizontal: 40),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 40),
                               child: Text(
                                 widget.contract.dateCreated(),
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ))
                         ],
                       ),
@@ -128,13 +242,13 @@ class _ProductDetailState extends State<ProductDetail> {
                         children: [
                           Container(
                             color: Colors.white,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: [
+                              children: const [
                                 Icon(Icons.people_alt_rounded,
                                     color: Colors.deepOrange),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.all(8.0),
                                   child: Text('Parties',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -144,25 +258,25 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Created by: ${widget.contract.payload!.parties!.contractCreator}',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Buyer: ${widget.contract.payload!.parties!.buyersName}',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Seller: ${widget.contract.payload!.parties!.sellersName}',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                         ],
                       ),
@@ -171,9 +285,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         children: [
                           Container(
                             color: Colors.white,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: [
+                              children: const [
                                 Icon(Icons.label, color: Colors.deepOrange),
                                 Padding(
                                     padding: EdgeInsets.all(8),
@@ -185,12 +299,13 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.symmetric(horizontal: 40),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 40),
                               child: Text(
                                 widget.contract.payload!.terms!
                                         .productDetails ??
                                     '',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ))
                         ],
                       ),
@@ -199,11 +314,10 @@ class _ProductDetailState extends State<ProductDetail> {
                         children: [
                           Container(
                             color: Colors.white,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             child: Row(
                               children: const [
-                                Icon(Icons.payment,
-                                    color: Colors.deepOrange),
+                                Icon(Icons.payment, color: Colors.deepOrange),
                                 Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Text('Price',
@@ -214,25 +328,28 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Product Price: ${formatAmount(widget.contract.payload!.terms!.productAmount.toString())}',
-                                style: TextStyle(fontSize: 18, fontFamily: ''),
+                                style: const TextStyle(
+                                    fontSize: 18, fontFamily: ''),
                               )),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Shipping Fee: ${formatAmount(widget.contract.payload!.terms!.logisticAmount.toString())}',
-                                style: TextStyle(fontSize: 18, fontFamily: ''),
+                                style: const TextStyle(
+                                    fontSize: 18, fontFamily: ''),
                               )),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Total: ${formatAmount(widget.contract.totalAmount())}',
-                                style: TextStyle(fontSize: 18, fontFamily: ''),
+                                style: const TextStyle(
+                                    fontSize: 18, fontFamily: ''),
                               )),
                         ],
                       ),
@@ -241,9 +358,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         children: [
                           Container(
                             color: Colors.white,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: [
+                              children: const [
                                 Icon(Icons.delivery_dining,
                                     color: Colors.deepOrange),
                                 Padding(
@@ -256,25 +373,25 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'From: ${widget.contract.payload!.terms!.shippingLocation}',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'To: ${widget.contract.payload!.terms!.shippingDestination}',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 'Delivers on: ${widget.contract.deliveryDate()}',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                         ],
                       ),
@@ -283,9 +400,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         children: [
                           Container(
                             color: Colors.white,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: [
+                              children: const [
                                 Icon(Icons.flag_circle,
                                     color: Colors.deepOrange),
                                 Padding(
@@ -298,17 +415,17 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 5),
                               child: Text(
                                 widget.contract.payload!.states!
                                         .approvalState ??
                                     '',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               )),
                         ],
                       ),
-                      SizedBox(height: 40)
+                      const SizedBox(height: 40)
                     ]),
                   ),
                 ],
@@ -353,63 +470,61 @@ class _ProductDetailState extends State<ProductDetail> {
                                   ],
                                 ));
                           });
-                      print(widget.contract.payload!.privilledges!.toJson());
+                      // print(widget.contract.payload!.privilledges!.toJson());
                       try {
-                      Map a = await contractAction(
-                          widget.contract.payload!.privilledges!.approvalCode ??
-                              '',
-                          widget.pin,
-                          widget.contract.payload!.contractID ?? '',
-                          widget.user.payload!.publicKey ?? '',
-                          'product',
-                          'approve',
-                          "approval_code");
+                        Map a = await contractAction(
+                            widget.contract.payload!.privilledges!
+                                    .approvalCode ??
+                                '',
+                            widget.pin,
+                            widget.contract.payload!.contractID ?? '',
+                            widget.user.payload!.publicKey ?? '',
+                            'product',
+                            'approve',
+                            "approval_code");
                         // Navigator.of(context).pop();
                         if (a.containsKey('Status')) {
                           if (a['Status'] == 'successful') {
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return AlertDialog(
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('Okay'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                    title: const Text("Approve successful"),
-                                    content:
-                                        const Text('This contract has been approved'));
-                              });
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve successful"),
+                                      content: const Text(
+                                          'This contract has been approved'));
+                                });
+                          } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve failed"),
+                                      content: Text(a['Message']));
+                                });
                           }
-                            else {
-                              showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return AlertDialog(
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('Okay'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                    title: const Text("Approve failed"),
-                                    content:
-                                        Text(a['Message']));
-                              });
-                            }
-
                         }
                       } catch (e) {
                         print('Error: $e');
@@ -430,7 +545,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                     )
                                   ],
                                   title: const Text("No internet access!"),
-                                  content: Text('Make sure you are connected to the internet and try again'));
+                                  content: const Text(
+                                      'Make sure you are connected to the internet and try again'));
                             });
                       }
                     })
@@ -441,6 +557,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   'Make sure you check the contract detail carefully before approving the contract.'));
         });
   }
+
   rejectContract() {
     showDialog(
         context: context,
@@ -468,70 +585,68 @@ class _ProductDetailState extends State<ProductDetail> {
                                 content: Row(
                                   children: const [
                                     Padding(
-                                      padding: const EdgeInsets.all(15.0),
+                                      padding: EdgeInsets.all(15.0),
                                       child: CircularProgressIndicator(),
                                     ),
                                     Text('Please wait...'),
                                   ],
                                 ));
                           });
-                      print(widget.contract.payload!.privilledges!.toJson());
+                      // print(widget.contract.payload!.privilledges!.toJson());
                       try {
-                      Map a = await contractAction(
-                          widget.contract.payload!.privilledges!.approvalCode ??
-                              '',
-                          widget.pin,
-                          widget.contract.payload!.contractID ?? '',
-                          widget.user.payload!.publicKey ?? '',
-                          'product',
-                          'reject',
-                          "approval_code");
+                        Map a = await contractAction(
+                            widget.contract.payload!.privilledges!
+                                    .approvalCode ??
+                                '',
+                            widget.pin,
+                            widget.contract.payload!.contractID ?? '',
+                            widget.user.payload!.publicKey ?? '',
+                            'product',
+                            'reject',
+                            "approval_code");
                         // Navigator.of(context).pop();
                         if (a.containsKey('Status')) {
                           if (a['Status'] == 'successful') {
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return AlertDialog(
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('Okay'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                    title: const Text("Reject successful"),
-                                    content:
-                                        const Text('This contract has been rejected'));
-                              });
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Reject successful"),
+                                      content: const Text(
+                                          'This contract has been rejected'));
+                                });
+                          } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Reject failed"),
+                                      content: Text(a['Message']));
+                                });
                           }
-                            else {
-                              showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return AlertDialog(
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('Okay'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                    title: const Text("Reject failed"),
-                                    content:
-                                        Text(a['Message']));
-                              });
-                            }
-
                         }
                       } catch (e) {
                         print('Error: $e');
@@ -552,15 +667,370 @@ class _ProductDetailState extends State<ProductDetail> {
                                     )
                                   ],
                                   title: const Text("No internet access!"),
-                                  content: Text('Make sure you are connected to the internet and try again'));
+                                  content: const Text(
+                                      'Make sure you are connected to the internet and try again'));
                             });
                       }
                     })
                 // )
               ],
               title: const Text("Are you sure?"),
-              content: const Text(
-                  'This action cannot be reversed.'));
+              content: const Text('This action cannot be reversed.'));
+        });
+  }
+
+  confirmContract() {
+    String code = '';
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (confirm) {
+          return AlertDialog(
+              title: const Text("Enter Confirmation code"),
+              content: TextFormField(
+                onChanged: (text) {
+                  code = text;
+                },
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('Confirm Contract'),
+                  onPressed: () {
+                    Navigator.of(confirm).pop();
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return AlertDialog(
+                              actionsAlignment: MainAxisAlignment.spaceBetween,
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                    child: const Text('Ok, confirm'),
+                                    onPressed: () async {
+                                      // Navigator.of(context).pop();
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (loading) {
+                                            return AlertDialog(
+                                                title: const Text(
+                                                    "Confirming contract"),
+                                                content: Row(
+                                                  children: const [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.all(15.0),
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    Text('Please wait...'),
+                                                  ],
+                                                ));
+                                          });
+                                      // print(widget
+                                      //     .contract.payload!.privilledges!
+                                      //     .toJson());
+                                      try {
+                                        Map a = await contractAction(
+                                            code,
+                                            widget.pin,
+                                            widget.contract.payload!
+                                                    .contractID ??
+                                                '',
+                                            widget.user.payload!.publicKey ??
+                                                '',
+                                            'product',
+                                            'confirm',
+                                            "confirmation_code");
+                                        // Navigator.of(context).pop();
+                                        if (a.containsKey('Status')) {
+                                          if (a['Status'] == 'successful') {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Okay'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                      title: const Text(
+                                                          "Confirm successful"),
+                                                      content: const Text(
+                                                          'This contract has been Confirmed'));
+                                                });
+                                          } else {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Okay'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                      title: const Text(
+                                                          "Confirm failed"),
+                                                      content:
+                                                          Text(a['Message']));
+                                                });
+                                          }
+                                        }
+                                      } catch (e) {
+                                        print('Error: $e');
+                                        // Navigator.of(context).pop();
+                                        showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (error) {
+                                              return AlertDialog(
+                                                  actions: [
+                                                    TextButton(
+                                                      child: const Text('Okay'),
+                                                      onPressed: () {
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                  title: const Text(
+                                                      "No internet access!"),
+                                                  content: const Text(
+                                                      'Make sure you are connected to the internet and try again'));
+                                            });
+                                      }
+                                    })
+                                // )
+                              ],
+                              title: const Text("Are you sure?"),
+                              content: const Text(
+                                  'Make sure the product has been delivered.'));
+                        });
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(confirm).pop();
+                  },
+                )
+              ]);
+        });
+  }
+  buyerRejectContract() {
+    String code = '';
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (confirm) {
+          return AlertDialog(
+              title: const Text("Enter Termination code"),
+              content: TextFormField(
+                onChanged: (text) {
+                  code = text;
+                },
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('Terminate Contract'),
+                  onPressed: () {
+                    Navigator.of(confirm).pop();
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return AlertDialog(
+                              actionsAlignment: MainAxisAlignment.spaceBetween,
+                              actions: [
+                                
+                                TextButton(
+                                    child: const Text('Ok, Terminate'),
+                                    onPressed: () async {
+                                      // Navigator.of(context).pop();
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (loading) {
+                                            return AlertDialog(
+                                                title: const Text(
+                                                    "Rejecting contract"),
+                                                content: Row(
+                                                  children: const [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.all(15.0),
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    Text('Please wait...'),
+                                                  ],
+                                                ));
+                                          });
+                                      // print(widget
+                                      //     .contract.payload!.privilledges!
+                                      //     .toJson());
+                                      try {
+                                        Map a = await contractAction(
+                                            code,
+                                            widget.pin,
+                                            widget.contract.payload!
+                                                    .contractID ??
+                                                '',
+                                            widget.user.payload!.publicKey ??
+                                                '',
+                                            'product',
+                                            'terminate',
+                                            "termination_code");
+                                        // Navigator.of(context).pop();
+                                        if (a.containsKey('Status')) {
+                                          if (a['Status'] == 'successful') {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Okay'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                      title: const Text(
+                                                          "Terminate successful"),
+                                                      content: const Text(
+                                                          'This contract has been Terminated'));
+                                                });
+                                          } else {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Okay'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                      title: const Text(
+                                                          "Terminate failed"),
+                                                      content:
+                                                          Text(a['Message'] != null ? a['Message'] : a['essage']));
+                                                });
+                                          }
+                                        }
+                                      } catch (e) {
+                                        print('Error: $e');
+                                        // Navigator.of(context).pop();
+                                        showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (error) {
+                                              return AlertDialog(
+                                                  actions: [
+                                                    TextButton(
+                                                      child: const Text('Okay'),
+                                                      onPressed: () {
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                  title: const Text(
+                                                      "No internet access!"),
+                                                  content: const Text(
+                                                      'Make sure you are connected to the internet and try again'));
+                                            });
+                                      }
+                                    }),
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                              title: const Text("Are you sure?"),
+                              content: const Text(
+                                  'This action cannot be reveresed.'));
+                        });
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(confirm).pop();
+                  },
+                )
+              ]);
         });
   }
 }

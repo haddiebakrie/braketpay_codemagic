@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:braketpay/api_callers/contracts.dart';
 import 'package:braketpay/api_callers/userinfo.dart';
@@ -7,13 +8,16 @@ import 'package:braketpay/screen/productprocess.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:iconly/iconly.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
+import '../api_callers/merchant.dart';
+
 class MerchantCreateService extends StatefulWidget {
-  MerchantCreateService({Key? key, required this.creatorType, required this.user, required this.pin})
+  MerchantCreateService({Key? key, required this.merchantID, required this.pin,required this.user})
       : super(key: key);
 
-  final String creatorType;
+  final String merchantID;
   final User user;
   final String pin;
 
@@ -23,13 +27,15 @@ class MerchantCreateService extends StatefulWidget {
 
 class _MerchantCreateServiceState extends State<MerchantCreateService> {
   bool isUsername = true;
+    bool hasImage = false;
   late String username;
   late String receiverName = 'Unknown';
   late String receiveraddr;
   late String contractTitle;
   int lastPhase = 0;
   late String logisticLoc;
-  late double downPayment;
+  late int downPayment;
+  late int days;
   String deliveryDate = 'YYYY-MM-DD';
   final _formKey = GlobalKey<FormState>();
   final _stageFormKey = GlobalKey<FormState>();
@@ -39,9 +45,12 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
   List<ServicePhaseField> stages = [];
   String dummyPhaseTitle='';
   String dummyPhaseCost='';
+    String image= '';
+  late String imageByte;
+  final ImagePicker _picker = ImagePicker();
   final _dummyController = TextEditingController();
   final _dummyCController = TextEditingController();
-  final TextEditingController _usernameFieldController = TextEditingController();
+  final TextEditingController downPaymentController = TextEditingController();
   final TextEditingController _priceFieldController = TextEditingController();
   final TextEditingController _locFieldController = TextEditingController();
   final TextEditingController _titleFieldController = TextEditingController();
@@ -54,7 +63,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
       appBar: AppBar(
           title: Column(
             children: [
-              Text('Service Contract'),
+              Text('Service Template'),
               // Text(
               //       // 'You are creating this contract as a ${widget.creatorType}',
               //       textAlign: TextAlign.center,
@@ -88,126 +97,61 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                 // ],
                 // );
                 
-                Container(
-                    color: Colors.grey.withAlpha(20),
-                    height: 40,
+                GestureDetector(
+                  onTap: () async {
+                    XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
+                    final _imageByte = await File(_image?.path ?? '').readAsBytes();
+                    // final byte = base64.encode(_imageByte);
+                    setState(() {
+                      image = _image?.path ?? '';
+                      imageByte = jsonEncode(_imageByte);
+                      hasImage = _image!.path == '' ? false : true;
+                      print(_imageByte);
+                      print(_imageByte.length);
+                    });
+                  },
+                  child: Container(
+                    height: 200,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
                     margin: EdgeInsets.all(5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            style: ButtonStyle(
-                              backgroundColor: isUsername
-                                  ? MaterialStateProperty.all(
-                                      Color.fromARGB(255, 255, 30, 0))
-                                  : MaterialStateProperty.all(
-                                      Color.fromARGB(0, 255, 255, 255)),
-                            ),
-                            child: Text(
-                              'Username',
-                              style: TextStyle(
-                                color: isUsername
-                                    ? Colors.white
-                                    : Colors.deepOrange,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                isUsername = true;
-                              });
-                            },
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                Colors.grey.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
+                          )
+                        ]),
+                        child: image == '' ? Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.image, size: 20),
+                              Text('Select Image')
+                            ],
                           ),
-                        ),
-                        Expanded(
-                          child: TextButton(
-                            style: ButtonStyle(
-                              backgroundColor: !isUsername
-                                  ? MaterialStateProperty.all(
-                                      Color.fromARGB(255, 255, 30, 0))
-                                  : MaterialStateProperty.all(
-                                      Color.fromARGB(0, 255, 255, 255)),
+                        ) : Stack(
+                          children: [
+                            Image.file(File(image), fit: BoxFit.fill, width: double.infinity, height: double.infinity),
+                          Container(
+                            color: Colors.black.withOpacity(.2),
+                            width: double.infinity, height: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.image, size: 20, color: Colors.white),
+                              Text('Select Image', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
+                              ],
                             ),
-                            child: Text(
-                              'Wallet Address',
-                              style: TextStyle(
-                                color: !isUsername
-                                    ? Colors.white
-                                    : Colors.deepOrange,
-                              ),
-                            ),
-                            onPressed: () {
-                              // setState(() {
-                              // isUsername = false;
-                              // }
-                              // );
-                            },
                           ),
+                          ], 
+                        )
                         ),
-                      ],
-                    )),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        controller: _usernameFieldController,
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          prefixText: '@',
-                          fillColor: Color.fromARGB(24, 158, 158, 158),
-                          filled: true,
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          hintText: 'username',
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        onChanged: (text) {
-                          username = text.trim();
-                          Future<Map<String, dynamic>> fullname =
-                              getUserInfo(text);
-                          fullname.then((value) {
-                            if (value.containsKey('Payload')) {
-                              if (value['Payload']['wallet_address'] ==
-                                  widget.user.payload!.walletAddress) {
-                                setState(() {
-                                  receiverName =
-                                      "You can't create a contract with yourself";
-                                });
-                              } else {
-                                setState(() {
-                                  receiverName = value['Payload']['fullname'];
-                                  receiveraddr =
-                                      value['Payload']['wallet_address'];
-
-                                  // print(value);
-                                });
-                              }
-                            } else {
-                              setState(() {
-                                receiverName =
-                                    'This username does match any user';
-                              });
-                            }
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'The second party is required';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Text('Receiver: $receiverName'),
-                  ],
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 15),
@@ -232,7 +176,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                               borderSide: BorderSide.none,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
-                          hintText: 'Ex Contract for Room cleaning',
+                          hintText: 'Ex Furniture making',
                           border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius:
@@ -409,7 +353,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -456,7 +400,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -469,7 +413,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                         ),
                       ),
                       TextFormField(
-                        controller: _priceFieldController,
+                        controller: downPaymentController,
                         cursorColor: Colors.black,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
@@ -490,7 +434,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
 
                         ),
                         onChanged: (text) {
-                          downPayment = double.parse(text.trim());
+                          downPayment = int.parse(text.trim());
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -503,45 +447,52 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child: Text(
-                          'Timeline of execution',
+                          'How many days does delivery take (minimum of 3 days)',
                           style: TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 15),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          _loginButtonController.reset();
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          DatePicker.showDatePicker(context,
-                              minTime: DateTime.now(),
-                              currentTime: deliveryDate == 'YYYY-MM-DD'
-                                  ? DateTime.now()
-                                  : DateTime.tryParse(deliveryDate),
-                              maxTime: DateTime(2101), onConfirm: (date) {
-                            setState(() {
-                              deliveryDate =
-                                  '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-                            });
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          width: double.infinity,
-                          color: Color.fromARGB(24, 158, 158, 158),
-                          child: Text(deliveryDate,
-                              style: TextStyle(fontSize: 20)),
+                      TextFormField(
+                        controller: _priceFieldController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          prefixStyle: TextStyle(color: Colors.grey),
+                          fillColor: Color.fromARGB(24, 158, 158, 158),
+                          filled: true,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          hintText: '4',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 20),
                         ),
-                      )
+                        onChanged: (text) {
+                          days = int.parse(text.trim());
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty || days < 3) {
+                            return 'Please set atleast 3 days for delivery';
+                          }
+                          return null;
+                        },
+                      ),
                     ],
                   ),
                 ),
+                SizedBox(height: 20),
                 RoundedLoadingButton(
                   borderRadius: 10,
                   color: Theme.of(context).primaryColor,
@@ -549,29 +500,11 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                   controller: _loginButtonController,
                   child: Text('Create'),
                   onPressed: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+
                     if (!_formKey.currentState!.validate()) {
                       _loginButtonController.reset();
-                    }else if (receiverName == 'This username does match any user' || receiverName == "You can't create a contract with yourself" || receiverName == 'Unknown') {
-                      _loginButtonController.reset();
-                      showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                        actions: [
-                                          TextButton(
-                                            child: const Text('Okay'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                        title:
-                                            const Text("Invalid Receiver username!"),
-                                        content: const Text(
-                                            'Enter a valid username'));
-                                  });
-                    } else if (stages.length < 3) {
+                    }else if (stages.length < 3) {
                       _loginButtonController.reset();
 
                       showDialog(
@@ -593,29 +526,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                                             'Please add at least 3 stages'));
                                   });
                     }
-                    
-                    else if (deliveryDate == 'YYYY-MM-DD') {
-                      _loginButtonController.reset();
 
-                      showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                        actions: [
-                                          TextButton(
-                                            child: const Text('Okay'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                        title:
-                                            const Text("Delivery date not set!"),
-                                        content: const Text(
-                                            'Please choose a delivery date'));
-                                  });
-                    } 
                     else {
 
                       Map _stages = {};
@@ -631,34 +542,26 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                           builder: (_) {
                             return AlertDialog(
                                 title: Text(
-                                  'A SERVICE CONTRACT \nWITH\n ${receiverName.toUpperCase()}',
+                                  'Creating contract template',
                                   textAlign: TextAlign.center,
                                 ),
                                 // content: SizedBox(width: 50, height: 50, child: Center(child: CircularProgressIndicator()))
-                                content: Row(children: [
+                                content: Row(children: const [
                                   Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: CircularProgressIndicator(),
                                   ),
-                                  Text('Creating Contract....',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500))
+                                  Text('Please wait....', style: TextStyle(fontWeight: FontWeight.w500))
                                 ]));
                           });
-                      Map a = await createServiceContract(
-                          widget.creatorType.toLowerCase(),
-                          widget.creatorType.toLowerCase() == 'client'
-                              ? widget.user.payload!.walletAddress ?? ''
-                              : receiveraddr,
-                          widget.creatorType.toLowerCase() == 'provider'
-                              ? widget.user.payload!.walletAddress ?? ''
-                              : receiveraddr,
-                          widget.user.payload!.bvn ?? '',
-                          contractTitle,
+                      Map a = await createMerchantServiceContract(
+                          widget.merchantID,
+                         widget.user.payload!.accountNumber ?? '',
+                          '$days Days',
                           jsonEncode(_stages),
-                          logisticLoc,
                           downPayment.toString(),
-                          deliveryDate,
+                          contractTitle,
+                          imageByte,
                           widget.pin);
                           if (a.containsKey('Status')) {
                                       if (a['Status'] == 'successful') {
@@ -684,9 +587,8 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                                                       },
                                                     )
                                                   ],
-                                                  title: const Text(
-                                                      "Contract created successfully"),
-                                                  content: Text(a['Message']));
+                                                  title: const Text("Template created!"),
+                                                content:  Text('Your Service template has been created.'));
                                             });
                                       } else {
                                         showDialog(
@@ -707,7 +609,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                                                     )
                                                   ],
                                                   title: const Text(
-                                                      "Contract creation failed"),
+                                                      "Template creation failed"),
                                                   content: Text(a['Message']));
                                             });
                                       }

@@ -19,31 +19,43 @@ class ProductContract {
     }
     return data;
   }
+
   bool isService() {
-    if (this.payload!.parties!.buyersName != null) {
-      return true;
-    } else {
+    if (this.payload?.parties?.buyersName != null) {
       return false;
+    } else {
+      return true;
     }
   }
 
   bool isContractCreator(String address) {
+
+      print(this.payload!.parties!.contractCreatorAddress);
+      print(this.payload!.parties!.creatorAddress);
+    if (!isService()) {
       if (this.payload!.parties!.contractCreatorAddress == address) {
         return true;
+      } else {
+        return false;
       }
-      return false;
+    } else {
+      if (this.payload!.parties!.creatorAddress == address) {
+        return true;
+      } else {
+        return false;
+      }
     }
+  }
 
   bool isProvider(String address) {
     if (this.isService()) {
       if (this.payload!.parties!.clientAddress == address) {
         return false;
-      }
-      else {
+      } else {
         return true;
       }
-    }
-    else {
+    } else {
+      print('${this.payload!.parties!.buyersName} - $address');
       if (this.payload!.parties!.buyersName == address) {
         return false;
       }
@@ -51,42 +63,48 @@ class ProductContract {
     }
   }
 
-
   String dateCreated() {
     if (this.payload!.parties!.buyersName != null) {
-      final DateTime formatted = HttpDate.parse(this.payload!.states!.dateContractCreated ?? "");
+      final DateTime formatted =
+          HttpDate.parse(this.payload!.states!.dateContractCreated ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     } else {
-      
-      final DateTime formatted = HttpDate.parse(this.payload!.states!.dateContractCreatedService ?? "");
+      final DateTime formatted = HttpDate.parse(
+          this.payload!.states!.dateContractCreatedService ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     }
   }
+
   DateTime httpDate() {
     if (this.payload!.parties!.buyersName != null) {
-      final DateTime formatted = HttpDate.parse(this.payload!.states!.dateLastChangeMade ?? "");
+      final DateTime formatted =
+          HttpDate.parse(this.payload!.states!.dateLastChangeMade ?? "");
       return formatted;
     } else {
-      
-      final DateTime formatted = HttpDate.parse(this.payload!.states!.dateContractCreatedService ?? "");
+      final DateTime formatted = HttpDate.parse(
+          this.payload!.states!.dateContractCreatedService ?? "");
       return formatted;
     }
   }
+
   String deliveryDate() {
     if (this.payload!.parties!.buyersName != null) {
-      final DateTime formatted = HttpDate.parse(this.payload!.terms!.deliveryDatetime ?? "");
+      final DateTime formatted =
+          HttpDate.parse(this.payload!.terms!.deliveryDatetime ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     } else {
-      final DateTime formatted = HttpDate.parse(this.payload!.terms!.deliveryDatetime ?? "");
+      final DateTime formatted =
+          HttpDate.parse(this.payload!.terms!.deliveryDatetime ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     }
   }
+
   String totalAmount() {
-    return "${double.parse(this.payload!.terms!.productAmount ?? '0') + double.parse(this.payload!.terms!.logisticAmount??'0')}";
+    return "${double.parse(this.payload!.terms!.productAmount ?? '0') + double.parse(this.payload!.terms!.logisticAmount ?? '0')}";
   }
 }
 
@@ -186,11 +204,13 @@ class Privilledges {
   String? terminationCode;
   String? approvalCode;
 
-
-  Privilledges({this.confirmationCode, this.terminationCode, this.approvalCode});
+  Privilledges(
+      {this.confirmationCode, this.terminationCode, this.approvalCode});
 
   Privilledges.fromJson(Map<String, dynamic> json) {
-    approvalCode = json.containsKey('approval_code') ? json['approval_code'] : json['approve_code'];
+    approvalCode = json.containsKey('approval_code')
+        ? json['approval_code']
+        : json['approve_code'];
     print(json);
     confirmationCode = json['confirmation_code'];
     terminationCode = json['termination_code'];
@@ -204,7 +224,6 @@ class Privilledges {
     return data;
   }
 }
-
 
 class States {
   String? approvalState;
@@ -284,8 +303,12 @@ class Terms {
       this.totalServiceAmount});
 
   Terms.fromJson(Map<String, dynamic> json) {
-    contractTitle = json.containsKey('contract_title') ? json['contract_title'] : json['contract title'];
-    deliveryDatetime = json.containsKey('delivery_datetime') ? json['delivery_datetime'] : json['execution timeline'];
+    contractTitle = json.containsKey('contract_title')
+        ? json['contract_title']
+        : json['contract title'];
+    deliveryDatetime = json.containsKey('delivery_datetime')
+        ? json['delivery_datetime']
+        : json['execution timeline'];
     logisticAmount = json['logistic amount'];
     productAmount = json['product amount'];
     productDetails = json['product_details'];

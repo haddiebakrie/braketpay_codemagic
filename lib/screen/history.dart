@@ -1,4 +1,5 @@
 
+import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/uix/transactioncard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -45,10 +46,19 @@ class _HistoryState extends State<History> {
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(20)),
               child: IconButton(
-                  icon: const Icon(IconlyBold.profile),
-                  color: Theme.of(context).primaryColor,
-                  iconSize: 20,
-                  onPressed: () {}),
+                icon: const Icon(IconlyBold.profile),
+                color: Theme.of(context).primaryColor,
+                iconSize: 20,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => 
+                        Profile(user: widget.user, pin: widget.pin)
+
+                    )
+                  );
+
+                }),
             ),
           ),
 

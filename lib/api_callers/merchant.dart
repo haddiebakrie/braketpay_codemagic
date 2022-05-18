@@ -1,10 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-
-
 
 Future<Map<String, dynamic>> getMerchant(
   String walletAddress,
@@ -82,24 +82,36 @@ Future<Map> createMerchant (
 
 
 Future<Map> fetchMerchantContract (
+  String productID,
+  String contractType,
   String id,
+  String walletAddress,
+  String pin,
+  String volume,
   ) async {
   String param = Uri(queryParameters: {
-      "merchant_id":id,
+    "product_id": productID,
+    "service_id": productID,
+    "merchant_id": id,
+    "contract_type": contractType,
+      "wallet_address":walletAddress,
+      "transaction_pin":pin,
+      "volume": volume
+      
     }).query;
 
-      print('99090909090');
-
+      // print(param);
+// 
     try {
       final response = await Dio().get(
-        'https://api.braketpay.com/fetch_registered_contract/v1?$param'
+        'https://api.braketpay.com/fetch_registered_contract?$param'
         );
       // print('99090909090');
 
-      // print(response.data);
+      print('${response.data}%%%%%%%%%%%%%%%%%%%%%%');
 
     if (response.statusCode == 200) {
-      print(response.data);
+      // print(response.data);
       return response.data;
 
     } else {
@@ -107,6 +119,7 @@ Future<Map> fetchMerchantContract (
     }
     } catch (e) {
       print(e);
+      print('HIHOH');
       return {'Message': 'No internet access'};
     }
 }
@@ -207,5 +220,152 @@ Future<Map> createMerchantProductContract (
     } catch (e) {
       print(e);
       return {'Message': 'No Internet access'};
+    }
+}
+
+
+Future<Map> createMerchantServiceContract (
+  String merchantId,
+  String accountNumber,
+  String days,
+  String stages,
+  String downpayment,
+  String contractTitle,
+  String bytes,
+  String transactionPin,  
+  ) async {
+  Map<String, dynamic> param = {
+    "merchant_id": merchantId,
+    "transaction_pin": transactionPin,
+    "account_number":accountNumber,
+    "downpayment": downpayment,
+    "delivery_stages": stages,
+    "service_picture": bytes,
+    "contract_title": contractTitle,
+    "delivery_duration": days
+    };
+  var params = FormData.fromMap(param);
+    print(param);
+    try{
+    final response = await post(
+      Uri.parse('https://api.braketpay.com/registered_service_contract/v1'),
+      headers: {'Content-Type':'application/json'},
+      body: jsonEncode(param)
+      );
+      print(response.body);
+
+      print(response.body);
+
+    if (response.statusCode == 200) {
+      print(response.body);
+
+      return jsonDecode(response.body);
+
+    } else {
+      return {'Message': 'No Internet access'};
+    }
+      
+    } catch (e) {
+      print(e);
+      return {'Message': 'No Internet access'};
+    }
+}
+
+
+
+Future<Map> activateMerchantContract (
+  String bvn,
+  String merchantID,
+  String pin,
+  String productID,
+  String walletAddress,
+  String location,
+  String shipFee,
+  ) async {
+  Map param = {
+      "bvn": bvn,
+      "buyer_transaction_pin":pin,
+      "merchant_id": merchantID,
+      "product_id": productID,
+      "buyer_wallet_address":walletAddress,
+      "instruction": "qrscan",
+      "delivery_location":location,
+      "shipping_cost": shipFee
+    };
+
+      print(param);
+      try {
+    final response = await Dio().put(
+      'https://api.braketpay.com/activate_seller_contract/v1',
+      data: param
+      );
+      // print('99090909090');
+
+      print(response.data);
+
+    if (response.statusCode == 200) {
+      print(response.data);
+      if (!response.data.containsKey('Payload')) {
+          return response.data;
+
+      }
+
+      return response.data;
+
+    } else {
+      print(response.data);
+      return {'Message':'No internet access'};
+    }
+    } catch (e) {
+      print(e);
+      return {'Message':'No internet access'};
+    }
+}
+
+
+Future<Map> activateServiceMerchantContract (
+  String bvn,
+  String merchantID,
+  String pin,
+  String serviceID,
+  String walletAddress,
+  String location,
+  ) async {
+  Map param = {
+      "bvn": bvn,
+      "client_transaction_pin":pin,
+      "merchant_id": merchantID,
+      "service_id": serviceID,
+      "client_wallet_address":walletAddress,
+      "instruction": "qrscan",
+      "delivery_location":location,
+    };
+
+      print(param);
+      try {
+    final response = await Dio().put(
+      'https://api.braketpay.com/activate_client_contract/v1',
+      data: param
+      );
+      // print('99090909090');
+
+      print(response.data);
+
+    if (response.statusCode == 200) {
+      print(response.data);
+      if (!response.data.containsKey('Payload')) {
+          return response.data;
+
+      }
+
+      return response.data;
+
+    } else {
+      print(response.data);
+      return {'Message':'No internet access'};
+    }
+    } catch (e) {
+      print(e);
+      return {'Message':'No internet access'};
     }
 }

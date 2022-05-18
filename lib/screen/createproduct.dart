@@ -159,34 +159,62 @@ class _CreateProductState extends State<CreateProduct> {
                                   BorderRadius.all(Radius.circular(10))),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
-                        onChanged: (text) {
+                        onChanged: (text) async {
+                          Map a = await getUserWith(text.trim(), 'username');
+                          print(a);
+                            if (!a.containsKey('Status')) {
+                              setState(() {
+                              receiverName = 'No Internet Access';
+                                
+                              });
+                              return;
+                            }
+                        receiverName = a.containsKey('Payload')
+                            ? a['Payload']['fullname']
+                            : 'Incorrect Braket Account';
                           username = text.trim();
-                          Future<Map<String, dynamic>> fullname =
-                              getUserInfo(text);
-                          fullname.then((value) {
-                            if (value.containsKey('Payload')) {
-                              if (value['Payload']['wallet_address'] ==
-                                  widget.user.payload!.walletAddress) {
+                          setState(() {
+                            if (a.containsKey('Payload') && a['Payload']['wallet_address'] == widget.user.payload!.walletAddress) {
                                 setState(() {
                                   receiverName =
                                       "You can't create a contract with yourself";
                                 });
-                              } else {
-                                setState(() {
-                                  receiverName = value['Payload']['fullname'];
-                                  receiveraddr =
-                                      value['Payload']['wallet_address'];
-
-                                  // print(value);
-                                });
-                              }
-                            } else {
-                              setState(() {
-                                receiverName =
-                                    'This username does not match any user';
-                              });
+                                return;
                             }
-                          });
+                          receiverName = 'Looking for user';
+                              receiverName = a.containsKey('Payload')
+                            ? '${a['Payload']['fullname']}'
+                                  : a.containsKey('Message')
+                                      ? a['Message']
+                                      : 'No Internet access';
+                            });
+                          // username = text.trim();
+                          // Future<Map<String, dynamic>> fullname =
+                          //     getUserInfo(text);
+                          // fullname.then((value) {
+                          //   if (value.containsKey('Payload')) {
+                          //     if (value['Payload']['wallet_address'] ==
+                          //         widget.user.payload!.walletAddress) {
+                          //       setState(() {
+                          //         receiverName =
+                          //             "You can't create a contract with yourself";
+                          //       });
+                          //     } else {
+                          //       setState(() {
+                          //         receiverName = value['Payload']['fullname'];
+                          //         receiveraddr =
+                          //             value['Payload']['wallet_address'];
+
+                          //         // print(value);
+                          //       });
+                          //     }
+                          //   } else {
+                          //     setState(() {
+                          //       receiverName =
+                          //           'This username does not match any user';
+                          //     });
+                          //   }
+                          // });
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {

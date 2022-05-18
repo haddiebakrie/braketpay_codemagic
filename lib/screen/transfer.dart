@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:braketpay/api_callers/pay.dart';
 import 'package:braketpay/api_callers/userinfo.dart';
 import 'package:braketpay/api_callers/utilities.dart';
@@ -352,6 +354,7 @@ class _RechargeState extends State<SendMoney> {
   }
 
   Future<dynamic> askBankName() {
+    Future<Map> banks = getBanks(widget.user.payload!.email??"", widget.user.payload!.password??"", 'bank', '', '');
     return showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -367,38 +370,67 @@ class _RechargeState extends State<SendMoney> {
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(20))),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: _networkList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        bankName = _networkList[index];
-                      });
-                      Navigator.of(context).pop(context);
-                    },
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text(_networkList[index]),
-                          leading: Container(
-                              margin: EdgeInsets.all(8),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40)),
-                              child: Image.asset(
-                                  'assets/${_networkList[index].split(" ")[0].toLowerCase()}.png')),
+              child: FutureBuilder<Map>(
+                future: banks,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot.data!['data'].length);
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!['data'].length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            bankName = snapshot.data!['data'][index]['name'];
+                          });
+                          Navigator.of(context).pop(context);
+                        },
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text(snapshot.data!['data'][index]['name']),
+                              leading: Container(
+                                  margin: EdgeInsets.all(8),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(40)),
+                                  child: 
+                                  Image.asset(
+                                      File('assets/${snapshot.data!['data'][index]['code']}.png').existsSync() ? 'assets/${snapshot.data!['data'][index]['code']}.png' : 'assets/logo.png')),
+                            ),
+                            Container(
+                                width: double.infinity,
+                                height: 1,
+                                color: Colors.grey.withAlpha(100),
+                                margin: EdgeInsets.only(bottom: 0))
+                          ],
                         ),
-                        Container(
-                            width: double.infinity,
-                            height: 1,
-                            color: Colors.grey.withAlpha(100),
-                            margin: EdgeInsets.only(bottom: 0))
-                      ],
-                    ),
+                      );
+                    },
                   );
-                },
+                  } else {
+                    return Container(
+                      height: 100,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                    bottom: Radius.zero),
+                                color: Colors.white,
+                              ),
+                              child: Center(
+                                  child: Column(
+                                children: const [
+                                  Padding(
+                                    padding: EdgeInsets.all(15.0),
+                                    child: CircularProgressIndicator(
+                                        color: Colors.grey),
+                                  ),
+                                  Text("Loading list of banks..."),
+                                ],
+                              )));;
+                  }
+                }
               ),
             ),
           );

@@ -16,6 +16,7 @@ Future<Map<String, dynamic>> getUserInfo(
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/fetch_second_party_credentials?$param'),
       );
+      print(response.body);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -24,12 +25,12 @@ Future<Map<String, dynamic>> getUserInfo(
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
-    throw response.statusCode;
+    return {'Message':'No Internet access'};
   }
 
     } catch (e) {
       print(e);
-      throw 'No internet Access';
+    return {'Message':'No Internet access'};
     }
 
 }
@@ -48,6 +49,7 @@ Future<Map<String, dynamic>> getUserWith(
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/fetch_second_party_credentials?$param'),
       );
+    print(response.body);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -57,11 +59,12 @@ Future<Map<String, dynamic>> getUserWith(
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
       print('Hell');
-    throw response.body;
+    return {'Message':'No Internet access'};
   }
 
     } catch (e) {
-      throw Exception(e.toString());
+      print(e);
+    return {'Message':'No Internet access'};
     }
 }
 
@@ -124,10 +127,12 @@ Future<User> fetchUserAccount(
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
     if (jsonDecode(response.body) is Map) {
-      print(response.body);
+      Map a = jsonDecode(response.body);
+      print(a['Payload']);
       if (jsonDecode(response.body).containsKey('Payload')) {
         Map<String, dynamic> payloads = jsonDecode(response.body);
-        return User.fromJson(payloads);} 
+        return User.fromJson(payloads);
+        } 
       else {
           throw 'Password or Transaction pin not correct!';
         }
@@ -160,8 +165,10 @@ Future<User> loginUser(
     String accountNumber =  validUsername['Payload']['account_number'];
     
     return fetchUserAccount(accountNumber, password, transactionPin);
+  } else if (validUsername.containsKey('Message')) {
+    throw validUsername['Message'];
 
   }else {
-    throw Exception('This username is not found in our record');
+    throw 'Please check your internet connection';
   };
 }

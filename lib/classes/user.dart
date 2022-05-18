@@ -37,6 +37,7 @@ class Payload {
   String? password;
   String? phoneNumber;
   String? publicKey;
+  String? qrCode;
   String? walletAddress;
   String? bvn;
 
@@ -51,6 +52,7 @@ class Payload {
       this.password,
       this.phoneNumber,
       this.publicKey,
+      this.qrCode,
       this.bvn,
       this.walletAddress});
 
@@ -64,6 +66,7 @@ class Payload {
     fullname = json['fullname'];
     password = json['password'];
     bvn = json['bvn'];
+    qrCode = json['account_qr_code'];
     phoneNumber = json['phone_number'];
     publicKey = json['public_key'];
     walletAddress = json['wallet_address'];
@@ -80,6 +83,7 @@ class Payload {
     data['fullname'] = this.fullname;
     data['password'] = this.password;
     data['bvn'] = this.bvn;
+    data['account_qr_code'] = this.qrCode;
     data['phone_number'] = this.phoneNumber;
     data['public_key'] = this.publicKey;
     data['wallet_address'] = this.walletAddress;

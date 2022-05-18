@@ -190,7 +190,6 @@ class _LoginState extends State<Login> {
                               try {
                                 User a =
                                     await loginUser(username, password, pin);
-
                                 _loginButtonController.success();
                                 Navigator.push(
                                     context,
@@ -198,6 +197,7 @@ class _LoginState extends State<Login> {
                                         builder: (context) =>
                                             Manager(user: a, pin: pin)));
                               } catch (e) {
+                                print(e);
                                 _loginButtonController.reset();
                                 showDialog(
                                     context: context,

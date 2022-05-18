@@ -23,10 +23,11 @@ class ContractListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        print(product.payload!.toJson());
         product.payload!.parties!.buyersName != null ? Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => ProductDetail(contract: product, pin: pin, user: user)
       )) : Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => ServiceDetail(contract: product)
+            builder: (BuildContext context) => ServiceDetail(contract: product, pin: pin, user: user)
       ));
       // );
       // }
@@ -52,7 +53,7 @@ class ContractListCard extends StatelessWidget {
               
               children: [
                 Text(product.dateCreated(), style: TextStyle(color: Colors.grey),),
-                Text(product.payload!.states!.approvalState ?? "")
+                Text(product.payload!.states!.closingState == 'Closed' ? 'Closed' : product.payload!.states!.approvalState ?? "")
               ],
             ),
             title: Text(
@@ -84,7 +85,7 @@ class ContractListCard extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(20)),
-                child: product.isService()
+                child: !product.isService()
                     ? IconButton(
                         icon: const Icon(IconlyBold.document),
                         color: Colors.white,

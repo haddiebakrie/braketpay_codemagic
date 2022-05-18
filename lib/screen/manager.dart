@@ -6,6 +6,7 @@ import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/history.dart';
 import 'package:braketpay/screen/merchant.dart';
 import 'package:braketpay/screen/home.dart';
+import 'package:braketpay/screen/wallet.dart';
 import 'package:braketpay/uix/walletcard.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
@@ -52,7 +53,7 @@ class _ManagerState extends State<Manager> {
       Home(user: widget.user, pin: widget.pin),
       Contracts(user: widget.user, pin: widget.pin),
       History(user: widget.user, pin: widget.pin),
-      Merchant(user: widget.user, pin: widget.pin),
+      Wallet(user: widget.user, pin: widget.pin),
       Merchant(user: widget.user, pin: widget.pin),
       // Text('HI'),
       // Contracts(),

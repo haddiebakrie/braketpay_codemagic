@@ -3,11 +3,13 @@ import 'package:braketpay/utils.dart';
 import 'package:flutter/material.dart';
 
 class WalletCard extends StatefulWidget {
-  const WalletCard({Key? key, required this.balance, required this.title})
+  WalletCard({Key? key, required this.balance, required this.title, this.onTapSend, this.onTapFund})
       : super(key: key);
 
   final String balance;
   final String title;
+  Function? onTapSend;
+  Function? onTapFund;
 
   @override
   State<WalletCard> createState() => _WalletCardState();
@@ -36,25 +38,9 @@ class _WalletCardState extends State<WalletCard> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Container(
-                  height: 40,
-                  width: 70,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: const LinearGradient(colors: [
-                        Colors.deepOrange,
-                        Colors.deepOrangeAccent,
-                      ])),
-                  child: TextButton(
-                      clipBehavior: Clip.hardEdge,
-                      onPressed: () {},
-                      child: const Text(
-                        'send',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                      )),
-                ),
-                const RoundButton(text: 'fund'),
+                
+                RoundButton(text: 'send', onTap: widget.onTapSend),
+                RoundButton(text: 'fund', onTap: widget.onTapFund),
               ],
             ),
           )

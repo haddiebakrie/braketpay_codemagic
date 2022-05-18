@@ -1,3 +1,4 @@
+import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/uix/contractmodeselect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -7,6 +8,7 @@ import '../api_callers/contracts.dart';
 import '../classes/product_contract.dart';
 import '../classes/user.dart';
 import '../uix/contractlistcard.dart';
+import '../uix/roundbutton.dart';
 
 class Contracts extends StatefulWidget {
   Contracts({Key? key, required this.user, required this.pin})
@@ -23,6 +25,8 @@ class _ContractsState extends State<Contracts> {
       widget.user.payload!.accountNumber ?? "",
       widget.user.payload!.password ?? "",
       widget.pin);
+  final _refreshKey = GlobalKey<RefreshIndicatorState>();
+    
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,16 @@ class _ContractsState extends State<Contracts> {
                 icon: const Icon(IconlyBold.profile),
                 color: Theme.of(context).primaryColor,
                 iconSize: 20,
-                onPressed: () {}),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => 
+                        Profile(user: widget.user, pin: widget.pin)
+
+                    )
+                  );
+
+                }),
           ),
         ),
       ),
@@ -61,6 +74,7 @@ class _ContractsState extends State<Contracts> {
             color: Colors.white,
           ),
           child: RefreshIndicator(
+            key: _refreshKey,
             onRefresh: () async {
               final transactions = await fetchContracts(
                   widget.user.payload!.accountNumber ?? "",
@@ -75,7 +89,7 @@ class _ContractsState extends State<Contracts> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return snapshot.data!.length > 0 ? ListView.builder(
-                      physics: BouncingScrollPhysics(),
+                      physics: AlwaysScrollableScrollPhysics(),
                       itemCount: snapshot.data?.length,
                       itemBuilder: (context, index) {
                         ProductContract product = snapshot.data![index];
@@ -88,20 +102,33 @@ class _ContractsState extends State<Contracts> {
                     Center(
                           child: Column(
                             children: [
-                              SizedBox(height:40),
-                              Icon(Icons.wifi_off_rounded),
-                              Text(
-                                  "No internet access\nCoudn't Load Contracts!\n\nPull down to refresh", textAlign: TextAlign.center),
+                              Image.asset('assets/sammy-no-connection.gif', width: 150),
+                                                      Text(
+                                                          "No internet access\nCoudn't Load Contract History!", textAlign: TextAlign.center),
+                                                    RoundButton(
+                                                        text: 'Retry',
+                                                        color1: Colors.black,
+                                                        color2: Colors.black,
+                                                        onTap: () {
+                                                          _refreshKey.currentState!.show();
+                                                        }
+                                                        
+                                                      )
                             ],
                           )),
                   ],
                 );
                 }
 
-                return const Center(
-                    child: SpinKitCubeGrid(
-                  color: Colors.deepOrange,
-                ));
+                return ListView(
+                  children: [Container(
+                    margin: EdgeInsets.only(top:50),
+                    child: const Center(
+                        child: SpinKitCubeGrid(
+                      color: Colors.deepOrange,
+                    )),
+                  ),
+                ]);
               },
             ),
           )),

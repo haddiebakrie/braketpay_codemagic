@@ -5,6 +5,7 @@ import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/createproductmerchant.dart';
+import '../screen/createservicemerchant.dart';
 
 class ContractModeSelect extends StatefulWidget {
   ContractModeSelect({Key? key, required this.user, required this.pin}) : super(key: key);
@@ -225,7 +226,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                           print(widget.contractType);
                           setState(() {
                             Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => CreateService(creatorType: 'Provider', user:widget.user, pin: widget.pin)));
+                        builder: (BuildContext context) => MerchantCreateService(user:widget.user, pin: widget.pin, merchantID: widget.merchantID)));
                           });
                         }),
                     Visibility(

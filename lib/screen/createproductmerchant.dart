@@ -31,6 +31,7 @@ class MerchantCreateProduct extends StatefulWidget {
 
 class _MerchantCreateProductState extends State<MerchantCreateProduct> {
   bool isUsername = true;
+  bool hasImage = false;
   late String username;
   late String productName;
   late String contractTitle;
@@ -89,10 +90,13 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                   onTap: () async {
                     XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
                     final _imageByte = await File(_image?.path ?? '').readAsBytes();
-                    final byte = base64.encode(_imageByte);
+                    // final byte = base64.encode(_imageByte);
                     setState(() {
                       image = _image?.path ?? '';
-                      imageByte = byte;
+                      imageByte = jsonEncode(_imageByte);
+                      hasImage = _image!.path == '' ? false : true;
+                      print(_imageByte);
+                      print(_imageByte.length);
                     });
                   },
                   child: Container(
@@ -375,7 +379,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child: Text(
-                          'How many days does delivery take',
+                          'How many days does delivery take (minimum of 3 days)',
                           style: TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 15),
                         ),
@@ -404,8 +408,8 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                           days = int.parse(text.trim());
                         },
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'This field is required';
+                          if (value == null || value.isEmpty || days < 3) {
+                            return 'Please set atleast 3 days for delivery';
                           }
                           return null;
                         },
@@ -421,6 +425,30 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                   controller: _loginButtonController,
                   child: Text('Create'),
                   onPressed: () async {
+                  FocusManager.instance.primaryFocus?.unfocus();
+
+                    if (!hasImage) {
+                      showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return AlertDialog(
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Okay'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                  title: const Text("No Image selected"),
+                                  content:  Text('Please select product image!.'));
+                            });
+                                return;
+                    }
                     if (!_formKey.currentState!.validate()) {
                       _loginButtonController.reset();
                     } 
@@ -434,14 +462,14 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                           barrierDismissible: false,
                           builder: (_) {
                             return AlertDialog(
-                                title: Text(
+                                title: const Text(
                                   'Creating contract template',
                                   textAlign: TextAlign.center,
                                 ),
                                 // content: SizedBox(width: 50, height: 50, child: Center(child: CircularProgressIndicator()))
                                 content: Row(children: const [
                                   Padding(
-                                    padding: const EdgeInsets.all(20.0),
+                                    padding:  EdgeInsets.all(20.0),
                                     child: CircularProgressIndicator(),
                                   ),
                                   Text('Please wait....', style: TextStyle(fontWeight: FontWeight.w500))
@@ -458,8 +486,72 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                           price.toString(),
                           logisticFrom,
                           widget.pin);
-                    }}
-                ),
+                
+                if (a.containsKey('Payload')) {
+                        _loginButtonController.success();
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return AlertDialog(
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Okay'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                  title: const Text("Template created!"),
+                                  content:  Text('Your Product template has been created.'));
+                            });
+                      } else {
+                        _loginButtonController.reset();
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return AlertDialog(
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Okay'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        // Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                  title: const Text("Can't create Template!"),
+                                  content:  Text(a['Message']));
+                            });
+
+                      }
+                    // a.onError((error, stackTrace) {
+                    //   print('$error ppppppppppppppppppppppppp');
+                    //   _loginButtonController.reset();
+                    //   showDialog(
+                    //       context: context,
+                    //       barrierDismissible: false,
+                    //       builder: (context) {
+                    //         return AlertDialog(
+                    //             actions: [
+                    //               TextButton(
+                    //                 child: const Text('Okay'),
+                    //                 onPressed: () {
+                    //                   Navigator.of(context).pop();
+                    //                 },
+                    //               )
+                    //             ],
+                    //             title: const Text("Can't Make transfer!"),
+                    //             content: Text(error.toString()));
+                    //       });
+                    //   throw Exception(error);
+                    // });
+                  }}),
                 SizedBox(height: 20)
               ])),
         ),

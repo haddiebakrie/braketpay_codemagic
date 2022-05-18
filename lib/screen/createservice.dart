@@ -620,7 +620,7 @@ class _CreateServiceState extends State<CreateService> {
 
                       Map _stages = {};
                       stages.forEach((ServicePhaseField element) {
-                        _stages.addAll({'Stage_${element.index+1}':{"about_stage":element.phaseTitle, "cost_of_stage":double.parse(element.phaseCost)}});
+                        _stages.addAll({"Stage_${element.index+1}":{"about_stage":element.phaseTitle, "cost_of_stage":double.parse(element.phaseCost)}});
                       },); 
 
                       print(_stages.toString());
