@@ -224,7 +224,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.calendar_month_rounded, color: Colors.deepOrange,),
+                                    Icon(Icons.calendar_month_rounded, color: Theme.of(context).primaryColor,),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text('Date', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -241,7 +241,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.people_alt_rounded, color: Colors.deepOrange),
+                                    Icon(Icons.people_alt_rounded, color: Theme.of(context).primaryColor),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text('Parties', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -260,7 +260,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.timelapse_rounded, color: Colors.deepOrange),
+                                    Icon(Icons.timelapse_rounded, color: Theme.of(context).primaryColor),
                                     Padding(padding: EdgeInsets.all(8),child: Text('Stages', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
                                   ],),
                                 ),
@@ -290,7 +290,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.fact_check, color: Colors.deepOrange),
+                                    Icon(Icons.fact_check, color: Theme.of(context).primaryColor),
                                     Padding(padding: EdgeInsets.all(8),child: Text('Total stages completed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
                                   ],),
                                 ),
@@ -305,7 +305,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.payment, color: Colors.deepOrange),
+                                    Icon(Icons.payment, color: Theme.of(context).primaryColor),
                                     Padding(padding: EdgeInsets.all(8), child: Text('Total amount', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
                                   ],),
                                 ),
@@ -319,7 +319,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.payments, color: Colors.deepOrange),
+                                    Icon(Icons.payments, color: Theme.of(context).primaryColor),
                                     Padding(padding: EdgeInsets.all(8), child: Text('Amount paid', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
                                   ],),
                                 ),
@@ -333,7 +333,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.receipt, color: Colors.deepOrange),
+                                    Icon(Icons.receipt, color: Theme.of(context).primaryColor),
                                     Padding(padding: EdgeInsets.all(8), child: Text('Down payment', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
                                   ],),
                                 ),
@@ -347,7 +347,7 @@ class _ProductDetailState extends State<ServiceDetail> {
                                   color: Colors.white,
                                   margin: EdgeInsets.all(20),
                                   child: Row(children: [
-                                    Icon(Icons.flag_circle, color: Colors.deepOrange),
+                                    Icon(Icons.flag_circle, color: Theme.of(context).primaryColor),
                                     Padding(padding: EdgeInsets.all(8), child: Text('Contract State', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
                                   ],),
                                 ),

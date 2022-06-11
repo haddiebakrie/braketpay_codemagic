@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
 import 'package:braketpay/classes/service_contract.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import "package:http/http.dart" as http;
 
 Future<List> fetchContracts(
@@ -16,6 +18,7 @@ Future<List> fetchContracts(
       "observation": "fetch contract",
       "datetime": "Wed, 13 Apr 2001 01:21:07 GMT"
     }).query;
+    Brakey brakey = Get.put(Brakey());
 
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
@@ -26,7 +29,7 @@ Future<List> fetchContracts(
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
     List payloads = jsonDecode(response.body);
-    List newPayloads = [];
+    List<ProductContract> newPayloads = [];
     for (Map<String, dynamic> item in payloads) {
       print(payloads);
       if (item.containsKey('Payload')) {
@@ -47,6 +50,7 @@ Future<List> fetchContracts(
     newPayloads.sort(((a, b) =>
                       b.httpDate().compareTo(a.httpDate())
                     ));
+    brakey.setContracts(newPayloads);
     return (newPayloads);
   } else {
     // If the server did not return a 201 CREATED response,
@@ -55,7 +59,7 @@ Future<List> fetchContracts(
   }
 }
 
-Future<bool> createProductContract (
+Future<Map> createProductContract (
   String contractCreator,
   String buyerAddress,
   String sellerAddress,
@@ -85,6 +89,7 @@ Future<bool> createProductContract (
       "delivery_datetime": deliveryDate
     };
 
+    try {
       print('99090909090');
     final response = await Dio().post(
       'https://api.braketpay.com/create_product_smart_contract/v1',
@@ -97,11 +102,15 @@ Future<bool> createProductContract (
     if (response.statusCode == 200) {
       print(response.data);
 
-      return true;
+      return response.data;
 
     } else {
-      throw Exception('${response.data}');
+      return {'Message': 'No Internet access, Please try again'};
     }
+    } catch (e) {
+      print(e);
+      return {'Message': 'No Internet access, Please try again'};
+    } 
 }
 
 Future<Map> createServiceContract (

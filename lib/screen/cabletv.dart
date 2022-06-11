@@ -260,7 +260,7 @@ class _CableTVState extends State<CableTV> {
                                           ?[_networkList[_networkIndex]]
                                       ?.values
                                       .elementAt(index)
-                              ? Colors.deepOrange
+                              ? Theme.of(context).primaryColor
                               : Colors.white,
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [

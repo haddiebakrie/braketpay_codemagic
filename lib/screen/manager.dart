@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:braketpay/api_callers/contracts.dart';
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/history.dart';
@@ -9,6 +11,7 @@ import 'package:braketpay/screen/home.dart';
 import 'package:braketpay/screen/wallet.dart';
 import 'package:braketpay/uix/walletcard.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -36,7 +39,7 @@ class Manager extends StatefulWidget {
 }
 
 class _ManagerState extends State<Manager> {
-
+  Brakey brakey = Get.put(Brakey());
 
   @override
   void initState() { 
@@ -48,6 +51,9 @@ class _ManagerState extends State<Manager> {
 
   @override
   Widget build(BuildContext context) {
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      brakey.listenToAccountChanges();
+     });
 
     List<Widget> screenList = [
       Home(user: widget.user, pin: widget.pin),
@@ -100,12 +106,12 @@ class _ManagerState extends State<Manager> {
         //           Text('Hi, ' + widget.title,
         //               style: const TextStyle(fontWeight: FontWeight.bold)),
         //           Text('@' + widget.title, style: const TextStyle(fontSize: 14))
-        body: IndexedStack(
+        body: Obx(() => (IndexedStack(
           children: screenList,
-          index: currentIndex,
-        ),
+          index: brakey.managerIndex.toInt(),
+        ))),
         //         ])),
-        bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: Obx(() => (BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(IconlyBold.home), label: 'Home'),
               BottomNavigationBarItem(
@@ -122,12 +128,12 @@ class _ManagerState extends State<Manager> {
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             showUnselectedLabels: true,
-            currentIndex: currentIndex,
+            currentIndex: brakey.managerIndex.value,
             type: BottomNavigationBarType.fixed,
-            onTap: (index) => setState(() {currentIndex = index;})
+            onTap: (index) => setState(() {brakey.changeManagerIndex(index);})
             // onTap: _selectTab,
             // currentIndex: _currentTab,
-            ),
+        )))
             
         
         // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

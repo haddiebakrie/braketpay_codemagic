@@ -50,7 +50,7 @@ class _CreateServiceState extends State<CreateService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepOrange,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
           title: Column(
             children: [
@@ -109,7 +109,7 @@ class _CreateServiceState extends State<CreateService> {
                               style: TextStyle(
                                 color: isUsername
                                     ? Colors.white
-                                    : Colors.deepOrange,
+                                    : Theme.of(context).primaryColor,
                               ),
                             ),
                             onPressed: () {
@@ -133,7 +133,7 @@ class _CreateServiceState extends State<CreateService> {
                               style: TextStyle(
                                 color: !isUsername
                                     ? Colors.white
-                                    : Colors.deepOrange,
+                                    : Theme.of(context).primaryColor,
                               ),
                             ),
                             onPressed: () {

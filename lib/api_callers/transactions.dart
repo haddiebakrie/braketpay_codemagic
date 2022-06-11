@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/transaction.dart';
+import 'package:get/get.dart';
 import "package:http/http.dart" as http;
 
 Future<List> fetchTransactions(
@@ -15,16 +17,17 @@ Future<List> fetchTransactions(
       "observation": "fetch transfer history",
       "datetime": ""
     }).query;
-
+    Brakey brakey = Get.put(Brakey());
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
       
       );
+      // print(response.request.url);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
     List payloads = jsonDecode(response.body);
-    List newPayloads = [];
+    List<Transaction> newPayloads = [];
     // print('item');
     for (dynamic item in payloads) {
 
@@ -45,7 +48,7 @@ Future<List> fetchTransactions(
   newPayloads.sort(((a, b) =>
                   b.httpDate().compareTo(a.httpDate())
                 ));
-
+    brakey.setTransactions(newPayloads); 
     return newPayloads;
   } else {
     // If the server did not return a 201 CREATED response,

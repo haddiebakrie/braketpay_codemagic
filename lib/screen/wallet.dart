@@ -1,4 +1,5 @@
 import 'package:braketpay/api_callers/transactions.dart';
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/transaction.dart';
 import 'package:braketpay/screen/createproduct.dart';
 import 'package:braketpay/classes/user.dart';
@@ -7,6 +8,7 @@ import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/screen/qrcodescanner.dart';
 import 'package:braketpay/screen/savings.dart';
 import 'package:braketpay/screen/transfer.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:braketpay/screen/utilities.dart';
 import 'package:braketpay/uix/transactioncard.dart';
@@ -39,6 +41,7 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
+  Brakey brakey = Get.put(Brakey());
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
@@ -73,11 +76,12 @@ class _WalletState extends State<Wallet> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Hi, ${widget.user.payload!.fullname?.split(' ')[0]}',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(
-                '@${widget.user.payload!.fullname?.split(' ')[1].toLowerCase()}',
-                style: const TextStyle(fontSize: 14))
+            Obx(() => Text( 
+                'Hi ${brakey.user.value!.payload!.fullname!.split(" ")[1]}',
+                style: const TextStyle(fontWeight: FontWeight.bold))),
+            Obx(() => Text( 
+                '@${brakey.user.value!.payload!.username}',
+                style: const TextStyle(fontSize: 14)))
           ],
         ),
       ),

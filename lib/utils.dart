@@ -33,3 +33,7 @@ Future<PermissionStatus> getCameraPermission() async {
       return status;
     }
 }
+
+String toTitleCase(String str) {
+  return str.length > 0 ? '${str[0].toUpperCase()}${str.substring(1).toLowerCase()}':'';
+}

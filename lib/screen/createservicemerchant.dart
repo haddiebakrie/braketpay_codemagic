@@ -59,7 +59,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepOrange,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
           title: Column(
             children: [

@@ -3,6 +3,7 @@ import 'package:braketpay/screen/buydata.dart';
 import 'package:braketpay/screen/cabletv.dart';
 import 'package:braketpay/screen/electricity.dart';
 import 'package:braketpay/screen/recharge.dart';
+import 'package:braketpay/screen/savings.dart';
 import 'package:braketpay/screen/transfer.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _UtilitiesState extends State<Utilities> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepOrange,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: Text('Utilities'),
         elevation: 0,
@@ -85,9 +86,12 @@ class _UtilitiesState extends State<Utilities> {
                 },
               ),
               UtilityButton(
-                url: 'assets/qr-code (3).png',
-                text: 'Scan',
-              ),
+                url: 'assets/saving-money (1).png', text: 'Savings',
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => Savings(user: widget.user, pin: widget.pin)));
+                },
+                ),
             ],
           ),
         ),

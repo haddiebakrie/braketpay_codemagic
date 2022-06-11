@@ -1,10 +1,12 @@
 import 'dart:ui';
 
 import 'package:braketpay/api_callers/contracts.dart';
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail(
@@ -20,6 +22,7 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  Brakey brakey = Get.put(Brakey());
   @override
   Widget build(BuildContext context) {
     final PageController _controller = PageController();
@@ -30,10 +33,10 @@ class _ProductDetailState extends State<ProductDetail> {
             title: Text(widget.contract.payload!.terms!.contractTitle ?? '')),
         bottomSheet: widget.contract.payload!.states!.approvalState ==
                 'Rejected' || widget.contract.payload!.states!.closingState == 'Closed'
-            ? SizedBox(
+            ? const SizedBox(
                 height: 70,
                 child:
-                    const Center(child: Text('This contract has been closed')))
+                    Center(child: Text('This contract has been closed')))
             : !widget.contract
                     .isContractCreator(widget.user.payload!.walletAddress ?? '')
                 ? Visibility(
@@ -213,10 +216,10 @@ class _ProductDetailState extends State<ProductDetail> {
                             color: Colors.white,
                             margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.calendar_month_rounded,
-                                  color: Colors.deepOrange,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -244,9 +247,9 @@ class _ProductDetailState extends State<ProductDetail> {
                             color: Colors.white,
                             margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: const [
+                              children: [
                                 Icon(Icons.people_alt_rounded,
-                                    color: Colors.deepOrange),
+                                    color: Theme.of(context).primaryColor),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text('Parties',
@@ -287,8 +290,8 @@ class _ProductDetailState extends State<ProductDetail> {
                             color: Colors.white,
                             margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: const [
-                                Icon(Icons.label, color: Colors.deepOrange),
+                              children: [
+                                Icon(Icons.label, color: Theme.of(context).primaryColor),
                                 Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Text('Product Detail',
@@ -316,8 +319,8 @@ class _ProductDetailState extends State<ProductDetail> {
                             color: Colors.white,
                             margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: const [
-                                Icon(Icons.payment, color: Colors.deepOrange),
+                              children: [
+                                Icon(Icons.payment, color: Theme.of(context).primaryColor),
                                 Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Text('Price',
@@ -360,9 +363,9 @@ class _ProductDetailState extends State<ProductDetail> {
                             color: Colors.white,
                             margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: const [
+                              children: [
                                 Icon(Icons.delivery_dining,
-                                    color: Colors.deepOrange),
+                                    color: Theme.of(context).primaryColor),
                                 Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Text('Shipping',
@@ -402,9 +405,9 @@ class _ProductDetailState extends State<ProductDetail> {
                             color: Colors.white,
                             margin: const EdgeInsets.all(20),
                             child: Row(
-                              children: const [
+                              children: [
                                 Icon(Icons.flag_circle,
-                                    color: Colors.deepOrange),
+                                    color: Theme.of(context).primaryColor),
                                 Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Text('Contract State',
@@ -498,6 +501,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
+                                            brakey.refreshUserDetail();
                                           },
                                         )
                                       ],
@@ -541,6 +545,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         Navigator.of(error).pop();
                                         Navigator.of(error).pop();
                                         Navigator.of(error).pop();
+                                            brakey.refreshUserDetail();
                                       },
                                     )
                                   ],
@@ -620,6 +625,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
+                                            brakey.refreshUserDetail();
                                           },
                                         )
                                       ],
@@ -773,6 +779,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();
+                                            brakey.refreshUserDetail();
+
                                                           },
                                                         )
                                                       ],
@@ -945,6 +953,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();
+                                            brakey.refreshUserDetail();
+
                                                           },
                                                         )
                                                       ],
@@ -979,7 +989,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       title: const Text(
                                                           "Terminate failed"),
                                                       content:
-                                                          Text(a['Message'] != null ? a['Message'] : a['essage']));
+                                                          Text(a['Message'] ?? a['essage']));
                                                 });
                                           }
                                         }

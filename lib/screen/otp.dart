@@ -96,12 +96,14 @@ Future<dynamic> askOTP(
                                     password,
                                     username,
                                     otp,
+                                    '',
+                                    ''
                                   );
                                   print(a);
                                   if (a.containsKey('Status')) {
                                     if (a['Status'] == 'successful') {
                                       _loginButtonController.reset();
-                                      askBVN(context, username, password, email, phone);
+                                      // askBVN(context, username, password, email, phone);
                                       // showDialog(
                                       //     context: context,
                                       //     barrierDismissible: false,

@@ -11,7 +11,8 @@ import 'package:braketpay/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-
+import 'package:get/get.dart';
+import 'package:braketpay/brakey.dart';
 import '../uix/listitemseparated.dart';
 
 class SavingsDetail extends StatefulWidget {
@@ -28,6 +29,7 @@ class SavingsDetail extends StatefulWidget {
 }
 
 class _SavingsDetailState extends State<SavingsDetail> {
+  final Brakey brakey = Get.put(Brakey());
   String amount = '';
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
   final _formKey = GlobalKey<FormState>();
@@ -43,7 +45,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
   Widget build(BuildContext context) {
     final PageController _controller = PageController();
     return RefreshIndicator(
-      key: _refreshKey,
+      key: brakey.refreshSavingsDetail.value,
       onRefresh: () async {
         final _commitments = await getSavings(
             widget.user.payload!.accountNumber ?? '',
@@ -97,6 +99,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 15),
                                 child: TextFormField(
+                                  keyboardType: TextInputType.number,
                                   cursorColor: Colors.black,
                                   decoration: const InputDecoration(
                                     fillColor:
@@ -163,6 +166,8 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                                                   .pop();
                                                               _loginButtonController
                                                                   .reset();
+                                                                  // brakey.reloadUser(widget.pin);
+                                                                  brakey.refreshUserDetail();
                                                               // askOTP(context, username, password,
                                                               //     firstname, surname, email, phone);
 
@@ -174,7 +179,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                                           )
                                                         ],
                                                         title: Text(
-                                                            "You have successfully saved $amount to ${widget.savings['savings_name']}"),
+                                                            "You have successfully saved $amount to ${widget.savings['name_of_savings']}"),
                                                         content:
                                                             Text(a['Message']));
                                                   });

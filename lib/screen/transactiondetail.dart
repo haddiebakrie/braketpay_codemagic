@@ -24,7 +24,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
   Widget build(BuildContext context) {
     final PageController _controller = PageController();
     return Scaffold(
-            backgroundColor: Colors.deepOrange,
+            backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
             elevation: 0,
             centerTitle: true,

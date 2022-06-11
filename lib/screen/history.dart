@@ -1,8 +1,10 @@
 
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/uix/transactioncard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import '../api_callers/transactions.dart';
 import '../classes/product_contract.dart';
@@ -21,6 +23,7 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
+  Brakey brakey = Get.put(Brakey());
   late Future<List<dynamic>> _transactions = fetchTransactions(
       widget.user.payload!.accountNumber ?? "",
       widget.user.payload!.password ?? "",
@@ -28,39 +31,19 @@ class _HistoryState extends State<History> {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-          elevation: 0,
-          titleSpacing: 5,
-          toolbarHeight: 65,
-          
-          actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-          ],
-          title: 
-                Text('Activities',textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),                
-          centerTitle: true,
-          leading: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(20)),
-              child: IconButton(
-                icon: const Icon(IconlyBold.profile),
-                color: Theme.of(context).primaryColor,
-                iconSize: 20,
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => 
-                        Profile(user: widget.user, pin: widget.pin)
-
-                    )
-                  );
-
-                }),
-            ),
-          ),
+        elevation: 0,
+        titleSpacing: 5,
+        toolbarHeight: 65,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+        ],
+        title: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.0),
+          child: Text('History',
+              // textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
 
           ),
       body: Container(
@@ -69,6 +52,7 @@ class _HistoryState extends State<History> {
           color: Colors.white,
           ),
         child: RefreshIndicator(
+                key: brakey.refreshHistory.value,
                 onRefresh: () async {
                   final transactions = await fetchTransactions(
                       widget.user.payload!.accountNumber ?? "",
@@ -87,7 +71,24 @@ class _HistoryState extends State<History> {
                   itemBuilder: (context, index) {
                     Transaction transaction = snapshot.data![index];
                     return TransactionListCard(transaction: transaction, user: widget.user);
-                                              }) : ListView(children: [Center(child: Text('You have not created made any transaction!'),)]);
+                                              }) : ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height-120,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/empty.png', width: 140),
+                                SizedBox(height:20),
+
+                                Center(
+                                  child: Text('You have not created any contract!'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
             } else if (snapshot.hasError) {
               return Container(
                 decoration: const BoxDecoration(
@@ -110,8 +111,8 @@ class _HistoryState extends State<History> {
                 ));
             }
     
-            return const Center(child: SpinKitCubeGrid(
-              color: Colors.deepOrange,
+            return Center(child: SpinKitCubeGrid(
+              color: Theme.of(context).primaryColor,
               
     
     

@@ -71,7 +71,7 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                         }),
                     Visibility(
                       visible: showService,
-                      child: Icon(Icons.check_circle, color: Colors.deepOrange),
+                      child: Icon(Icons.check_circle, color: Theme.of(context).primaryColor),
                     )
                   ],
                 ),
@@ -89,7 +89,7 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                         }),
                     Visibility(
                       visible: showProduct,
-                      child: Icon(Icons.check_circle, color: Colors.deepOrange),
+                      child: Icon(Icons.check_circle, color: Theme.of(context).primaryColor),
                     )
                   ],
                 ),
@@ -231,7 +231,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                         }),
                     Visibility(
                       visible: showService,
-                      child: Icon(Icons.check_circle, color: Colors.deepOrange),
+                      child: Icon(Icons.check_circle, color: Theme.of(context).primaryColor),
                     )
                   ],
                 ),
@@ -250,7 +250,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                         }),
                     Visibility(
                       visible: showProduct,
-                      child: Icon(Icons.check_circle, color: Colors.deepOrange),
+                      child: Icon(Icons.check_circle, color: Theme.of(context).primaryColor),
                     )
                   ],
                 ),

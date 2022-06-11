@@ -493,7 +493,7 @@ class _ElectricityState extends State<Electricity> {
                                   electricity_plan_rate['ServiceType']
                                       ?.values
                                       .elementAt(index)
-                              ? Colors.deepOrange
+                              ? Theme.of(context).primaryColor
                               : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       

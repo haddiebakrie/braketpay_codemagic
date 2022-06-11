@@ -16,7 +16,7 @@ Future<Map<String, dynamic>> getUserInfo(
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/fetch_second_party_credentials?$param'),
       );
-      print(response.body);
+      print('4${response.body}');
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -128,7 +128,7 @@ Future<User> fetchUserAccount(
     // then parse the JSON.
     if (jsonDecode(response.body) is Map) {
       Map a = jsonDecode(response.body);
-      print(a['Payload']);
+      // print(a['Payload']);
       if (jsonDecode(response.body).containsKey('Payload')) {
         Map<String, dynamic> payloads = jsonDecode(response.body);
         return User.fromJson(payloads);

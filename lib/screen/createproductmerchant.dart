@@ -59,7 +59,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.deepOrange,
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
           title: Text('Product Template'), centerTitle: true, elevation: 0),
       body: Container(

@@ -11,6 +11,8 @@ Future<Map> createUserAccount (
   String dateOfBirth,
   String email,
   String password,
+  String phoneConfirm,
+  String pin,
   String username,
   String otp,
   ) async {
@@ -21,10 +23,12 @@ Future<Map> createUserAccount (
       "email_address": email,
       "password": password,
       'username': username,
-      "verification_code": otp 
+      "verification_code": otp, 
+      "verification_number": phoneConfirm,
+      "pin": pin
     };
 
-      print('99090909090');
+      print(param);
       try {
     final response = await Dio().post(
       'https://api.braketpay.com/create_account/v1',
@@ -49,17 +53,20 @@ Future<Map> createUserAccount (
 
 Future<Map> sendOTP (
   String email,
+  String bvn,
   ) async {
  String param = Uri(queryParameters: {
       "email_or_phone_number": email,
-       'request_type': "verify"
+       'request_type': "verify",
+       'bvn': bvn
     }).query;
 
       print('99090909090');
     try {
     final response = await get(
       Uri.parse('https://api.braketpay.com/email_or_phone_confirmation/v1?$param'),
-      );
+      ).timeout(
+        const Duration(seconds: 10));;
       // print('99090909090');
 
       print(response.body);
@@ -82,6 +89,41 @@ Future<Map> sendOTP (
 
 }
 
+Future<Map> verifyBVN (
+  String phone,
+  String otp,
+  ) async {
+ String param = Uri(queryParameters: {
+      "verification_phone_number": phone,
+       'verification_otp': otp,
+    }).query;
+
+      print('99090909090');
+    try {
+    final response = await get(
+      Uri.parse('https://api.braketpay.com/bvn_verification_fetch?$param'),
+      ).timeout(
+        const Duration(seconds: 10));
+
+      print(response.body);
+      
+    if (response.statusCode == 200) {
+      // if (jsonDecode(response.body)['Response Code'] == 422 || jsonDecode(response.body)['Response Code'] == 406) {
+        print(response.body);
+        return jsonDecode(response.body);
+      // }
+        // return jsonDecode(response.body);
+
+    } else {
+      return {'Message': 'No internet access'};
+    }
+
+    } catch (e) {
+      print(e);
+      return {'Message': 'No internet access'};
+    }
+
+}
 
 Future<Map> setBVN (
   String phoneNumber,

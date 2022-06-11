@@ -1,9 +1,11 @@
 import 'package:braketpay/api_callers/contracts.dart';
 import 'package:braketpay/api_callers/userinfo.dart';
+import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/productprocess.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -21,11 +23,12 @@ class CreateProduct extends StatefulWidget {
 }
 
 class _CreateProductState extends State<CreateProduct> {
+  Brakey brakey = Get.put(Brakey());
   bool isUsername = true;
   late String username;
   late String contractTitle;
   late String receiverName = 'Unknown';
-  late String receiveraddr;
+  String receiveraddr = '';
   late String productDetail;
   late double price;
   late String logisticFrom;
@@ -45,7 +48,7 @@ class _CreateProductState extends State<CreateProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.deepOrange,
+      // backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
           title: Text('Product Contract'), centerTitle: true, elevation: 0),
       body: Container(
@@ -99,7 +102,7 @@ class _CreateProductState extends State<CreateProduct> {
                               style: TextStyle(
                                 color: isUsername
                                     ? Colors.white
-                                    : Colors.deepOrange,
+                                    : Theme.of(context).primaryColor,
                               ),
                             ),
                             onPressed: () {
@@ -123,7 +126,7 @@ class _CreateProductState extends State<CreateProduct> {
                               style: TextStyle(
                                 color: !isUsername
                                     ? Colors.white
-                                    : Colors.deepOrange,
+                                    : Theme.of(context).primaryColor,
                               ),
                             ),
                             onPressed: () {
@@ -160,11 +163,14 @@ class _CreateProductState extends State<CreateProduct> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         onChanged: (text) async {
+                          setState(() {
+                            receiverName = 'Looking for user...';
+                          });
                           Map a = await getUserWith(text.trim(), 'username');
                           print(a);
                             if (!a.containsKey('Status')) {
                               setState(() {
-                              receiverName = 'No Internet Access';
+                              receiverName = 'No Internet access (Tap to retry)';
                                 
                               });
                               return;
@@ -181,12 +187,18 @@ class _CreateProductState extends State<CreateProduct> {
                                 });
                                 return;
                             }
-                          receiverName = 'Looking for user';
+                            if (a.containsKey('Payload')) {
+                                setState(() {
+                                  receiveraddr = a['Payload']['wallet_address'];
+                                });
+                                return;
+                            }
+                          receiverName = 'Looking for user...';
                               receiverName = a.containsKey('Payload')
                             ? '${a['Payload']['fullname']}'
                                   : a.containsKey('Message')
                                       ? a['Message']
-                                      : 'No Internet access';
+                                      : 'No Internet access (Tap to retry)';
                             });
                           // username = text.trim();
                           // Future<Map<String, dynamic>> fullname =
@@ -224,7 +236,47 @@ class _CreateProductState extends State<CreateProduct> {
                         },
                       ),
                     ),
-                    Text('Receiver: $receiverName'),
+                    GestureDetector(
+                      onTap: () async {
+                      setState(() {
+                        receiverName = 'Looking for user...';
+                      });
+                        Map a = await getUserWith(username, 'username');
+                          print(a);
+                            if (!a.containsKey('Status')) {
+                              setState(() {
+                              receiverName = 'No Internet access (Tap to retry)';
+                                
+                              });
+                              return;
+                            }
+                        receiverName = a.containsKey('Payload')
+                            ? a['Payload']['fullname']
+                            : 'Incorrect Braket Account';
+                          
+                          setState(() {
+                            if (a.containsKey('Payload') && a['Payload']['wallet_address'] == widget.user.payload!.walletAddress) {
+                                setState(() {
+                                  receiverName =
+                                      "You can't create a contract with yourself";
+                                });
+                                return;
+                            }
+                          receiverName = 'Looking for user...';
+                              receiverName = a.containsKey('Payload')
+                            ? '${a['Payload']['fullname']}'
+                                  : a.containsKey('Message')
+                                      ? a['Message']
+                                      : 'No Internet access (Tap to retry)';
+                            });
+                      },
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    width: double.infinity,
+                    color: Color.fromARGB(24, 158, 158, 158),
+                    child: Text(receiverName, style: TextStyle(fontSize: 18)),
+                  ),
+                ),
                   ],
                 ),
                 Container(
@@ -537,10 +589,10 @@ class _CreateProductState extends State<CreateProduct> {
                   elevation: 0,
                   controller: _loginButtonController,
                   child: Text('Create'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_formKey.currentState!.validate()) {
                       _loginButtonController.reset();
-                    } else if (receiverName == 'This username does not match any user' || receiverName == "You can't create a contract with yourself" || receiverName == 'Unknown') {
+                    } else if (receiverName == 'Looking for user...' || receiverName == 'This username does not match any user' || receiverName == "You can't create a contract with yourself" || receiverName == 'Unknown' || receiverName == 'No Internet access (Tap to retry)') {
                       _loginButtonController.reset();
                         
                       showDialog(
@@ -605,7 +657,7 @@ class _CreateProductState extends State<CreateProduct> {
                                   Text('Creating Contract....', style: TextStyle(fontWeight: FontWeight.w500))
                                 ]));
                           });
-                      Future<bool> a = createProductContract(
+                      Map a = await createProductContract(
                           widget.creatorType.toLowerCase(),
                           widget.creatorType.toLowerCase() == 'buyer'
                               ? widget.user.payload!.walletAddress ?? ''
@@ -622,23 +674,56 @@ class _CreateProductState extends State<CreateProduct> {
                           logisticTo,
                           deliveryDate,
                           widget.pin);
-                      a.then((value) {
-                        if (value) {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        }
-                      });
-                      a.onError((error, stackTrace) =>
-                          // print(error),
-                          throw Exception('$error'));
-                      _loginButtonController.reset();
+                      if (a.containsKey('Payload')) {
+                        _loginButtonController.success();
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return AlertDialog(
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Okay'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        brakey.changeManagerIndex(1);
+                                        brakey.refreshUserDetail();
+                                        
+                                      },
+                                    )
+                                  ],
+                                  title: const Text("Product contract created successfuly!"),
+                                  content:  Text('Your contract has been sent to $receiverName, you would be notified when the contract is accepted.'));
+                            });
+                      } 
+                      else {
+                        _loginButtonController.reset();
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return AlertDialog(
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Okay'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        // Navigator.of(context).pop();
+                                        // Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                  title: const Text("Can't make Transfer!"),
+                                  content:  Text(a['Message']));
+                            });
 
-                    }
-                  },
-                ),
+                      }
+                    };}),
                 SizedBox(height: 20)
-              ]),
+            ]),
             )),
       ),
     );

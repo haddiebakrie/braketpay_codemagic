@@ -3,10 +3,13 @@ import 'package:braketpay/classes/transaction.dart';
 import 'package:braketpay/screen/createproduct.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/createservice.dart';
+import 'package:braketpay/screen/notifications.dart';
 import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/screen/qrcodescanner.dart';
 import 'package:braketpay/screen/savings.dart';
 import 'package:braketpay/screen/transfer.dart';
+import 'package:get/get.dart';
+import 'package:braketpay/brakey.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:braketpay/screen/utilities.dart';
 import 'package:braketpay/uix/transactioncard.dart';
@@ -38,6 +41,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final Brakey brakey = Get.put(Brakey());
   late Future<List<dynamic>> _contracts = fetchContracts(widget.user.payload!.accountNumber ?? "",
       widget.user.payload!.password ?? "",
       widget.pin);
@@ -51,6 +55,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
+        backgroundColor: Theme.of(context).primaryColor,
         titleSpacing: 5,
         toolbarHeight: 65,
         leading: Padding(
@@ -77,17 +82,23 @@ class _HomeState extends State<Home> {
           ),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+          IconButton(onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: 
+            ((context) => Notifications(user:widget.user, pin: widget.pin)
+            )));
+
+          }, icon: Obx(() => Icon(Icons.notifications)))
         ],
         title: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Hi, ${widget.user.payload!.fullname?.split(' ')[0]}',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(
-                '@${widget.user.payload!.fullname?.split(' ')[1].toLowerCase()}',
-                style: const TextStyle(fontSize: 14))
+           Obx(() => Text( 
+                'Hi ${brakey.user.value!.payload!.fullname!.split(" ")[1]}',
+                style: const TextStyle(fontWeight: FontWeight.bold))),
+            Obx(() => Text( 
+                '@${brakey.user.value!.payload!.username}',
+                style: const TextStyle(fontSize: 14)))
           ],
         ),
       ),
@@ -106,7 +117,7 @@ class _HomeState extends State<Home> {
                     MaterialPageRoute(
                         builder: (context) => SendMoney(user: widget.user, pin: widget.pin)));
                     },
-                      balance: widget.user.payload!.accountBalance.toString(),
+                      balance: brakey.user.value!.payload!.accountBalance.toString(),
                       title: 'Refferal Bonus'),
                 ),
                 Padding(
@@ -117,6 +128,9 @@ class _HomeState extends State<Home> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SendMoney(user: widget.user, pin: widget.pin)));
+                    },
+                    onTapFund: () {
+                      setState(() {brakey.changeManagerIndex(3);});
                     },
                       balance: widget.user.payload!.accountBalance.toString(),
                       title: 'Braket Wallet'),
@@ -152,8 +166,9 @@ class _HomeState extends State<Home> {
                       topLeft: Radius.circular(29),
                       topRight: Radius.circular(20))),
               child: RefreshIndicator(
-                key: _refreshKey,
+                key: brakey.refreshAll.value,
                 onRefresh: () async {
+                  brakey.reloadUser(widget.pin);
                   final contracts = await fetchContracts(
                       widget.user.payload!.accountNumber ?? "",
                       widget.user.payload!.password ?? "",
@@ -202,10 +217,11 @@ class _HomeState extends State<Home> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 UtilityButton(
-                                    url: 'assets/saving-money (1).png', text: 'Savings',
+                                    url: 'assets/saving-money (1).png', text: 'Contract',
                                     onTap: () {
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (BuildContext context) => Savings(user: widget.user, pin: widget.pin)));
+                                      contractMode();
+                                      // Navigator.of(context).push(MaterialPageRoute(
+                                      //     builder: (BuildContext context) => Savings(user: widget.user, pin: widget.pin)));
                                     },
                                     ),
                                 UtilityButton(
@@ -268,7 +284,7 @@ class _HomeState extends State<Home> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.w700))),
                             SizedBox(
-                              height: 420,
+                              height: 200,
                               child: FutureBuilder<List>(
                                 future: _contracts,
                                 builder: (context, snapshot) {
@@ -278,6 +294,7 @@ class _HomeState extends State<Home> {
                                     case ConnectionState.active:
                                       {
                                         return Container(
+                                          height: 220,
                                             decoration: const BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.vertical(
@@ -309,7 +326,36 @@ class _HomeState extends State<Home> {
                                                     snapshot.data![index];
                                                 return ContractListCard(
                                                     product: product, pin: widget.pin, user: widget.user);
-                                              }) : const Center(child: Text('You have not created any contract!'),);
+                                              }) : Container(
+                                              decoration: const BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                        top:
+                                                            Radius.circular(20),
+                                                        bottom: Radius.zero),
+                                              ),
+                                              child: Center(
+                                                  child: Column(
+                                                    children: [
+                                                      Image.asset('assets/empty.png', width: 140),
+                                                  SizedBox(height:20),
+                                                      const Text(
+                                                          "You have not created any contracts yet!", textAlign: TextAlign.center,
+                                                          style: TextStyle(fontWeight: FontWeight.w500)),
+                                                    SizedBox(height:20),
+                                                    RoundButton(
+                                                      width: 140,
+                                                        text: 'Create contract',
+                                                        color1: Colors.black,
+                                                        color2: Colors.black,
+                                                        onTap: () {
+                                                          contractMode();
+                                                        }
+                                                        
+                                                      )
+                                                    
+                                                    ],
+                                                  )));
                                         } else if (snapshot.hasError) {
                                           return Container(
                                               decoration: const BoxDecoration(
@@ -323,15 +369,16 @@ class _HomeState extends State<Home> {
                                               child: Center(
                                                   child: Column(
                                                     children: [
-                                                      Image.asset('assets/sammy-no-connection.gif', width: 150),
+                                                      Image.asset('assets/sammy-no-connection.gif', width: 100),
                                                       const Text(
                                                           "No internet access\nCoudn't Load Contract History!", textAlign: TextAlign.center),
+                                                    SizedBox(height:20),
                                                     RoundButton(
                                                         text: 'Retry',
                                                         color1: Colors.black,
                                                         color2: Colors.black,
                                                         onTap: () {
-                                                          _refreshKey.currentState!.show();
+                                                          brakey.refreshUserDetail();
                                                         }
                                                         
                                                       )
@@ -342,9 +389,9 @@ class _HomeState extends State<Home> {
                                       }
                                   }
 
-                                  return const Center(
+                                  return Center(
                                       child: SpinKitCubeGrid(
-                                    color: Colors.deepOrange,
+                                    color: Theme.of(context).primaryColor,
                                   ));
                                 },
                               ),
@@ -361,7 +408,7 @@ class _HomeState extends State<Home> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.w700))),
                             SizedBox(
-                              height: 420,
+                              height: 220,
                               child: FutureBuilder<List>(
                                 future: _transactions,
                                 builder: (context, snapshot) {
@@ -402,7 +449,36 @@ class _HomeState extends State<Home> {
                                                     snapshot.data![index];
                                                 return TransactionListCard(
                                                     transaction: transaction, user: widget.user);
-                                              }) : const Center(child: Text('You have not made any transactions yet!'),);
+                                              }) : Container(
+                                              decoration: const BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                        top:
+                                                            Radius.circular(20),
+                                                        bottom: Radius.zero),
+                                              ),
+                                              child: Center(
+                                                  child: Column(
+                                                    children: [
+                                                      Image.asset('assets/empty.png', width: 140),
+                                                  SizedBox(height:20),
+                                                      const Text(
+                                                          "You have not made any transaction yet!", textAlign: TextAlign.center,
+                                                          style: TextStyle(fontWeight: FontWeight.w500)),
+                                                    SizedBox(height:20),
+                                                    RoundButton(
+                                                      width: 140,
+                                                        text: 'Fund wallet',
+                                                        color1: Colors.black,
+                                                        color2: Colors.black,
+                                                        onTap: () {
+                                                          // brakey.refreshUserDetail();
+                                                        }
+                                                        
+                                                      )
+                                                    
+                                                    ],
+                                                  )));
                                         } else if (snapshot.hasError) {
                                           return Container(
                                               decoration: const BoxDecoration(
@@ -416,9 +492,10 @@ class _HomeState extends State<Home> {
                                               child: Center(
                                                   child: Column(
                                                     children: [
-                                                      Image.asset('assets/sammy-no-connection.gif', width: 150),
+                                                      Image.asset('assets/sammy-no-connection.gif', width: 120),
                                                       const Text(
                                                           "No internet access\nCoudn't Load Transaction History!", textAlign: TextAlign.center),
+                                                    SizedBox(height:20),
                                                     RoundButton(
                                                         text: 'Retry',
                                                         color1: Colors.black,
@@ -434,9 +511,9 @@ class _HomeState extends State<Home> {
                                       }
                                   }
 
-                                  return const Center(
+                                  return Center(
                                       child: SpinKitCubeGrid(
-                                    color: Colors.deepOrange,
+                                    color: Theme.of(context).primaryColor,
                                   ));
                                 },
                               ),
@@ -463,27 +540,27 @@ class _HomeState extends State<Home> {
               )),
         )
       ]),
-      floatingActionButton: ElevatedButton(
-          onPressed: () {
-            contractMode();
-          },
-          child: SizedBox(
-            width: 70,
-            height: 40,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                Icon(
-                  IconlyBold.paper_plus,
-                  color: Colors.white,
-                ),
-                Text(
-                  'Create',
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            ),
-          )),
+      // floatingActionButton: ElevatedButton(
+      //     onPressed: () {
+      //       contractMode();
+      //     },
+      //     child: SizedBox(
+      //       width: 70,
+      //       height: 40,
+      //       child: Row(
+      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //         children: const [
+      //           Icon(
+      //             IconlyBold.paper_plus,
+      //             color: Colors.white,
+      //           ),
+      //           Text(
+      //             'Create',
+      //             style: TextStyle(color: Colors.white),
+      //           )
+      //         ],
+      //       ),
+      //     )),
     );
   }
 
