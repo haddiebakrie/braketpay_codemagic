@@ -15,8 +15,11 @@ Future<Map> createUserAccount (
   String pin,
   String username,
   String otp,
+  String level,
   ) async {
-  Map param = {
+    Map param;
+  if (level=='without_bvn') {
+    param = {
       "fullname": fullname,
       "phone_number": '234${int.parse(phoneNumber)}',
       "date_of_birth": dateOfBirth,
@@ -25,22 +28,41 @@ Future<Map> createUserAccount (
       'username': username,
       "verification_code": otp, 
       "verification_number": phoneConfirm,
-      "pin": pin
+      "signup_level": level
     };
+  } else {
+      param = {
+          "fullname": fullname,
+          "phone_number": '234${int.parse(phoneNumber)}',
+          "date_of_birth": dateOfBirth,
+          "email_address": email,
+          "password": password,
+          'username': username,
+          "verification_code": otp, 
+          "verification_number": phoneConfirm,
+          "transaction_pin": pin,
+          "signup_level": level
+        };
+
+  }
 
       print(param);
       try {
-    final response = await Dio().post(
-      'https://api.braketpay.com/create_account/v1',
-      data: param
+    final response = await post(
+      Uri.parse('https://api.braketpay.com/create_account/v1'),
+       headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      body: jsonEncode(param)
       );
       // print('99090909090');
 
-      // print(response.data);
+      print(response.body);
 
     if (response.statusCode == 200) {
-      print(response.data);
-      return response.data;
+      print(response.body);
+      return jsonDecode(response.body);
 
     } else {
       return {'Message': 'No internet access'};
@@ -54,19 +76,25 @@ Future<Map> createUserAccount (
 Future<Map> sendOTP (
   String email,
   String bvn,
+  String verifyType,
+  String password,
   ) async {
  String param = Uri(queryParameters: {
       "email_or_phone_number": email,
-       'request_type': "verify",
-       'bvn': bvn
+       'request_type': verifyType,
+       'password': password,
+       'bvn_nin': bvn
     }).query;
 
-      print('99090909090');
+      print(param);
     try {
     final response = await get(
       Uri.parse('https://api.braketpay.com/email_or_phone_confirmation/v1?$param'),
-      ).timeout(
-        const Duration(seconds: 10));;
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      );
       // print('99090909090');
 
       print(response.body);
@@ -74,7 +102,8 @@ Future<Map> sendOTP (
     if (response.statusCode == 200) {
       if (jsonDecode(response.body)['Response Code'] == 422 || jsonDecode(response.body)['Response Code'] == 406) {
         print(response.body);
-        return {'Message': '', "Status": 'successful'};
+        return jsonDecode(response.body);
+
       }
         return jsonDecode(response.body);
 
@@ -92,18 +121,25 @@ Future<Map> sendOTP (
 Future<Map> verifyBVN (
   String phone,
   String otp,
+  String type,
   ) async {
  String param = Uri(queryParameters: {
       "verification_phone_number": phone,
+      "verification_email_address": phone,
+      "email_or_phone_number": phone,
        'verification_otp': otp,
+       "request_type": type,
     }).query;
 
-      print('99090909090');
+      print(param);
     try {
     final response = await get(
       Uri.parse('https://api.braketpay.com/bvn_verification_fetch?$param'),
-      ).timeout(
-        const Duration(seconds: 10));
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      );
 
       print(response.body);
       
@@ -135,30 +171,34 @@ Future<Map> setBVN (
   String addr,
   ) async {
       try {
-      Map wallet_address = await getUserInfo(username);
-      print(wallet_address);
-      String w_addr = wallet_address['Payload']['wallet_address'];
+      // Map wallet_address = await getUserInfo(username);
+      // print(wallet_address);
+      // String w_addr = wallet_address['Payload']['wallet_address'];
   Map param = {
       "email_address": email,
-      "wallet_address": w_addr,
+      "wallet_address": addr,
       "phone_number": '234' + int.parse(phoneNumber).toString(),
       "password": password,
-      "bvn":int.parse(bvn),
+      "bvn_nin":bvn,
       "transaction_pin": pin
     };
 
       print(param);
-    final response = await Dio().put(
-      'https://api.braketpay.com/set_transaction_pin_and_bvn/v1',
-      data: param
+    final response = await put(
+      Uri.parse('https://api.braketpay.com/set_transaction_pin_and_bvn/v1'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      body: jsonEncode(param)
       );
-      // print('99090909090');
+      print(response.request?.url??'');
 
-      // print(response.data);
+      print(response.body);
 
     if (response.statusCode == 200) {
-      print(response.data);
-      return response.data;
+      print(response.body);
+      return jsonDecode(response.body);
 
     } else {
       return {'Message': 'No internet access'};

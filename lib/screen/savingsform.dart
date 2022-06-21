@@ -159,7 +159,7 @@ String value = 'Lite';
                                         child: Text(
                                           'Name your savings',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: FontWeight.w400,
                                               fontSize: 15),
                                         ),
                                       ),
@@ -204,7 +204,7 @@ String value = 'Lite';
                                           child: Text(
                                             'How much do you want to save (Your target)',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w600,
+                                                fontWeight: FontWeight.w400,
                                                 fontSize: 15),
                                           ),
                                         ),
@@ -249,7 +249,7 @@ String value = 'Lite';
                                         child: Text(
                                           'How much do you want to start with (Your first commit)',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: FontWeight.w400,
                                               fontSize: 15),
                                         ),
                                       ),
@@ -290,7 +290,7 @@ String value = 'Lite';
                                     child: Text(
                                       'How often do you want to save',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w400,
                                           fontSize: 15),
                                     ),
                                   ),
@@ -316,7 +316,7 @@ String value = 'Lite';
                                         child: Text(
                                           'How much do you want to save $freqValue',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: FontWeight.w400,
                                               fontSize: 15),
                                         ),
                                       ),

@@ -11,11 +11,14 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../classes/user.dart';
+import '../uix/themedcontainer.dart';
+import '../utils.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key, this.showOnboarding=false}) : super(key: key);
+  const Login({Key? key, this.showOnboarding=false, this.hasUser=false}) : super(key: key);
 
   final bool showOnboarding;
+  final bool? hasUser;
 
   @override
   State<Login> createState() => _LoginState(
@@ -33,19 +36,199 @@ class _LoginState extends State<Login> {
   String password = '';
   String pin = '';
   late String _errorMessage = '';
-  bool passwordVisible = false;
+  bool passwordVisible = true;
   final Icon _passwordIcon = const Icon(Icons.visibility_off);
   bool isLastPage = false;
 
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-    //   askLogin();
-    // });
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          if (widget.hasUser==true) {
+      Get.bottomSheet(
+        BottomSheet(
+          backgroundColor: Colors.transparent,
+          enableDrag: false,
+          onClosing: () {}, 
+          builder: (context) {
+          return StatefulBuilder(
+            builder: (context, changeState) {
+              return Container(
+                decoration: ContainerBackgroundDecoration(),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Container(
+                      // padding: MediaQuery.of(context).viewInsets,
+                      decoration: ContainerBackgroundDecoration(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: AutofillGroup(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [  
+                            SizedBox(
+                              width: double.infinity,
+                              child: Text(
+                                  '👋',
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                                ),
+                            ),
+                              SizedBox(height:10),
+                              SizedBox(
+                              width: double.infinity,
+                                child: Text(
+                                  'Welcome back, ${brakey.user.value!.payload!.fullname!.split(' ')[0]}',
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(height:30),
+                              Text(
+                                '@${brakey.user.value!.payload!.username}',
+                                style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,),
+                              ),
+                              
+                              Container(
+                                height: 50,
+                                margin: const EdgeInsets.symmetric(vertical: 10),
+                                child: TextFormField(
+                                  obscureText: passwordVisible,
+                                  cursorColor: Colors.black,
+                                  autofillHints: const [AutofillHints.password],
+                        
+                                  // controller: _userPasswordController,
+                                  decoration: InputDecoration(
+                                    suffixIcon: IconButton(onPressed: () {
+                                      print(passwordVisible);
+                                     changeState(() {
+                                       passwordVisible = !passwordVisible;
+                                     });
+                                      // print(passwordVisible);
+                                    },
+                                     icon: passwordVisible ? Icon(Icons.visibility_off) : Icon(Icons.visibility)
+                                    ),
+                                    hintText: 'Password',
+                                    fillColor: const Color.fromARGB(24, 158, 158, 158),
+                                    filled: true,
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(10))),
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(10))),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                  ),
+                                  onChanged: (text) {
+                                    password = text;
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Enter your Password';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              
+                              Container(
+                                margin: const EdgeInsets.all(10),
+                                child: RoundedLoadingButton(
+                                    borderRadius: 10,
+                                    color: Theme.of(context).primaryColor,
+                                    elevation: 0,
+                                    controller: _loginButtonController,
+                                    onPressed: () async {
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      if (_formKey.currentState!.validate()) {
+                                        // print('$username, $pin, $password');
+                                        try {
+                                          User a =
+                                              await loginUser(brakey.user.value!.payload!.username??'', password, pin);
+                                              print(a.payload?.pin??"");
+                                          _loginButtonController.success();
+                                          brakey.setUser(Rxn(a), pin);
+                                          Get.offUntil(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Manager(user: a, pin: ''),
+                                                maintainState: true),
+                                            (route) => false);
+                                          // Navigator.pushAndRemoveUntil(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             Manager(user: a, pin: "")), Manager(user:a, pin:''));
+                                        } catch (e) {
+                                          print(e);
+                                          _loginButtonController.reset();
+                                          showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                    actions: [
+                                                      TextButton(
+                                                        child: const Text('Okay'),
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                      )
+                                                    ],
+                                                    title: const Text("Can't Login!"),
+                                                    content: Text(toTitleCase(e.toString())));
+                                              });
+                                        }
+                                      } else {
+                                        setState(() {
+                                          passwordVisible = !passwordVisible;
+                                        });
+                                        _loginButtonController.reset();
+                                      }
+                                    },
+                                    child: const Text('Login')),
+                                    
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(onPressed: () {
+                                    Navigator.of(context).pop();
+                                    askLogin();
+                                  }, 
+                                  style: ButtonStyle(alignment: Alignment.center),
+                                  child: Text('Not @${brakey.user.value!.payload!.username}? Login with Username')),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),);
+            }
+          );
+          }
+        )
+      );
+    }
+    });
   }
 
+
+
   Future<dynamic> askLogin() {
+
+    bool _passwordVisibility = true;
     return showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -56,15 +239,11 @@ class _LoginState extends State<Login> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, StateSetter changeState) {
-              bool _passwordVisibility = false;
               return Form(
                 key: _formKey,
                 child: Container(
                   padding: MediaQuery.of(context).viewInsets,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20))),
+                  decoration: ContainerBackgroundDecoration(),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: AutofillGroup(
@@ -86,7 +265,7 @@ class _LoginState extends State<Login> {
                           Container(
                             margin: const EdgeInsets.symmetric(vertical: 15),
                             child: TextFormField(
-                              autofillHints: [AutofillHints.username],
+                              autofillHints: const [AutofillHints.username],
                               cursorColor: Colors.black,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -117,33 +296,33 @@ class _LoginState extends State<Login> {
                             height: 50,
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             child: TextFormField(
-                              obscureText: true,
+                              obscureText: passwordVisible,
                               cursorColor: Colors.black,
-                              autofillHints: [AutofillHints.password],
+                              autofillHints: const [AutofillHints.password],
                     
                               // controller: _userPasswordController,
-                              decoration: const InputDecoration(
-                              //   icon: IconButton(onPressed: () {
-                              //     print(passwordVisible);
-                              //   //  setState(() {
-                              //      passwordVisible = !passwordVisible;
-                              //   //  });
-                              //     print(passwordVisible);
-                              //   },
-                              //    icon: const Icon(Icons.visibility_off)
-                                // ),
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(onPressed: () {
+                                  print(passwordVisible);
+                                 changeState(() {
+                                   passwordVisible = !passwordVisible;
+                                 });
+                                  // print(passwordVisible);
+                                },
+                                 icon: passwordVisible ? Icon(Icons.visibility_off) : Icon(Icons.visibility)
+                                ),
                                 hintText: 'Password',
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
+                                fillColor: const Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
-                                focusedBorder: OutlineInputBorder(
+                                focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10))),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                               ),
                               onChanged: (text) {
                                 password = text;
@@ -151,37 +330,6 @@ class _LoginState extends State<Login> {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Enter your Password';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: TextFormField(
-                              obscureText: true,
-                              cursorColor: Colors.black,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                hintText: 'Transaction PIN',
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                              onChanged: (text) {
-                                pin = text;
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Enter your Transaction PIN';
                                 }
                                 return null;
                               },
@@ -201,13 +349,20 @@ class _LoginState extends State<Login> {
                                     try {
                                       User a =
                                           await loginUser(username, password, pin);
+                                          print(a.payload?.pin??"");
                                       _loginButtonController.success();
                                       brakey.setUser(Rxn(a), pin);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Manager(user: a, pin: pin)));
+                                      Get.offUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Manager(user: a, pin: ''),
+                                            maintainState: true),
+                                        (route) => false);
+                                      // Navigator.pushAndRemoveUntil(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             Manager(user: a, pin: "")), Manager(user:a, pin:''));
                                     } catch (e) {
                                       print(e);
                                       _loginButtonController.reset();
@@ -225,7 +380,7 @@ class _LoginState extends State<Login> {
                                                   )
                                                 ],
                                                 title: const Text("Can't Login!"),
-                                                content: Text(e.toString()));
+                                                content: Text(toTitleCase(e.toString())));
                                           });
                                     }
                                   } else {
@@ -252,9 +407,9 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     _errorMessage = _errorMessage;
     final _controller = PageController(
-      initialPage: widget.showOnboarding ? 5 : 0
+      initialPage: widget.showOnboarding ? 4 : 0
     );
-      print(widget.showOnboarding);
+      // print(widget.showOnboarding);
     return Scaffold(
       
       extendBody: false,
@@ -332,7 +487,7 @@ class _LoginState extends State<Login> {
         controller: _controller,
         onPageChanged: (index) {
           setState(() {
-            isLastPage = index == 5;
+            isLastPage = index == 4;
           });
         },
         children: [
@@ -356,7 +511,7 @@ class _LoginState extends State<Login> {
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                       color: Theme.of(context).primaryColor),
-                                  children: [
+                                  children: const [
                                     TextSpan(
                                       text:
                                           ' is not enough, BraketPay smart contract is all you need!',
@@ -392,7 +547,7 @@ class _LoginState extends State<Login> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const SizedBox(height: 10),
-                      Image.asset('assets/sammy_service.png'),
+                      Image.asset('assets/sammy-delivers.png'),
                       Column(
                         children: [
                           RichText(
@@ -403,7 +558,7 @@ class _LoginState extends State<Login> {
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                       color: Theme.of(context).primaryColor),
-                                  children: [
+                                  children: const [
                                     TextSpan(
                                       text:
                                           ' your order.',
@@ -445,7 +600,7 @@ class _LoginState extends State<Login> {
                           RichText(
                               text: TextSpan(
                                   text: 'Receive your payment without ',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       height: 1.5,
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
@@ -477,54 +632,54 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Stack(
-                children: [
-                  // PageIndicator
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset('assets/sammy_savings.png'),
-                      Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                                  text: 'EARN',
-                                  style: TextStyle(
-                                      height: 1.5,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor),
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          '  while you save.',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    )
-                                  ]),
-                              textAlign: TextAlign.center),
+          // SingleChildScrollView(
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          //     child: Stack(
+          //       children: [
+          //         // PageIndicator
+          //         Column(
+          //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //           children: [
+          //             const SizedBox(height: 10),
+          //             Image.asset('assets/sammy_savings.png'),
+          //             Column(
+          //               children: [
+          //                 RichText(
+          //                     text: TextSpan(
+          //                         text: 'EARN',
+          //                         style: TextStyle(
+          //                             height: 1.5,
+          //                             fontSize: 22,
+          //                             fontWeight: FontWeight.bold,
+          //                             color: Theme.of(context).primaryColor),
+          //                         children: const [
+          //                           TextSpan(
+          //                             text:
+          //                                 '  while you save.',
+          //                             style: TextStyle(
+          //                                 height: 1.5,
+          //                                 fontSize: 22,
+          //                                 fontWeight: FontWeight.bold,
+          //                                 color: Colors.black),
+          //                           )
+          //                         ]),
+          //                     textAlign: TextAlign.center),
                           
-                          const SizedBox(height: 20),
-                          const Text(
-                              'Earn up to 20% of your savings with BraketSavings. All you have to do is JUST SAVE .',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          //                 const SizedBox(height: 20),
+          //                 const Text(
+          //                     'Earn up to 20% of your savings with BraketSavings. All you have to do is JUST SAVE .',
+          //                     style: TextStyle(fontSize: 16, color: Colors.black),
+          //                     textAlign: TextAlign.center),
+          //               ],
+          //             ),
+          //             const SizedBox(height: 20),
+          //           ],
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -540,37 +695,37 @@ class _LoginState extends State<Login> {
                         children: [
                           RichText(
                               text: TextSpan(
-                                  text: 'Make',
+                                  text: 'SAVE',
                                   style: TextStyle(
                                       height: 1.5,
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black),
+                                      color: Theme.of(context).primaryColor),
                                   children: [
-                                    TextSpan(
+                                    const TextSpan(
                                       text:
-                                          ' SEAMLESS ',
+                                          ' and ',
+                                      style: TextStyle(
+                                          height: 1.5,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color:Colors.black),
+                                    ),
+                                   TextSpan(
+                                      text:
+                                          'SPEND.',
                                       style: TextStyle(
                                           height: 1.5,
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
                                           color: Theme.of(context).primaryColor),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          'cash tranfers.',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
                                     )
                                   ]),
                               textAlign: TextAlign.center),
                           
                           const SizedBox(height: 20),
                           const Text(
-                              'Send money to your friends and family without delay.',
+                              'Enjoy high return of investment when you use BraketSavings and Send money to your friends and family without delay.',
                               style: TextStyle(fontSize: 16, color: Colors.black),
                               textAlign: TextAlign.center),
                         ],
@@ -602,8 +757,8 @@ class _LoginState extends State<Login> {
                                   fontWeight: FontWeight.bold,
                                   color: Theme.of(context).primaryColor),
                               textAlign: TextAlign.center),
-                          SizedBox(height: 20),
-                          Text('Sign up now to become a star in our UNIVERSE',
+                          const SizedBox(height: 20),
+                          const Text('Sign up now to become a star in our UNIVERSE',
                               style: TextStyle(fontSize: 20, color: Colors.black),
                               textAlign: TextAlign.center),
                         ],
@@ -619,8 +774,8 @@ class _LoginState extends State<Login> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [!isLastPage ? TextButton(child: const Text('Skip'), onPressed: () {
-          _controller.animateToPage(5, duration: const Duration(seconds:1), curve: Curves.ease);
+        actions: [!isLastPage && !widget.showOnboarding ? TextButton(child: const Text('Skip'), onPressed: () {
+          _controller.animateToPage(4, duration: const Duration(seconds:1), curve: Curves.ease);
         },) : Container()],
       ),
     );

@@ -14,6 +14,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:get/get.dart';
 import 'package:braketpay/brakey.dart';
 import '../uix/listitemseparated.dart';
+import '../uix/themedcontainer.dart';
 
 class SavingsDetail extends StatefulWidget {
   SavingsDetail(
@@ -43,13 +44,15 @@ class _SavingsDetailState extends State<SavingsDetail> {
       HttpDate.parse(widget.savings['breaking_timeline']);
   @override
   Widget build(BuildContext context) {
+    print(widget.savings);
     final PageController _controller = PageController();
     return RefreshIndicator(
       key: brakey.refreshSavingsDetail.value,
       onRefresh: () async {
         final _commitments = await getSavings(
             widget.user.payload!.accountNumber ?? '',
-            widget.pin,
+            brakey.user.value!.payload!.pin??'',
+            brakey.user.value!.payload!.password??'',
             'single',
             widget.savings['savings_id']);
         setState(() {
@@ -316,17 +319,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
               ),
               Container(
                 margin: EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 3,
-                        blurRadius: 10,
-                        offset: const Offset(0, 0),
-                      )
-                    ]),
+                decoration: ContainerDecoration(),
                 child: Column(
                   children: [
                     SizedBox(height: 10),

@@ -1,7 +1,4 @@
-{
-    "status": true,
-    "message": "Successful",
-    "data": [
+List nibbsBanks = [
         {
             "name": "Access Bank Nigeria",
             "slug": "access",
@@ -611,5 +608,4 @@
             "nibss_bank_code": "100025",
             "country": "NG"
         }
-    ]
-}
+];

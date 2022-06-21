@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../api_callers/merchant.dart';
+import '../uix/themedcontainer.dart';
 
 class MerchantCreateService extends StatefulWidget {
   MerchantCreateService({Key? key, required this.merchantID, required this.pin,required this.user})
@@ -75,10 +76,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
       body: Container(
         padding: EdgeInsets.only(top: 10),
         width: double.infinity,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(29), topRight: Radius.circular(20))),
+        decoration: ContainerBackgroundDecoration(),
         child: Form(
             key: _formKey,
             child: Padding(
@@ -97,7 +95,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                 // ],
                 // );
                 
-                GestureDetector(
+                InkWell(
                   onTap: () async {
                     XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
                     final _imageByte = await File(_image?.path ?? '').readAsBytes();
@@ -163,7 +161,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                         child: Text(
                           'Contract title',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -208,7 +206,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                           child: Text(
                             'Service rendering phases (minimum of 3 phase)',
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 15),
+                                fontWeight: FontWeight.w400, fontSize: 15),
                           ),
                         ),
                         Container(
@@ -247,7 +245,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                           child: Text(
                             'Rendering Phase ${lastPhase + 1}',
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 15),
+                                fontWeight: FontWeight.w400, fontSize: 15),
                           ),
                         ),
                   
@@ -362,7 +360,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                         child: Text(
                           'Location',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -409,7 +407,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                         child: Text(
                           'Downpayment',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -456,7 +454,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                         child: Text(
                           'How many days does delivery take (minimum of 3 days)',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -670,7 +668,7 @@ class ServicePhaseField extends StatelessWidget {
                 child: Text(
                   'Rendering Phase ${index + 1}',
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 15),
+                      fontWeight: FontWeight.w400, fontSize: 15),
                 ),
               ),
             TextFormField(

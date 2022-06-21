@@ -1,19 +1,24 @@
 
 import 'package:braketpay/brakey.dart';
+import 'package:braketpay/screen/notifications.dart';
 import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/uix/transactioncard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:icon_badge/icon_badge.dart';
 import 'package:iconly/iconly.dart';
 import '../api_callers/transactions.dart';
 import '../classes/product_contract.dart';
 import '../classes/transaction.dart';
 import '../classes/user.dart';
 import '../uix/contractlistcard.dart';
+import '../uix/roundbutton.dart';
+import '../uix/shimmerwidgets.dart';
+import '../uix/themedcontainer.dart';
 
 class History extends StatefulWidget {
-    History({Key? key, required this.user, required this.pin}) : super(key: key);
+    const History({Key? key, required this.user, required this.pin}) : super(key: key);
 
   final User user;
   final String pin;
@@ -33,11 +38,27 @@ class _HistoryState extends State<History> {
       appBar: AppBar(
         elevation: 0,
         titleSpacing: 5,
+        centerTitle: true,
         toolbarHeight: 65,
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-        ],
+        // actions: [
+        //   Obx(() => IconBadge(
+        //     onTap: () {
+        //       Navigator.of(context).push(MaterialPageRoute(builder: 
+        //     ((context) => Notifications(user:widget.user, pin: widget.pin)
+        //     )));
+        //     },
+        //     maxCount: 9,
+        //     icon: Icon(Icons.notifications),
+        //     itemCount: brakey.notiCount.toInt(),
+        //     right: 10.0,
+        //     hideZero: true,
+        //     top:10.0
+
+        //     // hideZero: true,
+            
+        //     ))
+        // ],
         title: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.0),
           child: Text('History',
@@ -47,10 +68,8 @@ class _HistoryState extends State<History> {
 
           ),
       body: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20), bottom:Radius.zero),
-          color: Colors.white,
-          ),
+        padding: const EdgeInsets.symmetric(vertical:10),
+        decoration: ContainerBackgroundDecoration(),
         child: RefreshIndicator(
                 key: brakey.refreshHistory.value,
                 onRefresh: () async {
@@ -66,7 +85,7 @@ class _HistoryState extends State<History> {
           future: _transactions,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return snapshot.data!.length > 0 ? ListView.builder(
+              return snapshot.data!.isNotEmpty ? ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, index) {
                     Transaction transaction = snapshot.data![index];
@@ -79,9 +98,9 @@ class _HistoryState extends State<History> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset('assets/empty.png', width: 140),
-                                SizedBox(height:20),
+                                const SizedBox(height:20),
 
-                                Center(
+                                const Center(
                                   child: Text('You have not created any contract!'),
                                 ),
                               ],
@@ -99,26 +118,32 @@ class _HistoryState extends State<History> {
                 child: ListView(
                   children: [
                     Center(
-                          child: Column(
-                            children: [
-                              SizedBox(height:40),
-                              Icon(Icons.wifi_off_rounded),
-                              Text(
-                                  "No internet access\nCoudn't Load Transaction History!\n\nPull down to refresh", textAlign: TextAlign.center),
-                            ],
-                          )),
+                                    child: Column(
+                                  children: [
+                                    Image.asset('assets/sammy-no-connection.gif',
+                                        width: 150),
+                                    const Text(
+                                        "No internet access\nCouldn't Load Transaction History!",
+                                        textAlign: TextAlign.center),
+                                    const SizedBox(height: 20),
+                                    RoundButton(
+                                        text: 'Retry',
+                                        color1: Colors.black,
+                                        color2: Colors.black,
+                                        onTap: () {
+                                          brakey.refreshHistory.value!.currentState!.show();
+                                        }
+                                        
+                                        )
+                                  ],
+                                ))
                   ],
                 ));
             }
     
-            return Center(child: SpinKitCubeGrid(
-              color: Theme.of(context).primaryColor,
-              
-    
-    
-    
-              
-            ));
+            return ListView.builder(itemBuilder: (builder, index) {
+                  return const ContractCardShimmer();
+                });
           },
         ),
       ),

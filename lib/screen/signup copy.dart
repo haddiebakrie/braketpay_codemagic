@@ -324,7 +324,7 @@ Future<dynamic> askSignup(
                               onPressed: () async {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (_formKey.currentState!.validate()) {
-                                  Map a = await sendOTP(email, '');
+                                  Map a = await sendOTP(email, '', '', '');
                                   if (a.containsKey('Status')) {
                                     if (a['Status'] == 'successful' || a['Status'] == 'successfull' || a['Status'] == 'successful') {
                                       showDialog(

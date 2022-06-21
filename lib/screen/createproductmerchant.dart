@@ -13,6 +13,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../api_callers/merchant.dart';
+import '../uix/themedcontainer.dart';
 
 
 
@@ -65,10 +66,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
       body: Container(
         padding: EdgeInsets.only(top: 10),
         width: double.infinity,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(29), topRight: Radius.circular(20))),
+        decoration: ContainerBackgroundDecoration(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: Form(
@@ -86,7 +84,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                 ),
                 // ],
                 // );
-                GestureDetector(
+                InkWell(
                   onTap: () async {
                     XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
                     final _imageByte = await File(_image?.path ?? '').readAsBytes();
@@ -154,7 +152,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                         child: Text(
                           'Contract title',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -197,7 +195,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                         child: Text(
                           'Product Name',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -239,7 +237,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                         child: Text(
                           'Product Detail',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -286,7 +284,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                         child: Text(
                           'Product Price',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -332,7 +330,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                         child: Text(
                           'Shipping Location',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(
@@ -381,7 +379,7 @@ class _MerchantCreateProductState extends State<MerchantCreateProduct> {
                         child: Text(
                           'How many days does delivery take (minimum of 3 days)',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
                       TextFormField(

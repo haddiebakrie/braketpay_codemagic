@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:braketpay/api_callers/contracts.dart';
@@ -6,6 +8,11 @@ import 'package:braketpay/classes/transaction.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share/share.dart';
+
+import '../uix/themedcontainer.dart';
 
 class TransactionDetail extends StatefulWidget {
   const TransactionDetail(
@@ -14,12 +21,12 @@ class TransactionDetail extends StatefulWidget {
 
   final Transaction transaction;
   final User user;
-
   @override
   State<TransactionDetail> createState() => _TransactionDetailState();
 }
 
 class _TransactionDetailState extends State<TransactionDetail> {
+  ScreenshotController screenShotController = ScreenshotController();
   @override
   Widget build(BuildContext context) {
     final PageController _controller = PageController();
@@ -28,137 +35,182 @@ class _TransactionDetailState extends State<TransactionDetail> {
         appBar: AppBar(
             elevation: 0,
             centerTitle: true,
-            title: const Text('Receipt')),
+            title: const Text('Transaction Detail')),
         bottomSheet: Container(
                 height: 60,
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: Container(
                   width: double.infinity,
                     decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                      color: Color.fromARGB(255, 23, 50, 255),
+                      color: const Color.fromARGB(255, 23, 50, 255),
                     ),
                     child: TextButton(
-                        child: Text(
+                        child: const Text(
                           'Share',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          await screenShotController.capture().then((value) 
+                          async {
+                            if (value != null) {
+                              final directory = await getApplicationDocumentsDirectory();
+                              final imagePath = await File('${directory.path}/${widget.transaction.payload!.receiptId}.png').create();
+                              await imagePath.writeAsBytes(value);
 
+                              /// Share Plugin
+                              await Share.shareFiles([imagePath.path]);
+                          }
+                          }
+                          );
                         })),
                   
                 ),
 
             
-        body: SingleChildScrollView(child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20), bottom: Radius.zero),
-            color: Colors.white,
-          ),
-          child: Column(
-            children: [
-          SizedBox(height:20),
-              Icon(Icons.check_circle, size: 40, color: Colors.green),
-              Text('SUCCESSFUL', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height:10),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
+        body: Screenshot(
+          controller: screenShotController,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: ContainerBackgroundDecoration(),
+            child: ListView(
               children: [
-              ListTile(title: Text('Transaction Date'), trailing: Text(widget.transaction.payload!.dateMade())),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
+                Stack(
+                  children: [
+                    Container(
+                      // color: Colors.red,
+                      width: double.infinity,
+                      height: 600,
+                      padding: const EdgeInsets.all(90),
+                      child: Opacity(
+                        opacity: 0.01,
+                        child: Image.asset('assets/braket_logo.png', width: 120 , height: 120))),
+                    Column(
+                      children: [
+                      //   Row(
+                      //     children: [
+                      // Padding(
+                      //   padding: const EdgeInsets.all(20.0),
+                      //   child: Text("${widget.transaction.payload!.formatAmount()}", style: TextStyle(fontSize: 40),),
+                      // ),
+                      //     ],
+                      //   ),
+                      Image.asset('assets/braket-full-01.png', width:90),
+                    Container(
+                      // margin: const EdgeInsets.all(5),
+                      width: double.infinity,
+                      child: Text("Receipt ID: ${widget.transaction.payload!.receiptId}", textAlign: TextAlign.end, style: const TextStyle(fontWeight: FontWeight.bold),)),
+                    Column(
+                      children: [
+                      ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text('Transaction Date'), trailing: Text(widget.transaction.payload!.dateMade())),
+                      Container(color: Colors.grey, height: 1, width: double.infinity)
+                      ] 
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text('Amount'), trailing: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(widget.transaction.payload!.formatAmount(), style: const TextStyle(fontFamily: '')),
+                            Text('charges: ${formatAmount(widget.transaction.payload!.transactionFee.toString())}', style: TextStyle(color: Colors.grey))
+                          ],
+                        )),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical:0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text("Sender's Name"), trailing: Text("${widget.transaction.payload!.senderName}")),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                      Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        ListTile(
+                          minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, 
+                          title: const Text("Sender's Account"), trailing: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                           Text(widget.transaction.payload!.senderAccountNumber == '00-00-00-00-00' ? widget.transaction.payload!.transactionType!.split('>').last.toUpperCase() : widget.transaction.payload!.senderAccountNumber??''),
+                          widget.transaction.payload!.senderAccountNumber != widget.user.payload!.accountNumber ?
+                          Text(widget.transaction.payload!.receivingBank??"${widget.transaction.payload!.transactionType}".split('>')[0], style: TextStyle(color: Colors.grey),)
+                          : Text('BraketPay', style: TextStyle(color: Colors.grey),)
+                          ],
+                        )),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text("Receiver's Name"), trailing: Text("${widget.transaction.payload!.receiverName}")),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text("Receiver's Account"), trailing: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(widget.transaction.payload!.receiverAccountNumber == '00-00-00-00-00' ? widget.transaction.payload!.transactionType!.split('>').last.toUpperCase() : widget.transaction.payload!.receiverAccountNumber??''),
+                          widget.transaction.payload!.receiverAccountNumber != widget.user.payload!.accountNumber ?
+                          Text(widget.transaction.payload!.receivingBank??"${widget.transaction.payload!.transactionType}".split('>')[0].toUpperCase(), style: TextStyle(color: Colors.grey),)
+                          : Text('BraketPay', style: TextStyle(color: Colors.grey),)
+                          
+                          ],
+                        )),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        // ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: Text("Narration"), trailing: Text("${widget.transaction.payload!.narration}")),
+                        // Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        ListTile(title: const Text("Payment Method"), trailing: Text("${widget.transaction.payload!.transactionType}".split('>')[0].toUpperCase())),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Paid with Braket', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 80)
+                      ]
+                    ),
+                  ],
+                ),
+              ],
+            )
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text('Amount'), trailing: Text("${widget.transaction.payload!.formatAmount()}", style: TextStyle(fontFamily: ''))),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical:0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Sender's Name"), trailing: Text("${widget.transaction.payload!.senderName}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-            Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Sender's Account"), trailing: Text("${widget.transaction.payload!.senderAccountNumber}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Receiver's Name"), trailing: Text("${widget.transaction.payload!.receiverName}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Receiver's Account"), trailing: Text("${widget.transaction.payload!.receiverAccountNumber}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Receiver's Bank"), trailing: Text("${widget.transaction.payload!.receivingBank}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Receipt ID"), trailing: Text("${widget.transaction.payload!.receiptId}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Narration"), trailing: Text("${widget.transaction.payload!.narration}")),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: Column(
-              children: [
-              ListTile(title: Text("Payment Method"), trailing: Text("${widget.transaction.payload!.transactionType}".toUpperCase().replaceAll('>', '-'))),
-              Container(color: Colors.grey, height: 1, width: double.infinity)
-              ] 
-            ) 
-          ),
-          SizedBox(height: 10),
-          Text('Paid with Braket'),
-          SizedBox(height: 80)
-            ]
-          )
-        ))
+        )
         );}
                       
 }

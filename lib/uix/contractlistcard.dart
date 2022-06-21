@@ -2,13 +2,17 @@
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/productdetail.dart';
 import 'package:braketpay/screen/servicedetail.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
 import '../classes/product_contract.dart';
+import '../screen/loandetail.dart';
+import '../utils.dart';
 
 class ContractListCard extends StatelessWidget {
-  const ContractListCard({
+  ContractListCard({
     Key? key, 
     required this.pin,
     required this.product,
@@ -19,33 +23,34 @@ class ContractListCard extends StatelessWidget {
   final String pin;
   final User user;
 
+  final Map<String, Color> colors = {
+  'Terminated':Colors.red,
+  'Rejected':Colors.red,
+  'Closed': Colors.blueGrey.shade600,
+  'Not approved': Colors.blue,
+  'Approved': Colors.green,
+  'Confirmed': Colors.green,
+  'Not Confirmed': Colors.blue,
+  };
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    String state = product.contractType() == 2 ? product.payload!.states!.confirmationState??'' : product.payload?.states?.closingState == 'Closed' ? 'Closed' : product.payload?.states?.closingState == 'Terminated' ? 'Terminated' : product.payload!.states!.approvalState ?? ""; 
+    return InkWell(
       onTap: () {
-        print(product.payload!.toJson());
-        product.payload!.parties!.buyersName != null ? Navigator.of(context).push(MaterialPageRoute(
+      print(product.contractType());
+        product.contractType() == 0 ? Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => ProductDetail(contract: product, pin: pin, user: user)
-      )) : Navigator.of(context).push(MaterialPageRoute(
+      )) : product.contractType() == 1 ? Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => ServiceDetail(contract: product, pin: pin, user: user)
-      ));
-      // );
-      // }
+      )) : Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => LoanDetail(contract: product, pin: pin, user: user)));
+          
       },
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10, right: 10, left: 10),
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 3,
-              blurRadius: 10,
-              offset: const Offset(0, 0), // changes position of shadow
-            ),
-          ]),
+          decoration: ContainerDecoration(),
           child: ListTile(
             horizontalTitleGap: 10,
             trailing: Column(
@@ -53,7 +58,7 @@ class ContractListCard extends StatelessWidget {
               
               children: [
                 Text(product.dateCreated(), style: TextStyle(color: Colors.grey),),
-                Text(product.payload!.states!.closingState == 'Closed' ? 'Closed' : product.payload!.states!.approvalState ?? "")
+                Text(state, style: TextStyle(fontWeight: FontWeight.bold, color: this.colors[state]??Theme.of(context).textTheme.labelMedium?.color))
               ],
             ),
             title: Text(
@@ -65,19 +70,18 @@ class ContractListCard extends StatelessWidget {
             subtitle: RichText(
               maxLines: 1,
               text: TextSpan(
-                  text: "By: ",
+                  text: product.isContractCreator(user.payload!.walletAddress??'') ? "To: " : "From: ", 
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.black
                   ),
                   children: <TextSpan>[
                     TextSpan(
                         style: const TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: Colors.black,
                         ),
                         text:
-                            "${product.payload!.parties!.contractCreator}"),
+                            "${toTitleCase(product.getSecondParty(user.payload!.fullname??''))}"),
                   ]),
             ),
             leading: AbsorbPointer(
@@ -85,17 +89,25 @@ class ContractListCard extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(20)),
-                child: !product.isService()
+                child: product.contractType() == 0
                     ? IconButton(
                         icon: const Icon(IconlyBold.document),
                         color: Colors.white,
                         iconSize: 20,
                         onPressed: () {})
-                    : IconButton(
+                    : product.contractType() == 1 ? 
+                    
+                    IconButton(
                         icon: const Icon(IconlyBold.setting),
                         color: Colors.white,
                         iconSize: 20,
-                        onPressed: () {}),
+                        onPressed: () {}) : 
+                   IconButton(
+                        icon: const Icon(Icons.money),
+                        color: Colors.white,
+                        iconSize: 20,
+                        onPressed: () {})     
+                        ,
               ),
             ),
           ),

@@ -1,9 +1,12 @@
 import 'package:braketpay/api_callers/registration.dart';
 import 'package:braketpay/api_callers/userinfo.dart';
+import 'package:braketpay/brakey.dart';
+import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -12,12 +15,11 @@ import 'package:im_stepper/stepper.dart';
 import '../utils.dart';
 import 'manager.dart';
 
-
 class SignUp extends StatefulWidget {
   SignUp({Key? key, required this.email, required this.payload}) : super(key: key);
 
   String email;
-  Map payload;
+  Map? payload;
 
   @override
   State<StatefulWidget> createState()  => _SignupState();
@@ -25,12 +27,13 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignupState extends State<SignUp> {
+  Brakey brakey = Get.put(Brakey());
   String password = '';
   String pin = '';
   String phoneConfirm = '';
   String otp = '';
-  String fullname = '';
-  String dob = '';
+  late String fullname = "${widget.payload?['lastname']??''} ${widget.payload?['firstname']??''} ${widget.payload?['middlename']??''}";
+  late String dob = "${widget.payload?['birthdate']??''}";
   String helperText = '';
   int index = 0;
   PageController pageController = PageController();
@@ -42,8 +45,11 @@ class _SignupState extends State<SignUp> {
       RoundedLoadingButtonController();
   @override
   Widget build(BuildContext context) {
-    dob = widget.payload['birthdate'];
-    fullname = "${widget.payload['lastname']} ${widget.payload['firstname']} ${widget.payload['middlename']}";
+    setState(() {
+      // dob = 
+      // fullname = ;
+      
+    });
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -63,7 +69,7 @@ class _SignupState extends State<SignUp> {
           enableNextPreviousButtons: false,
           enableStepTapping: false,
           activeStepColor: Colors.white,
-          stepColor:  Color.fromARGB(255, 253, 195, 195),
+          stepColor:  Colors.grey,
           icons: [
             Icon(Icons.key, color: Theme.of(context).primaryColor),
             Icon(IconlyBold.profile, color: Theme.of(context).primaryColor),
@@ -97,40 +103,44 @@ class _SignupState extends State<SignUp> {
                           style: TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 30),
-                          child: TextFormField(
-                              autofillHints: const [AutofillHints.telephoneNumber],
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              fillColor: const Color.fromARGB(24, 158, 158, 158),
-                              filled: true,
-                              focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              hintText: 'Phone Confirmation',
-                              helperText: 'Enter the phone number sent to ${widget.email}',
-                              helperMaxLines: 2,
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                        SizedBox(height: 20),
+                        Visibility(
+                          visible: widget.payload!.containsKey('firstname'),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 30),
+                            child: TextFormField(
+                                autofillHints: const [AutofillHints.telephoneNumber],
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              cursorColor: Colors.black,
+                              decoration: InputDecoration(
+                                fillColor: const Color.fromARGB(24, 158, 158, 158),
+                                filled: true,
+                                focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                hintText: 'Phone Confirmation',
+                                helperText: 'Enter the phone number sent to ${widget.email}',
+                                helperMaxLines: 2,
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                              ),
+                              onChanged: (text) {
+                                phoneConfirm = text.trim();
+                                _loginButtonController.reset();
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'This field is required';
+                                }
+                                return null;
+                              },
                             ),
-                            onChanged: (text) {
-                              phoneConfirm = text.trim();
-                              _loginButtonController.reset();
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'This field is required';
-                              }
-                              return null;
-                            },
                           ),
                         ),
                         Container(
@@ -159,6 +169,7 @@ class _SignupState extends State<SignUp> {
                             ),
                             onChanged: (text) async {
                               otp = text.trim();
+                              print(widget.payload);
                               // if (otp.length == 6) {
                   
                               // }
@@ -181,9 +192,9 @@ class _SignupState extends State<SignUp> {
                                 onPressed: () async {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   if (_formKey.currentState!.validate()) {
-                                Map a = await verifyBVN(phoneConfirm, otp);
+                                Map a = !widget.payload!.containsKey('firstname') ? await verifyBVN(widget.email, otp, 'email otp') : await verifyBVN(phoneConfirm, otp, 'bvn_nin otp');
                                         print('ppp$a');
-                                    if (a.containsKey('Payload')) {
+                                    if (a.containsKey('Payload') || a['Status'] == 'success') {
                                         
                                         setState(() {
                                           index = 1;
@@ -225,160 +236,228 @@ class _SignupState extends State<SignUp> {
                                 child: const Text('Confirm')))
                     ]
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Personal Information',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 15),
-                        child: TextFormField(
-                          initialValue: fullname,
-                          // readOnly: true,
-                          cursorColor: Colors.black,
-                          decoration: const InputDecoration(
-                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            hintText: "SURNAME FIRSTNAME" ,
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
-                          ),
-                          onChanged: (text) {
-                            fullname = text.trim();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter your Fullname';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 15),
-                        child: TextFormField(
-                          cursorColor: Colors.black,
-                          initialValue: phoneConfirm,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            hintText: 'Phone number',
-                            helperMaxLines: 2,
-                            helperText:
-                                'Enter your a Phone number without country code Ex. 09011001100',
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
-                          ),
-                          onChanged: (text) {
-                            phone = text.trim();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter your a Phone number without country code Ex. 09011001100';
-                            }
-                            if (value.length < 11 || !value.startsWith('0')) {
-                              showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                        actions: [
-                                          TextButton(
-                                            child: const Text('Okay'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                        title:
-                                            const Text("Invalid phone number!"),
-                                        content: const Text(
-                                            'Phone number must be in the format 09011001100'));
-                                  });
-                              return 'Enter your a Phone number without country code Ex. 09011001100';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      Container(
-                    margin: const EdgeInsets.symmetric(vertical: 15),
+                  SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        
-                        GestureDetector(
-                          onTap: () {
-                            _loginButtonController.reset();
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            DatePicker.showDatePicker(context,
-                                minTime: DateTime.now(),
-                                currentTime: DateTime.parse(dob),
-                                maxTime: DateTime(2101), onConfirm: (date) {
-                              setState(() {
-                                dob =
-                                    '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-                              });
-                            });
-
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(15),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                            color: const Color.fromARGB(24, 158, 158, 158),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(dob,
-                                style: const TextStyle(fontSize: 20)),
+                        const Text(
+                          'Personal Information',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 15),
+                          child: Column(
+                            
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                  
+                              Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: const Text(
+                            'Fullname',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15),
                           ),
-                        )
+                        ),
+                              TextFormField(
+                                initialValue: fullname.trim() == '' ? null : fullname,
+                                cursorColor: Colors.black,
+                                decoration: const InputDecoration(
+                                  fillColor: Color.fromARGB(24, 158, 158, 158),
+                                  filled: true,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10))),
+                                  hintText: "Surname Firstname" ,
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10))),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 10),
+                                ),
+                                onChanged: (text) {
+                                  fullname = text.trim();
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Enter your Fullname';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                  
+                              Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: const Text(
+                            'Phone number',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15),
+                          ),
+                        ),
+                              TextFormField(
+                                cursorColor: Colors.black,
+                                initialValue: phoneConfirm,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  fillColor: Color.fromARGB(24, 158, 158, 158),
+                                  filled: true,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10))),
+                                  hintText: 'Phone number',
+                                  helperMaxLines: 2,
+                                  helperText:
+                                      'Enter your a Phone number without country code Ex. 09011001100',
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10))),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 10),
+                                ),
+                                onChanged: (text) {
+                                  phone = text.trim();
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Enter your a Phone number without country code Ex. 09011001100';
+                                  }
+                                  if (value.length < 11 || !value.startsWith('0')) {
+                                    showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text('Okay'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                              title:
+                                                  const Text("Invalid phone number!"),
+                                              content: const Text(
+                                                  'Phone number must be in the format 09011001100'));
+                                        });
+                                    return 'Enter your a Phone number without country code Ex. 09011001100';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                      margin: const EdgeInsets.symmetric(vertical: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                  
+                              Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: const Text(
+                            'Date of Birth',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15),
+                          ),
+                        ),
+                          
+                          InkWell(
+                            onTap: () {
+                              _loginButtonController.reset();
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              DatePicker.showDatePicker(context,
+                                  minTime: DateTime(1888),
+                                  currentTime: dob == '' ? DateTime.now() : DateTime.parse(dob),
+                                  maxTime: DateTime(2101), onConfirm: (date) {
+                                print(dob+'p');
+                                setState(() {
+                                  dob = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+                                });
+                                print(fullname);
+                                  dob = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+                              });
+                  
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                              color: const Color.fromARGB(24, 158, 158, 158),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(dob,
+                                  style: const TextStyle(fontSize: 20)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  
+                    
+                        
+                        Container(
+                            margin: const EdgeInsets.all(10),
+                            child: RoundedLoadingButton(
+                                borderRadius: 10,
+                                color: Theme.of(context).primaryColor,
+                                elevation: 0,
+                                controller: _loginButtonController,
+                                onPressed: () async {
+                                  if (dob.trim()=='' || dob==null) {
+                                    _loginButtonController.reset();
+                                  showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                  actions: [
+                                                    TextButton(
+                                                      child: const Text('Okay'),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                            _loginButtonController.reset();
+                                                      },
+                                                    )
+                                                  ],
+                                                  title: const Text(
+                                                      "Invalid Date of birth"),
+                                                  content: Text('Enter your Date of Birth'));
+                                            });
+                                            return;
+                                }
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  if (_formKey.currentState!.validate()) {
+                                 setState(() {
+                                   index = 2;
+                                 });   
+                                  pageController.animateToPage(2, duration: Duration(seconds: 1), curve: Curves.ease);
+                                } 
+                                
+                                
+                                else {
+                                  _loginButtonController.reset();
+                                }},
+                                child: const Text('Confirm')))
                       ],
                     ),
-                  ),
-
-                  
-                      
-                      Container(
-                          margin: const EdgeInsets.all(10),
-                          child: RoundedLoadingButton(
-                              borderRadius: 10,
-                              color: Theme.of(context).primaryColor,
-                              elevation: 0,
-                              controller: _loginButtonController,
-                              onPressed: () async {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                if (_formKey.currentState!.validate()) {
-                               setState(() {
-                                 index = 2;
-                               });   
-                                pageController.animateToPage(2, duration: Duration(seconds: 1), curve: Curves.ease);
-                              }else {
-                                _loginButtonController.reset();
-                              }},
-                              child: const Text('Confirm')))
-                    ],
                   ),
                   Column(children: [
                     Container(
@@ -433,7 +512,7 @@ class _SignupState extends State<SignUp> {
 
                             // )),
                             hintText: 'Password',
-                            helperText: 'Password must be at least 8 digits',
+                            helperText: 'Password must be at least 8 characters',
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
                             focusedBorder: OutlineInputBorder(
@@ -455,58 +534,61 @@ class _SignupState extends State<SignUp> {
                               return 'Enter your Password';
                             }
                             if (value.length < 8) {
-                              return 'Password must be at least 8 digits';
+                              return 'Password must be at least 8 characters';
                             }
                             return null;
                           },
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          obscureText: true,
-                          maxLength: 4,
-                          cursorColor: Colors.black,
-                          // controller: _userPasswordController,
-                          decoration: const InputDecoration(
-                            // suffixIcon: IconButton(onPressed: () {
-                            //   setState(() {
-                            //     _passwordVisible = !_passwordVisible;
-                            //   });
-                            // }, icon: Icon(_passwordVisible ?
-                            // Icons.visibility :
-                            // Icons.visibility_off
-
-                            // )),
-                            hintText: 'Transaction PIN',
-                            helperText: 'Set a 4 digits transaction PIN',
-                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
+                      Visibility(
+                        visible: widget.payload!.containsKey('firstname'),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            obscureText: true,
+                            maxLength: 4,
+                            cursorColor: Colors.black,
+                            // controller: _userPasswordController,
+                            decoration: const InputDecoration(
+                              // suffixIcon: IconButton(onPressed: () {
+                              //   setState(() {
+                              //     _passwordVisible = !_passwordVisible;
+                              //   });
+                              // }, icon: Icon(_passwordVisible ?
+                              // Icons.visibility :
+                              // Icons.visibility_off
+                      
+                              // )),
+                              hintText: 'Transaction PIN',
+                              helperText: 'Set a 4 digits transaction PIN',
+                              fillColor: Color.fromARGB(24, 158, 158, 158),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            onChanged: (text) {
+                              pin = text;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter your PIN';
+                              }
+                              if (value.length < 4) {
+                                return 'PIN must be 4 digits';
+                              }
+                              return null;
+                            },
                           ),
-                          onChanged: (text) {
-                            pin = text;
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter your PIN';
-                            }
-                            if (value.length < 4) {
-                              return 'PIN must be 4 digits';
-                            }
-                            return null;
-                          },
                         ),
                       ),
                       Container(
@@ -529,6 +611,7 @@ class _SignupState extends State<SignUp> {
                                     pin,
                                     username,
                                     otp,
+                                    widget.payload!.containsKey('firstname') ? "with_bvn" : "without_bvn"
                                   );
                                   print(a);
                                   if (a.containsKey('Status')) {
@@ -551,6 +634,39 @@ class _SignupState extends State<SignUp> {
                                                   ],
                                                 ));
                                           });
+                                          try {
+                                            User a = await loginUser(username, password, pin);
+                                            brakey.setUser(Rxn(a), pin);
+                                            Get.offUntil(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Manager(user: a, pin: ''),
+                                                maintainState: true),
+                                            (route) => false);
+
+                                          } catch (e) {
+                                      _loginButtonController.reset();
+                                            showDialog(
+
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                                actions: [
+                                                  TextButton(
+                                                    child: const Text('Okay'),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                          _loginButtonController.reset();
+                                                    },
+                                                  )
+                                                ],
+                                                title: const Text(
+                                                    "Failed"),
+                                                content: Text(a['Message']??'Something went wrong, Please try again.'));
+                                          });
+                                          }
                                     } else {
                                       showDialog(
                                           context: context,
@@ -594,11 +710,14 @@ class _SignupState extends State<SignUp> {
                                                 ],
                                                 title: const Text(
                                                     "Account creation failed"),
-                                                content: Text(a['Message']));
+                                                content: Text(toTitleCase(a['Message'])));
                                           });
                                       // }
 
                                     }
+                                } else {
+                                  _loginButtonController.reset();
+                                  return; 
                                 }
                               },
                               child: const Text('Signup')))

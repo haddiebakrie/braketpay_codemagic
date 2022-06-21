@@ -51,7 +51,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.memory(Uint8List.fromList(image)),
+                  Image.memory(Uint8List.fromList(image),),
                   Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -130,7 +130,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                   child: Text(
                                     'Shipping Destination',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w400,
                                         fontSize: 15),
                                   ),
                                 ),
@@ -176,7 +176,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                   child: Text(
                                     'Cost of Shipping',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w400,
                                         fontSize: 15),
                                   ),
                                 ),

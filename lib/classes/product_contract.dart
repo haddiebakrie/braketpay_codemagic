@@ -9,19 +9,37 @@ class ProductContract {
 
   ProductContract.fromJson(Map<String, dynamic> json) {
     payload =
-        json['Payload'] != null ? new Payload.fromJson(json['Payload']) : null;
+        json['Payload'] != null ? Payload.fromJson(json['Payload']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.payload != null) {
-      data['Payload'] = this.payload!.toJson();
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    if (payload != null) {
+      data['Payload'] = payload!.toJson();
     }
     return data;
   }
 
+  int contractType() {
+    /* 
+    0 - Product
+    1 - Service
+    2 - Loan
+    */
+    if (payload?.parties?.buyersName!=null) {
+      return 0;
+    } else if (payload?.parties?.clientName!=null) {
+      return 1;
+    } else if (payload?.parties!=null) {
+      return 2;
+      
+    } else {
+      return 3;
+    }
+  }
+
   bool isService() {
-    if (this.payload?.parties?.buyersName != null) {
+    if (payload?.parties?.buyersName != null) {
       return false;
     } else {
       return true;
@@ -29,17 +47,22 @@ class ProductContract {
   }
 
   bool isContractCreator(String address) {
-
-      print(this.payload!.parties!.contractCreatorAddress);
-      print(this.payload!.parties!.creatorAddress);
-    if (!isService()) {
-      if (this.payload!.parties!.contractCreatorAddress == address) {
+    if (contractType()==0) {
+      if (payload!.parties!.contractCreatorAddress == address) {
         return true;
       } else {
         return false;
       }
-    } else {
-      if (this.payload!.parties!.creatorAddress == address) {
+    } else if (contractType()==2) {
+      if (payload!.parties!.lenderWalletAddress == address) {
+        return true;
+      } else {
+        return false;
+      }
+  }
+    
+    else {
+      if (payload!.parties!.creatorAddress == address) {
         return true;
       } else {
         return false;
@@ -47,16 +70,53 @@ class ProductContract {
     }
   }
 
+  String getSecondParty(String name) {
+    if (payload!.parties==null){
+      return '';
+    }
+        print(contractType()==2);
+    if (contractType()==1) {
+      if (payload!.parties!.clientName == name) {
+        return payload!.parties!.providersName??'';
+      } else {
+        return payload!.parties!.clientName ??"";
+      }
+    } else if (contractType()==2) {
+      if (payload!.parties!.lenderName == name) {
+        return payload!.parties!.borrowerName??"";
+
+      } else {
+        return payload!.parties!.lenderName??'';
+      }
+    } 
+    
+    else {
+      // print("$name dasd");
+      if (payload!.parties!.buyersName == name) {
+        return payload!.parties!.sellersName??'';
+      } else {
+        return payload!.parties!.buyersName??'';
+      }
+    }
+  }
+
   bool isProvider(String address) {
-    if (this.isService()) {
-      if (this.payload!.parties!.clientAddress == address) {
+    if (contractType()==1) {
+      if (payload!.parties!.clientAddress == address) {
         return false;
       } else {
         return true;
       }
-    } else {
-      print('${this.payload!.parties!.buyersName} - $address');
-      if (this.payload!.parties!.buyersName == address) {
+      
+    } else if (contractType()==2) {
+      if (payload!.parties!.borrowerWalletAddress==address) {
+        return false;
+
+      } else {return true;}
+    }
+    
+    else {
+      if (payload!.parties!.buyersName == address) {
         return false;
       }
       return true;
@@ -64,47 +124,69 @@ class ProductContract {
   }
 
   String dateCreated() {
-    if (this.payload!.parties!.buyersName != null) {
+    if (payload!.terms == null) {
+      return '';
+    }
+    if (payload!.parties!.buyersName != null) {
       final DateTime formatted =
-          HttpDate.parse(this.payload!.states!.dateContractCreated ?? "");
+          HttpDate.parse(payload!.states!.dateContractCreated ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
-    } else {
+    } else if(payload!.parties!.borrowerName != null){
+      final DateTime formatted = DateTime.parse(
+          payload!.states!.dateLastChangeMade ?? "");
+          String date = DateFormat('MMM, dd yyyy').format(formatted);
+      return date;
+    }  else {
       final DateTime formatted = HttpDate.parse(
-          this.payload!.states!.dateContractCreatedService ?? "");
+          payload!.states!.dateContractCreatedService ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     }
   }
 
   DateTime httpDate() {
-    if (this.payload!.parties!.buyersName != null) {
+    if (payload!.parties!.buyersName != null) {
       final DateTime formatted =
-          HttpDate.parse(this.payload!.states!.dateLastChangeMade ?? "");
+          HttpDate.parse(payload!.states!.dateLastChangeMade ?? "");
       return formatted;
-    } else {
+    
+    } else if(payload!.parties!.clientName != null){
       final DateTime formatted = HttpDate.parse(
-          this.payload!.states!.dateContractCreatedService ?? "");
+          payload!.states!.dateContractCreatedService ?? "");
+      return formatted;
+
+    } else if(payload!.parties!.borrowerName != null){
+      print("${payload!.contractID}7777");
+      final DateTime formatted = DateTime.parse(
+          payload!.states!.dateLastChangeMade ?? "");
+      return formatted;
+    } 
+    
+     else {
+      final DateTime formatted = HttpDate.parse(
+          payload!.states!.dateContractCreatedService ?? "");
       return formatted;
     }
   }
 
+  DateTime formattedHttpDate() => DateTime(httpDate().year, httpDate().month, httpDate().day);
   String deliveryDate() {
-    if (this.payload!.parties!.buyersName != null) {
+    if (payload!.parties!.buyersName != null) {
       final DateTime formatted =
-          HttpDate.parse(this.payload!.terms!.deliveryDatetime ?? "");
+          HttpDate.parse(payload!.terms!.deliveryDatetime ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     } else {
       final DateTime formatted =
-          HttpDate.parse(this.payload!.terms!.deliveryDatetime ?? "");
+          HttpDate.parse(payload!.terms!.deliveryDatetime ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
       return date;
     }
   }
 
   String totalAmount() {
-    return "${double.parse(this.payload!.terms!.productAmount ?? '0') + double.parse(this.payload!.terms!.logisticAmount ?? '0')}";
+    return "${double.parse(payload!.terms!.productAmount ?? '0') + double.parse(payload!.terms!.logisticAmount ?? '0')}";
   }
 }
 
@@ -114,40 +196,43 @@ class Payload {
   Privilledges? privilledges;
   States? states;
   Terms? terms;
+  String? approvalState;
 
   Payload(
       {this.contractID,
       this.parties,
       this.privilledges,
       this.states,
+      this.approvalState,
       this.terms});
 
   Payload.fromJson(Map<String, dynamic> json) {
-    contractID = json['ContractID'];
+    contractID = json.containsKey('contract_id') ? json['contract_id'] : json['ContractID'];
     parties =
-        json['Parties'] != null ? new Parties.fromJson(json['Parties']) : null;
+        json['Parties'] != null ? Parties.fromJson(json['Parties']) : null;
     privilledges = json['Privilledges'] != null
-        ? new Privilledges.fromJson(json['Privilledges'])
+        ? Privilledges.fromJson(json['Privilledges'])
         : null;
     states =
-        json['States'] != null ? new States.fromJson(json['States']) : null;
-    terms = json['Terms'] != null ? new Terms.fromJson(json['Terms']) : null;
+        json['States'] != null ? States.fromJson(json['States']) : null;
+    terms = json['Terms'] != null ? Terms.fromJson(json['Terms']) : null;
+    approvalState = json['approval_state'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ContractID'] = this.contractID;
-    if (this.parties != null) {
-      data['Parties'] = this.parties!.toJson();
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['ContractID'] = contractID;
+    if (parties != null) {
+      data['Parties'] = parties!.toJson();
     }
-    if (this.privilledges != null) {
-      data['Privilledges'] = this.privilledges!.toJson();
+    if (privilledges != null) {
+      data['Privilledges'] = privilledges!.toJson();
     }
-    if (this.states != null) {
-      data['States'] = this.states!.toJson();
+    if (states != null) {
+      data['States'] = states!.toJson();
     }
-    if (this.terms != null) {
-      data['Terms'] = this.terms!.toJson();
+    if (terms != null) {
+      data['Terms'] = terms!.toJson();
     }
     return data;
   }
@@ -155,6 +240,11 @@ class Payload {
 
 class Parties {
   String? buyersName;
+  String? borrowerName;
+  String? borrowerWalletAddress;
+  String? lenderBizID;
+  String? lenderName;
+  String? lenderWalletAddress;
   String? contractCreator;
   String? contractCreatorAddress;
   String? sellersName;
@@ -165,6 +255,11 @@ class Parties {
 
   Parties(
       {this.buyersName,
+      this.borrowerName,
+      this.borrowerWalletAddress,
+      this.lenderBizID,
+      this.lenderName,
+      this.lenderWalletAddress,
       this.contractCreator,
       this.contractCreatorAddress,
       this.sellersName,
@@ -178,6 +273,11 @@ class Parties {
     contractCreator = json['contract creator'];
     contractCreatorAddress = json['contract_creator_address'];
     sellersName = json['sellers name'];
+    borrowerName = json['borrower_name'];
+    borrowerWalletAddress = json['borrower_wallet_address'];
+    lenderBizID = json['lender_business_id'];
+    lenderName = json['lender_name'];
+    lenderWalletAddress = json['lender_wallet_address'];
     clientAddress = json['client address'];
     clientName = json['client name'];
     creatorAddress = json['creator address'];
@@ -185,16 +285,21 @@ class Parties {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['buyers name'] = this.buyersName;
-    data['contract creator'] = this.contractCreator;
-    data['contract_creator_address'] = this.contractCreatorAddress;
-    data['sellers name'] = this.sellersName;
-    data['client address'] = this.clientAddress;
-    data['client name'] = this.clientName;
-    data['contract creator'] = this.contractCreator;
-    data['creator address'] = this.creatorAddress;
-    data['providers name'] = this.providersName;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['buyers name'] = buyersName;
+    data['contract creator'] = contractCreator;
+    data['contract_creator_address'] = contractCreatorAddress;
+    data['sellers name'] = sellersName;
+    data['borrower_name'] = borrowerName;
+    data['borrower_wallet_address'] = borrowerWalletAddress;
+    data['lender_name'] = lenderName;
+    data['lender_business_id'] = lenderBizID;
+    data['lender_wallet_address'] = lenderWalletAddress;
+    data['client address'] = clientAddress;
+    data['client name'] = clientName;
+    data['contract creator'] = contractCreator;
+    data['creator address'] = creatorAddress;
+    data['providers name'] = providersName;
     return data;
   }
 }
@@ -203,24 +308,34 @@ class Privilledges {
   String? confirmationCode;
   String? terminationCode;
   String? approvalCode;
+  String? borrowerRepayment;
+  String? loanStages;
+  String? totalRepayment;
+  String? borrowerRepaymentStatus;
+
 
   Privilledges(
-      {this.confirmationCode, this.terminationCode, this.approvalCode});
-
+      {this.confirmationCode, this.terminationCode, this.approvalCode, this.borrowerRepayment, this.borrowerRepaymentStatus});
   Privilledges.fromJson(Map<String, dynamic> json) {
     approvalCode = json.containsKey('approval_code')
         ? json['approval_code']
         : json['approve_code'];
-    print(json);
     confirmationCode = json['confirmation_code'];
+    loanStages = json['loan_stages'];
     terminationCode = json['termination_code'];
+    totalRepayment = json.containsKey("total_braket_repayments") ? json['total_braket_repayments'] : json['total_borrower_repayments'];
+    borrowerRepayment = json.containsKey('borrower_repayments') ? json['borrower_repayments'] : json['braket_repayments'];
+    borrowerRepaymentStatus = json.containsKey("borrower_repayment_status") ? json['borrower_repayment_status'] : json['braket_repayment_status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['approval_code'] = this.approvalCode;
-    data['confirmation_code'] = this.confirmationCode;
-    data['termination_code'] = this.terminationCode;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['approval_code'] = approvalCode;
+    data['confirmation_code'] = confirmationCode;
+    data['borrower_repayments'] = borrowerRepayment;
+    data['loan_stages'] = loanStages;
+    data['borrower_repayment_status'] = borrowerRepaymentStatus;
+    data['termination_code'] = terminationCode;
     return data;
   }
 }
@@ -244,7 +359,7 @@ class States {
       this.dateLastChangeMade});
 
   States.fromJson(Map<String, dynamic> json) {
-    approvalState = json['approval state'];
+    approvalState = json.containsKey('approval state') ? json['approval state'] : json['approval_state'];
     closingState = json['closing state'];
     confirmationState = json['confirmation_state'];
     dateContractRegistered = json['date contract registered'];
@@ -254,14 +369,14 @@ class States {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['approval state'] = this.approvalState;
-    data['closing state'] = this.closingState;
-    data['confirmation_state'] = this.confirmationState;
-    data['date contract registered'] = this.dateContractRegistered;
-    data['date contract created'] = this.dateContractCreatedService;
-    data['date_contract_created'] = this.dateContractCreated;
-    data['date_last_change_made'] = this.dateLastChangeMade;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['approval state'] = approvalState;
+    data['closing state'] = closingState;
+    data['confirmation_state'] = confirmationState;
+    data['date contract registered'] = dateContractRegistered;
+    data['date contract created'] = dateContractCreatedService;
+    data['date_contract_created'] = dateContractCreated;
+    data['date_last_change_made'] = dateLastChangeMade;
     return data;
   }
 }
@@ -283,6 +398,13 @@ class Terms {
   String? stageCompletionPayment;
   int? stagesAchieved;
   String? totalServiceAmount;
+  String? balance;
+  String? interestRate;
+  String? loanAmount;
+  String? loanPeriod;
+  String? loanType;
+  String? paymentLeft;
+  String? periodLeft;
 
   Terms(
       {this.contractTitle,
@@ -300,15 +422,31 @@ class Terms {
       this.remainderPayment,
       this.stageCompletionPayment,
       this.stagesAchieved,
-      this.totalServiceAmount});
+      this.totalServiceAmount,
+      this.balance,
+      this.interestRate,
+      this.loanAmount,
+      this.loanPeriod,
+      this.loanType,
+      this.paymentLeft,
+      this.periodLeft,
+      });
 
   Terms.fromJson(Map<String, dynamic> json) {
-    contractTitle = json.containsKey('contract_title')
+    print(json['loan_title']);
+    contractTitle = json.containsKey('loan_title') ? json['loan_title'] : json.containsKey('contract_title')
         ? json['contract_title']
         : json['contract title'];
     deliveryDatetime = json.containsKey('delivery_datetime')
         ? json['delivery_datetime']
         : json['execution timeline'];
+    balance = json['balance'];
+    interestRate = json['interest_rate'];
+    loanAmount = json['loan_amount'];
+    loanPeriod = json['loan_period'];
+    loanType = json['loan_type'];
+    paymentLeft = json['payment_left'];
+    periodLeft = json['period_left'];
     logisticAmount = json['logistic amount'];
     productAmount = json['product amount'];
     productDetails = json['product_details'];
@@ -326,23 +464,29 @@ class Terms {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['contract_title'] = this.contractTitle;
-    data['delivery_datetime'] = this.deliveryDatetime;
-    data['logistic amount'] = this.logisticAmount;
-    data['product amount'] = this.productAmount;
-    data['product_details'] = this.productDetails;
-    data['shipping destination'] = this.shippingDestination;
-    data['shipping location'] = this.shippingLocation;
-    data['about stages'] = this.aboutStages;
-    data['delivery location'] = this.deliveryLocation;
-    data['downpayment'] = this.downpayment;
-    data['execution timeline'] = this.executionTimeline;
-    data['number of service stages'] = this.numberOfServiceStages;
-    data['remainder_payment'] = this.remainderPayment;
-    data['stage_completion_payment'] = this.stageCompletionPayment;
-    data['stages achieved'] = this.stagesAchieved;
-    data['total service amount'] = this.totalServiceAmount;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['contract_title'] = contractTitle;
+    data['delivery_datetime'] = deliveryDatetime;
+    data['logistic amount'] = logisticAmount;
+    data['balance'] = balance;
+    data['loan_type'] = loanType;
+    data['interest_rate'] = interestRate;
+    data['payment_left'] = paymentLeft;
+    data['loan_amount'] = loanAmount;
+    data['period_left'] = periodLeft;
+    data['product amount'] = productAmount;
+    data['product_details'] = productDetails;
+    data['shipping destination'] = shippingDestination;
+    data['shipping location'] = shippingLocation;
+    data['about stages'] = aboutStages;
+    data['delivery location'] = deliveryLocation;
+    data['downpayment'] = downpayment;
+    data['execution timeline'] = executionTimeline;
+    data['number of service stages'] = numberOfServiceStages;
+    data['remainder_payment'] = remainderPayment;
+    data['stage_completion_payment'] = stageCompletionPayment;
+    data['stages achieved'] = stagesAchieved;
+    data['total service amount'] = totalServiceAmount;
     return data;
   }
 }

@@ -12,6 +12,7 @@ import 'package:iconly/iconly.dart';
 import '../api_callers/contracts.dart';
 import '../api_callers/notifications.dart';
 import '../uix/notificationcard.dart';
+import '../uix/themedcontainer.dart';
 import '../utils.dart';
 import '../classes/user.dart';
 import '../uix/contractlistcard.dart';
@@ -38,16 +39,21 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
-
+    // print(notifications);
+    // print(brakey.notiCount);
+    // print(brakey.notiCount);
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
         titleSpacing: 5,
         toolbarHeight: 65,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(CupertinoIcons.bell_solid))
-        ],
+        leading: BackButton(onPressed: () {
+            brakey.clearNotiCount();
+            Navigator.of(context).pop();
+
+
+        }),
         title: const Text('Notifications',
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.bold)),
@@ -55,11 +61,7 @@ class _NotificationsState extends State<Notifications> {
         
       ),
       body: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20), bottom: Radius.zero),
-            color: Colors.white,
-          ),
+          decoration: ContainerBackgroundDecoration(),
           child: RefreshIndicator(
             key: brakey.refreshNotifications.value,
             onRefresh: () async {
@@ -76,8 +78,25 @@ class _NotificationsState extends State<Notifications> {
                       itemCount: notifications?.length,
                       itemBuilder: (context, index) {
                         // product = snapshot.data![index];
-                        return NotificationCard(notifications: jsonDecode(notifications?[notifications?.keys.toList()[index]]), pin:widget.pin);
-                }) : Container()
+                        return NotificationCard(notifications: jsonDecode(notifications?[notifications?.keys.toList()[notifications!.length - index - 1]]), pin:widget.pin);
+                }) :ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height-120,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/empty.png', width: 140),
+                                SizedBox(height:20),
+
+                                Center(
+                                  child: Text('Empty!'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
     
     )));
   }

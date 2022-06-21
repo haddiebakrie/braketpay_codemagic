@@ -34,6 +34,10 @@ Future<PermissionStatus> getCameraPermission() async {
     }
 }
 
+String nairaSign() {
+  return '\u20A6';
+}
+
 String toTitleCase(String str) {
-  return str.length > 0 ? '${str[0].toUpperCase()}${str.substring(1).toLowerCase()}':'';
+  return str.length > 0 ? '${str[0].toUpperCase()}${str.substring(1)}':'';
 }

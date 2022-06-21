@@ -2,6 +2,7 @@
 import 'package:braketpay/classes/transaction.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/transactiondetail.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
@@ -17,7 +18,7 @@ class TransactionListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
       Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => TransactionDetail(transaction: transaction, user:user)
@@ -28,17 +29,7 @@ class TransactionListCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 3,
-              blurRadius: 10,
-              offset: const Offset(0, 0), // changes position of shadow
-            ),
-          ]),
+          decoration: ContainerDecoration(),
           child: ListTile(
             horizontalTitleGap: 10,
             trailing: Column(
@@ -53,6 +44,7 @@ class TransactionListCard extends StatelessWidget {
             ),
             title: Text(
               transaction.payload!.receiverName ?? "",
+              maxLines: 1,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: RichText(
@@ -60,13 +52,13 @@ class TransactionListCard extends StatelessWidget {
                   text: "",
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.black
+
                   ),
                   children: <TextSpan>[
                     TextSpan(
                         style: const TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: Colors.black,
                         ),
                         text:
                             "${transaction.payload!.formatAmount()}"),
@@ -78,6 +70,12 @@ class TransactionListCard extends StatelessWidget {
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(20)),
                   child: transaction.payload!.transactionType!.contains('airtel') ? Image.asset('assets/airtel.png') 
+                  : transaction.payload!.transactionType!.contains('9') ? Image.asset('assets/9mobile.png')
+                  : transaction.payload!.transactionType!.contains('etisalat') ? Image.asset('assets/9mobile.png')
+                  : transaction.payload!.transactionType!.contains('glo') ? Image.asset('assets/glo.jpg')
+                  : transaction.payload!.transactionType!.contains('dstv') ? Image.asset('assets/dstv.png')
+                  : transaction.payload!.transactionType!.contains('dstv') ? Image.asset('assets/dstv.png')
+                  : transaction.payload!.transactionType!.contains('gotv') ? Image.asset('assets/gotv.png')
                   : transaction.payload!.transactionType!.contains('mtn') ? Image.asset('assets/mtn.png') : IconButton(
                       icon: const Icon(IconlyBold.send),
                       color: Colors.white,

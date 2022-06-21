@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:braketpay/api_callers/contracts.dart';
@@ -5,11 +6,19 @@ import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconly/iconly.dart';
+import 'package:im_stepper/stepper.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+
+import '../uix/askpin.dart';
+import '../uix/themedcontainer.dart';
 
 class ProductDetail extends StatefulWidget {
-  const ProductDetail(
+  ProductDetail(
       {Key? key, required this.contract, required this.pin, required this.user})
       : super(key: key);
 
@@ -23,16 +32,37 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   Brakey brakey = Get.put(Brakey());
+  Map  contractStateMap = {
+    'open' : {'color' : Colors.orange, 'comment' : 'This contract is still active'},
+    'closed' :{'color' : Colors.green, 'comment' : 'This contract has been terminated'},
+    'terminated' :{'color' : Colors.red, 'comment' : 'This contract has been terminated'},
+    'rejected' :{'color' : Colors.red, 'comment' : 'This contract has been terminated'},
+    'declined' :{'color' : Colors.red, 'comment' : 'This contract has been terminated'},
+  };
+
   @override
   Widget build(BuildContext context) {
+  int contractStateIndex = widget.contract.payload!.states!.approvalState?.toLowerCase() == 'rejected' ? 2 :
+                                widget.contract.payload!.states!.approvalState?.toLowerCase() == 'approved' ? 1 : 0;
+  
+  contractStateIndex = widget.contract.payload!.states!.confirmationState?.toLowerCase() == 'confirmed' ? 3 :
+  widget.contract.payload!.states!.closingState?.toLowerCase() == 'terminated' ? 4 : contractStateIndex; 
+    
     final PageController _controller = PageController();
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
             elevation: 0,
+            
             centerTitle: true,
-            title: Text(widget.contract.payload!.terms!.contractTitle ?? '')),
+            // actions: [
+            //   IconButton(onPressed: () {}, icon: const Icon(Icons.download_rounded))
+            // ],
+            // title: Text(widget.contract.payload!.terms!.contractTitle ?? '')),
+            // title: Text('${widget.contract.payload!.states!.closingState}')
+            ),
         bottomSheet: widget.contract.payload!.states!.approvalState ==
-                'Rejected' || widget.contract.payload!.states!.closingState == 'Closed'
+                'Rejected' || widget.contract.payload!.states!.closingState == 'Closed' || widget.contract.payload!.states!.closingState == 'Terminated'
             ? const SizedBox(
                 height: 70,
                 child:
@@ -130,7 +160,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       color: Colors.white),
                                                 ),
                                                 onPressed: () {
-                                                  rejectContract();
+                                                  sellerTerminateContract();
                                                 }))),
                                   ])))
                 : Container(
@@ -192,253 +222,392 @@ class _ProductDetailState extends State<ProductDetail> {
                                         }))),
                           ])),
         body: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20), bottom: Radius.zero),
-            color: Colors.white,
-          ),
-          child: PageView(controller: _controller, children: [
-            Stack(children: [
+          decoration: ContainerBackgroundDecoration(),
+          child: ListView(
+            children: [
               Container(
-                  margin: const EdgeInsets.only(left: 30),
-                  height: double.infinity,
-                  width: 2,
-                  color: Colors.grey),
-              ListView(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 50),
-                    child: Column(children: [
+              padding: const EdgeInsets.all(20.0),
+                margin: const EdgeInsets.only(bottom: 90),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                              width: 60,
+                              margin: const EdgeInsets.only(bottom: 10),
+                              height: 5,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                    ),
+                  Text(widget.contract.payload!.terms!.contractTitle ?? '', style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold )),
+                  Text("Created on: ${widget.contract.dateCreated()}", style: const TextStyle(fontSize: 14, color: Colors.blueGrey) ),
+                  Text("ID: ${widget.contract.payload!.contractID}", style: const TextStyle(fontSize: 14, color: Colors.blueGrey) ),
+                  
+                  SizedBox(height:20),
+                                    
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const Text('Contract State', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+
                           Container(
-                            color: Colors.white,
-                            margin: const EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical:2),
+                            color: contractStateMap[widget.contract.payload!.states!.closingState?.toLowerCase()]?['color'].shade50?? Colors.grey.shade50,
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  Icons.calendar_month_rounded,
-                                  color: Theme.of(context).primaryColor,
+                                Icon(Icons.circle, size: 10, 
+                            color: contractStateMap[widget.contract.payload!.states!.closingState?.toLowerCase()]?['color']??Colors.grey,
+                                
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text('Date',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                )
+                                const SizedBox(width: 2),
+                                Text(widget.contract.payload?.states?.closingState??'', style: TextStyle(
+                            color: contractStateMap[widget.contract.payload!.states!.closingState?.toLowerCase()]?['color']??Colors.grey,
+                              fontWeight: FontWeight.bold
+                                ),)
                               ],
                             ),
-                          ),
-                          Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 40),
-                              child: Text(
-                                widget.contract.dateCreated(),
-                                style: const TextStyle(fontSize: 18),
-                              ))
+                          )
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      IconStepper(
+                        enableNextPreviousButtons: false,
+                        enableStepTapping: false,
+                        steppingEnabled: false,
+                        lineColor: Colors.grey,
+                        stepColor: Colors.transparent,
+                        activeStepBorderColor: Colors.transparent,
+                        activeStepColor: Colors.transparent,
+                        stepRadius: 25,
+                        activeStep: contractStateIndex == 0 || contractStateIndex == 1 ?
+                        0 : contractStateIndex == 2 || contractStateIndex == 3 ? 1 : 3,
+                        icons: [
+                        Icon(CupertinoIcons.person_crop_circle_badge_checkmark, color: contractStateIndex == 1 || contractStateIndex >= 3 ? Colors.green.shade400 : contractStateIndex == 2 ? Colors.red : Colors.grey,),
+                        Icon(Icons.delivery_dining, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 4 ? Colors.red : Colors.grey),
+                        Icon(Icons.handshake, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 6 ? Colors.red : Colors.grey),
+                      ]),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
-                            color: Colors.white,
-                            margin: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Icon(Icons.people_alt_rounded,
-                                    color: Theme.of(context).primaryColor),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text('Parties',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Created by: ${widget.contract.payload!.parties!.contractCreator}',
-                                style: const TextStyle(fontSize: 18),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Buyer: ${widget.contract.payload!.parties!.buyersName}',
-                                style: const TextStyle(fontSize: 18),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Seller: ${widget.contract.payload!.parties!.sellersName}',
-                                style: const TextStyle(fontSize: 18),
-                              )),
+                          const SizedBox(),
+                          // SizedBox(),
+                          Text(contractStateIndex == 2 ? 'Rejected' : 'Accepted', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex >= 3 || contractStateIndex == 1  ? Colors.green.shade400 : contractStateIndex == 2 ? Colors.red : Colors.grey,)),
+                          const SizedBox(),
+                          Text(contractStateIndex == 4 ? '     Terminated' : '    Delivered', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 4 ? Colors.red : Colors.grey)),
+                          const SizedBox(),
+                          Text('Completed', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 6 ? Colors.red : Colors.grey)),
+                          const SizedBox(),
                         ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.white,
-                            margin: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Icon(Icons.label, color: Theme.of(context).primaryColor),
-                                Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text('Product Detail',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18)))
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 40),
-                              child: Text(
-                                widget.contract.payload!.terms!
-                                        .productDetails ??
-                                    '',
-                                style: const TextStyle(fontSize: 18),
-                              ))
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.white,
-                            margin: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Icon(Icons.payment, color: Theme.of(context).primaryColor),
-                                Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text('Price',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18)))
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Product Price: ${formatAmount(widget.contract.payload!.terms!.productAmount.toString())}',
-                                style: const TextStyle(
-                                    fontSize: 18, fontFamily: ''),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Shipping Fee: ${formatAmount(widget.contract.payload!.terms!.logisticAmount.toString())}',
-                                style: const TextStyle(
-                                    fontSize: 18, fontFamily: ''),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Total: ${formatAmount(widget.contract.totalAmount())}',
-                                style: const TextStyle(
-                                    fontSize: 18, fontFamily: ''),
-                              )),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.white,
-                            margin: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Icon(Icons.delivery_dining,
-                                    color: Theme.of(context).primaryColor),
-                                Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text('Shipping',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18)))
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'From: ${widget.contract.payload!.terms!.shippingLocation}',
-                                style: const TextStyle(fontSize: 18),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'To: ${widget.contract.payload!.terms!.shippingDestination}',
-                                style: const TextStyle(fontSize: 18),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                'Delivers on: ${widget.contract.deliveryDate()}',
-                                style: const TextStyle(fontSize: 18),
-                              )),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.white,
-                            margin: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Icon(Icons.flag_circle,
-                                    color: Theme.of(context).primaryColor),
-                                Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text('Contract State',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18)))
-                              ],
-                            ),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5),
-                              child: Text(
-                                widget.contract.payload!.states!
-                                        .approvalState ??
-                                    '',
-                                style: const TextStyle(fontSize: 18),
-                              )),
-                        ],
-                      ),
-                      const SizedBox(height: 40)
-                    ]),
+                      )
+                    ],
                   ),
-                ],
-              )
-            ])
-          ]),
+                  
+
+                  const SizedBox(height: 20,),
+                   
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Product Detail', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                      const SizedBox(height:10),
+                      Text(
+                        widget.contract.payload!.terms!
+                                .productDetails ??
+                            '',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(height:10),
+                      
+                    ],
+                  ),
+                  const SizedBox(height:20),
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Fees', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                      const SizedBox(height:10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('PRODUCT PRICE'),
+                            Text(formatAmount(widget.contract.payload?.terms?.productAmount??''))
+                          ]
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('SHIPPING FEE'),
+                            Text(formatAmount(widget.contract.payload?.terms?.logisticAmount??''))
+                          ]
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Total Amount', style: TextStyle(fontWeight: FontWeight.w500)),
+                            Text(formatAmount(widget.contract.totalAmount()), style: const TextStyle(fontWeight: FontWeight.w500))
+                          ]
+                        ),
+                      )
+                    ]  
+                      ),
+                      SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Logistics', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                      const SizedBox(height:10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Shipping from'),
+                            Text(widget.contract.payload?.terms?.shippingLocation??'')
+                          ]
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Shipping to'),
+                            Text(widget.contract.payload?.terms?.shippingDestination??'')
+                          ]
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Delivery date', style: TextStyle(fontWeight: FontWeight.w500)),
+                            Text(widget.contract.deliveryDate(), style: const TextStyle(fontWeight: FontWeight.w500))
+                          ]
+                        ),
+                      )
+                    ]  
+                      ),
+                      SizedBox(height:20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Parties', style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18)),
+                      ListTile(
+                        minLeadingWidth: 0,
+                        contentPadding: EdgeInsets.zero,
+                        minVerticalPadding: 0,
+                        title: const Text('Contract creator'),
+                        trailing: Text(
+                          '${widget.contract.payload!.parties!.contractCreator}',
+                          style: const TextStyle(),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                        const Text('Buyer'),
+                        Text(
+                          '${widget.contract.payload!.parties!.buyersName}',
+                        ),
+
+                        ],
+                      ),
+                      ListTile(
+                        minLeadingWidth: 0,
+                        contentPadding: EdgeInsets.zero,
+                        minVerticalPadding: 0,
+                        title: const Text('Seller'),
+                        trailing:  Text(
+                          '${widget.contract.payload!.parties!.sellersName}',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Visibility(
+                    visible: widget.contract.isProvider(widget.user.payload!.fullname ?? ''),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Activation Codes', style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            InkWell(
+                             onTap: () {
+                               print('hi');
+                                Clipboard.setData(ClipboardData(
+                                    text: widget.contract.payload!.privilledges?.confirmationCode));
+                                Get.showSnackbar(const GetSnackBar(
+                                    duration: Duration(seconds: 1),
+                                    animationDuration: Duration(milliseconds: 10),
+                                    forwardAnimationCurve: Curves.ease,
+                                    messageText: Text(
+                                        'Confirmation code has been copied',
+                                        style:
+                                            TextStyle(color: Colors.white))));
+                            },
+                              child: Container(
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                                  margin: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: Colors.green.shade50
+                                                  ),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: Border.all(color: Colors.green.shade600)
+                                                  ),
+                                                  padding: const EdgeInsets.all(10),
+                                                  child: Text(
+                                                    '${widget.contract.payload!.privilledges?.confirmationCode}',
+                                                    style: TextStyle(fontSize: 30, color: Colors.green.shade600),
+                                                  ),
+                                                ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(IconlyBold.paper,
+                                                  size: 20,
+                                                  color: Colors.green.shade600),
+                                                  Text('copy', style: TextStyle(color: Colors.green.shade600),)
+                                          ],
+                                        ),
+                                      )
+                                              ],
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Confirmation Code'
+                                            
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                        InkWell(
+                             onTap: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: widget.contract.payload!.privilledges?.terminationCode));
+                                Get.showSnackbar(const GetSnackBar(
+                                    duration: Duration(seconds: 1),
+                                    animationDuration: Duration(milliseconds: 10),
+                                    forwardAnimationCurve: Curves.ease,
+                                    messageText: Text(
+                                        'Termination code has been copied',
+                                        style:
+                                            TextStyle(color: Colors.white))));
+                            },
+                              child: Container(
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                                  margin: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: Colors.red.shade50
+                                                  ),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: Border.all(color: Colors.red.shade600)
+                                                  ),
+                                                  padding: const EdgeInsets.all(10),
+                                                  child: Text(
+                                                    '${widget.contract.payload!.privilledges?.terminationCode}',
+                                                    style: TextStyle(fontSize: 30, color: Colors.red.shade600),
+                                                  ),
+                                                ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(IconlyBold.paper,
+                                                  size: 20,
+                                                  color: Colors.red.shade600),
+                                                  Text('copy', style: TextStyle(color: Colors.red.shade600),)
+                                          ],
+                                        ),
+                                      )
+                                              ],
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Termination Code'
+                                            
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                        
+                        
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                 const SizedBox(height: 40)
+                ]),
+              ),
+            ],
+          ),
         ));
   }
 
-  approveContract() {
+  approveContract() async {
+     StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+  final _pinEditController = TextEditingController();
+    Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+                          if (pin == null || !pin.containsKey('pin')) {
+                            return;
+                          }
+    
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -473,13 +642,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                   ],
                                 ));
                           });
-                      // print(widget.contract.payload!.privilledges!.toJson());
+                      print(widget.contract.payload!.privilledges!.toJson());
                       try {
                         Map a = await contractAction(
                             widget.contract.payload!.privilledges!
                                     .approvalCode ??
                                 '',
-                            widget.pin,
+                            pin['pin'],
                             widget.contract.payload!.contractID ?? '',
                             widget.user.payload!.publicKey ?? '',
                             'product',
@@ -487,7 +656,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             "approval_code");
                         // Navigator.of(context).pop();
                         if (a.containsKey('Status')) {
-                          if (a['Status'] == 'successful') {
+                          if (a['Status'] == 'successful' || a['Status'] == 'successfull' || a['Status'] == 'pass') {
                             showDialog(
                                 context: context,
                                 barrierDismissible: false,
@@ -506,8 +675,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         )
                                       ],
                                       title: const Text("Approve successful"),
-                                      content: const Text(
-                                          'This contract has been approved'));
+                                      content: Text(toTitleCase(a['Message'])));
                                 });
                           } else {
                             showDialog(
@@ -526,10 +694,29 @@ class _ProductDetailState extends State<ProductDetail> {
                                         )
                                       ],
                                       title: const Text("Approve failed"),
-                                      content: Text(a['Message']));
+                                      content: Text(toTitleCase(a['Message'])));
                                 });
                           }
-                        }
+                        } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve failed"),
+                                      content: Text(toTitleCase(a['Message'])));
+                                });
+                          }
                       } catch (e) {
                         print('Error: $e');
                         // Navigator.of(context).pop();
@@ -563,7 +750,15 @@ class _ProductDetailState extends State<ProductDetail> {
         });
   }
 
-  rejectContract() {
+  
+  rejectContract() async {
+     StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+  final _pinEditController = TextEditingController();
+    Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+                          if (pin == null || !pin.containsKey('pin')) {
+                            return;
+                          }
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -603,7 +798,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             widget.contract.payload!.privilledges!
                                     .approvalCode ??
                                 '',
-                            widget.pin,
+                            pin['pin'],
                             widget.contract.payload!.contractID ?? '',
                             widget.user.payload!.publicKey ?? '',
                             'product',
@@ -611,7 +806,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             "approval_code");
                         // Navigator.of(context).pop();
                         if (a.containsKey('Status')) {
-                          if (a['Status'] == 'successful') {
+                          if (a['Status'] == 'successful' || a['Status'] == 'successfull' || a['Status'] == 'pass') {
                             showDialog(
                                 context: context,
                                 barrierDismissible: false,
@@ -630,8 +825,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         )
                                       ],
                                       title: const Text("Reject successful"),
-                                      content: const Text(
-                                          'This contract has been rejected'));
+                                      content: Text(toTitleCase(a['Message'])));
                                 });
                           } else {
                             showDialog(
@@ -650,10 +844,29 @@ class _ProductDetailState extends State<ProductDetail> {
                                         )
                                       ],
                                       title: const Text("Reject failed"),
-                                      content: Text(a['Message']));
+                                      content: Text(toTitleCase(a['Message'])));
                                 });
                           }
-                        }
+                        }else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve failed"),
+                                      content: Text(toTitleCase(a['Message'])));
+                                });
+                          }
                       } catch (e) {
                         print('Error: $e');
                         // Navigator.of(context).pop();
@@ -685,8 +898,15 @@ class _ProductDetailState extends State<ProductDetail> {
         });
   }
 
-  confirmContract() {
+  confirmContract() async {
     String code = '';
+     StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+  final _pinEditController = TextEditingController();
+    Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+                          if (pin == null || !pin.containsKey('pin')) {
+                            return;
+                          }
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -745,7 +965,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                       try {
                                         Map a = await contractAction(
                                             code,
-                                            widget.pin,
+                                            pin['pin'],
                                             widget.contract.payload!
                                                     .contractID ??
                                                 '',
@@ -756,7 +976,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                             "confirmation_code");
                                         // Navigator.of(context).pop();
                                         if (a.containsKey('Status')) {
-                                          if (a['Status'] == 'successful') {
+                                          if (a['Status'] == 'successful' || a['Status'] == 'successfull' || a['Status'] == 'pass') {
                                             showDialog(
                                                 context: context,
                                                 barrierDismissible: false,
@@ -786,8 +1006,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       ],
                                                       title: const Text(
                                                           "Confirm successful"),
-                                                      content: const Text(
-                                                          'This contract has been Confirmed'));
+                                                      content: Text(toTitleCase(a['Message'])));
                                                 });
                                           } else {
                                             showDialog(
@@ -818,7 +1037,26 @@ class _ProductDetailState extends State<ProductDetail> {
                                                           Text(a['Message']));
                                                 });
                                           }
-                                        }
+                                        } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve failed"),
+                                      content: Text(toTitleCase(a['Message'])));
+                                });
+                          }
                                       } catch (e) {
                                         print('Error: $e');
                                         // Navigator.of(context).pop();
@@ -851,7 +1089,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               ],
                               title: const Text("Are you sure?"),
                               content: const Text(
-                                  'Make sure the product has been delivered.'));
+                                  'Do not confirm this contract if the product has not been delivered.'));
                         });
                   },
                 ),
@@ -864,8 +1102,16 @@ class _ProductDetailState extends State<ProductDetail> {
               ]);
         });
   }
-  buyerRejectContract() {
+  buyerRejectContract() async {
     String code = '';
+     StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+  final _pinEditController = TextEditingController();
+    Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+                          if (pin == null || !pin.containsKey('pin')) {
+
+                            return;
+                          }
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -919,7 +1165,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                       try {
                                         Map a = await contractAction(
                                             code,
-                                            widget.pin,
+                                            pin['pin'],
                                             widget.contract.payload!
                                                     .contractID ??
                                                 '',
@@ -928,9 +1174,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                             'product',
                                             'terminate',
                                             "termination_code");
+                                            print(a);
                                         // Navigator.of(context).pop();
                                         if (a.containsKey('Status')) {
-                                          if (a['Status'] == 'successful') {
+                                          if (a['Status'] == 'successful' || a['Status'] == 'successfull' || a['Status'] == 'pass') {
                                             showDialog(
                                                 context: context,
                                                 barrierDismissible: false,
@@ -960,8 +1207,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       ],
                                                       title: const Text(
                                                           "Terminate successful"),
-                                                      content: const Text(
-                                                          'This contract has been Terminated'));
+                                                      content: Text(toTitleCase(a['Message'])));
                                                 });
                                           } else {
                                             showDialog(
@@ -989,10 +1235,29 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       title: const Text(
                                                           "Terminate failed"),
                                                       content:
-                                                          Text(a['Message'] ?? a['essage']));
+                                                          Text(toTitleCase(a['Message'] ?? a['essage'])));
                                                 });
                                           }
-                                        }
+                                        } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve failed"),
+                                      content: Text(toTitleCase(a['Message'])));
+                                });
+                          }
                                       } catch (e) {
                                         print('Error: $e');
                                         // Navigator.of(context).pop();
@@ -1042,5 +1307,185 @@ class _ProductDetailState extends State<ProductDetail> {
                 )
               ]);
         });
+  }
+
+  sellerTerminateContract() async {
+    String code = '';
+     StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+  final _pinEditController = TextEditingController();
+    Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+    if (pin == null || !pin.containsKey('pin')) {
+      return;
+    }
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (confirm) {
+          return AlertDialog(
+                              actionsAlignment: MainAxisAlignment.spaceBetween,
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                    child: const Text('Ok, Terminate'),
+                                    onPressed: () async {
+                                      // Navigator.of(context).pop();
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (loading) {
+                                            return AlertDialog(
+                                                title: const Text(
+                                                    "Rejecting contract"),
+                                                content: Row(
+                                                  children: const [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.all(15.0),
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    Text('Please wait...'),
+                                                  ],
+                                                ));
+                                          });
+                                      // print(widget
+                                      //     .contract.payload!.privilledges!
+                                      //     .toJson());
+                                      try {
+                                        Map a = await contractAction(
+                                            widget.contract.payload!.privilledges!.terminationCode??'',
+                                            pin['pin'],
+                                            widget.contract.payload!
+                                                    .contractID ??
+                                                '',
+                                            widget.user.payload!.publicKey ??
+                                                '',
+                                            'product',
+                                            'terminate',
+                                            "termination_code");
+                                            print(a);
+                                        // Navigator.of(context).pop();
+                                        if (a.containsKey('Status')) {
+                                          if (a['Status'] == 'successful' || a['Status'] == 'successfull' || a['Status'] == 'pass') {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Okay'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                            brakey.refreshUserDetail();
+
+                                                          },
+                                                        )
+                                                      ],
+                                                      title: const Text(
+                                                          "Terminate successful"),
+                                                      content: Text(toTitleCase(a['Message'])));
+                                                });
+                                          } else {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Okay'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                      title: const Text(
+                                                          "Terminate failed"),
+                                                      content:
+                                                          Text(toTitleCase(a['Message'] ?? a['essage'])));
+                                                });
+                                          }
+                                        } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                      title: const Text("Approve failed"),
+                                      content: Text(toTitleCase(a['Message'])));
+                                });
+                          }
+                                      } catch (e) {
+                                        print('Error: $e');
+                                        // Navigator.of(context).pop();
+                                        showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (error) {
+                                              return AlertDialog(
+                                                  actions: [
+                                                    TextButton(
+                                                      child: const Text('Okay'),
+                                                      onPressed: () {
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                        Navigator.of(error)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                  title: const Text(
+                                                      "No internet access!"),
+                                                  content: const Text(
+                                                      'Make sure you are connected to the internet and try again'));
+                                            });
+                                      }
+                                    }),
+                                
+                              ],
+                              title: const Text("Are you sure?"),
+                              content: const Text(
+                                  'This action cannot be reveresed.'));
+                        });
   }
 }

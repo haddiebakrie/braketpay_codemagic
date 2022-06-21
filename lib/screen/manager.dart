@@ -14,24 +14,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 import '../uix/contractlistcard.dart';
 import 'contracts.dart';
 
 class Manager extends StatefulWidget {
-  Manager({Key? key, required this.user, required this.pin, this.mcurrentIndex = 0}) : super(key: key);
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+  const Manager({Key? key, required this.user, required this.pin, this.mcurrentIndex = 0}) : super(key: key);
   final User user;
   final String pin;
-  int mcurrentIndex;
+  final int mcurrentIndex;
 
 
   @override
@@ -39,77 +31,78 @@ class Manager extends StatefulWidget {
 }
 
 class _ManagerState extends State<Manager> {
+  AppUpdateInfo? _updateInfo;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
+  bool _flexibleUpdateAvailable = false;
+
+  Future<void> checkForUpdate() async {
+    print('Checking for Update');
+    InAppUpdate.checkForUpdate().then((value) => {
+    setState(() {
+      _updateInfo = value;
+    }),
+    _updateInfo?.updateAvailability == UpdateAvailability.updateAvailable ? InAppUpdate.startFlexibleUpdate().catchError((e){}) 
+    : null
+    }
+    
+    ).catchError((e) {
+      print(e);
+    });
+  }
+
   Brakey brakey = Get.put(Brakey());
+  late final List<Widget> screenList;
+  List<int> _navigationRoutes = [0];
 
   @override
   void initState() { 
     super.initState();
+    checkForUpdate();
+    screenList = [
+      Home(user: widget.user, pin: brakey.user.value!.payload!.pin??'', gotoWallet: gotoWallet),
+      Contracts(user: widget.user, pin:brakey.user.value!.payload!.pin??''),
+      History(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
+      Wallet(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
+      Merchant(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
+    ];
     
   }
 
   int currentIndex = 0;
 
+  gotoWallet() {
+      setState(() {brakey.changeManagerIndex(3);});
+  }
+
+  
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(Duration(seconds: 5), (timer) {
+    Timer.periodic(Duration(seconds: 10), (timer) {
       brakey.listenToAccountChanges();
      });
 
-    List<Widget> screenList = [
-      Home(user: widget.user, pin: widget.pin),
-      Contracts(user: widget.user, pin: widget.pin),
-      History(user: widget.user, pin: widget.pin),
-      Wallet(user: widget.user, pin: widget.pin),
-      Merchant(user: widget.user, pin: widget.pin),
-      // Text('HI'),
-      // Contracts(),
-      // Contracts(),
-      // CalendarPage(),
-      // ProfilePage(),
-    ];
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async {
+        if (_navigationRoutes.last == 0) {
+          return true;
+        }
+        if (_navigationRoutes.length > 1) {
+          _navigationRoutes.removeLast();
+          brakey.changeManagerIndex(_navigationRoutes.last);
+          return false;
+        } else {
+          return true;
+        }
+      },
       child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
-        
-        // appBar: AppBar(
-        //     elevation: 0,
-        //     titleSpacing: 5,
-        //     toolbarHeight: 65,
-        //     leading: Padding(
-        //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-        //       child: Container(
-        //         decoration: BoxDecoration(
-        //             color: Colors.white,
-        //             border: Border.all(color: Colors.white),
-        //             borderRadius: BorderRadius.circular(20)),
-        //         child: IconButton(
-        //             icon: const Icon(IconlyBold.profile),
-        //             color: Theme.of(context).primaryColor,
-        //             iconSize: 20,
-        //             onPressed: () {}),
-        //       ),
-        //     ),
-        //     actions: [
-        //       IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-        //     ],
-        //     title: Column(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           Text('Hi, ' + widget.title,
-        //               style: const TextStyle(fontWeight: FontWeight.bold)),
-        //           Text('@' + widget.title, style: const TextStyle(fontSize: 14))
-        body: Obx(() => (IndexedStack(
-          children: screenList,
-          index: brakey.managerIndex.toInt(),
-        ))),
+        body: Obx( () => IndexedStack(
+            children: screenList,
+            index: brakey.managerIndex.toInt(),
+          ),
+        ),
         //         ])),
         bottomNavigationBar: Obx(() => (BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
@@ -130,7 +123,12 @@ class _ManagerState extends State<Manager> {
             showUnselectedLabels: true,
             currentIndex: brakey.managerIndex.value,
             type: BottomNavigationBarType.fixed,
-            onTap: (index) => setState(() {brakey.changeManagerIndex(index);})
+            onTap: (index) {
+              print(_navigationRoutes);
+              brakey.changeManagerIndex(index);
+              _navigationRoutes.remove(index);
+              _navigationRoutes.add(index);
+            }
             // onTap: _selectTab,
             // currentIndex: _currentTab,
         )))

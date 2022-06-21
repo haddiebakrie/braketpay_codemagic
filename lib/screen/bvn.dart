@@ -9,6 +9,8 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:get/get.dart';
 import 'package:braketpay/brakey.dart';
 import 'manager.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+
 
 Future<dynamic> askBVN(
   context,
@@ -48,152 +50,107 @@ Future<dynamic> askBVN(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'Security Infomation',
+                        'Sign up',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
-                        child: TextFormField(
-                          autofillHints: [AutofillHints.email],
-                          cursorColor: Colors.black,
-                          decoration: const InputDecoration(
-                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            hintText: 'Email address',
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
-                          ),
-                          onChanged: (text) {
-                            email = text.trim();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter your email address';
-                            }
-                            return null;
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: const Text(
+                          'Email address',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 15),
+                        ),
+                      ),
+                            TextFormField(
+                              autofillHints: const [AutofillHints.email],
+                              cursorColor: Colors.black,
+                              decoration: const InputDecoration(
+                                fillColor: Color.fromARGB(24, 158, 158, 158),
+                                filled: true,
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                hintText: 'Ex yourname@gmail.com',
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 10),
+                              ),
+                              onChanged: (text) {
+                                email = text.trim();
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter your email address';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.symmetric(vertical: 15),
-                        child: TextFormField(
-                          cursorColor: Colors.black,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          decoration: const InputDecoration(
-                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                            filled: true,
-                            hintMaxLines: 2,
-                            helperMaxLines: 2,
-                            errorMaxLines: 2,
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            hintText: 'BVN',
-                            helperText: 'Enter your BVN, dail *565# with the same number linked with your BVN',
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
-                          ),
-                          onChanged: (text) {
-                            bvn = text.trim();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty || value.trim().length < 11) {
-                              return 'Enter your BVN, dail *565# with the same number linked with your BVN';
-                            }
-                            return null;
-                          },
+                        margin: const EdgeInsets.symmetric(vertical: 1),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+
+                            Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: const Text(
+                          'Enter your NIN or BVN (optional)',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                       ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(vertical: 15),
-                      //   child: TextFormField(
-                      //     cursorColor: Colors.black,
-                      //       keyboardType: TextInputType.number,
-                      //       maxLength: 4,
-                      //       obscureText: true,
-                      //     decoration: const InputDecoration(
-                      //       fillColor: Color.fromARGB(24, 158, 158, 158),
-                      //       filled: true,
-                      //       hintMaxLines: 2,
-                      //       helperMaxLines: 2,
-                      //       errorMaxLines: 2,
-                      //       focusedBorder: OutlineInputBorder(
-                      //           borderSide: BorderSide.none,
-                      //           borderRadius:
-                      //               BorderRadius.all(Radius.circular(10))),
-                      //       hintText: 'Transaction PIN',
-                      //       helperText: 'Set your 4 digit Transaction PIN ',
-                      //       border: OutlineInputBorder(
-                      //           borderSide: BorderSide.none,
-                      //           borderRadius:
-                      //               BorderRadius.all(Radius.circular(10))),
-                      //       contentPadding:
-                      //           EdgeInsets.symmetric(horizontal: 10),
-                      //     ),
-                      //     onChanged: (text) {
-                      //       pin = text.trim();
-                      //       _loginButtonController.reset();
-                      //     },
-                      //     validator: (value) {
-                      //       if (value == null || value.isEmpty || value.trim().length < 4) {
-                      //         return 'Set your 4 digit Transaction PIN ';
-                      //       }
-                      //       return null;
-                      //     },
-                      //   ),
-                      // ),
-                      
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(vertical: 15),
-                      //   child: TextFormField(
-                          
-                      //     cursorColor: Colors.black,
-                      //       keyboardType: TextInputType.number,
-                      //       maxLength: 4,
-                      //       obscureText: true,
-                      //     decoration: const InputDecoration(
-                      //       fillColor: Color.fromARGB(24, 158, 158, 158),
-                      //       filled: true,
-                      //       hintMaxLines: 2,
-                      //       helperMaxLines: 2,
-                      //       errorMaxLines: 2,
-                      //       focusedBorder: OutlineInputBorder(
-                      //           borderSide: BorderSide.none,
-                      //           borderRadius:
-                      //               BorderRadius.all(Radius.circular(10))),
-                      //       hintText: 'Confirm Transaction PIN',
-                      //       border: OutlineInputBorder(
-                      //           borderSide: BorderSide.none,
-                      //           borderRadius:
-                      //               BorderRadius.all(Radius.circular(10))),
-                      //       contentPadding:
-                      //           EdgeInsets.symmetric(horizontal: 10),
-                      //     ),
-                      //     validator: (value) {
-                      //       if (value == null || value.isEmpty || value != pin) {
-                      //         return 'Enter the same Transaction PIN ';
-                      //       }
-                      //       return null;
-                      //     },
-                      //   ),
-                      // ),
-                      
+                            TextFormField(
+                              maxLength: 11,
+                              cursorColor: Colors.black,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              decoration: const InputDecoration(
+                                fillColor: Color.fromARGB(24, 158, 158, 158),
+                                filled: true,
+                                hintMaxLines: 2,
+                                helperMaxLines: 2,
+                                errorMaxLines: 2,
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                hintText: 'XXXXXXXXXXX',
+                                helperText: 'Leave empty to signup without NIN or BVN',
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 10),
+                              ),
+                              onChanged: (text) {
+                                bvn = text.trim();
+                              },
+                              validator: (value) {
+                                if ( value != null && value.isNotEmpty && value.trim().length < 11) {
+                                  return 'Leave empty to signup without NIN or BVN';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height:10),
                       Container(
                           margin: const EdgeInsets.all(10),
                           child: RoundedLoadingButton(
@@ -209,10 +166,12 @@ Future<dynamic> askBVN(
                                   Map a = await sendOTP(
                                     email,
                                     bvn,
+                                    bvn == '' ? 'verify email' : 'verify bvn_nin_before_signup',
+                                  ''
                                   );
                                 //   print(a);
-                                  if (a.containsKey('Payload')) {
-                                    if (a['Status'] == 'successful' || a['Response Code'] == 202) {
+                                  if (a.containsKey('Status')) {
+                                    if (a['Status'] == 'successfull' || a['Status'] == 'successful' || a['Response Code'] == 202 || a['Response Code'] == 422 || a['Response Code'] == 406 ) {
                                       _loginButtonController.success();
                                       showDialog(
                                           context: context,
@@ -229,7 +188,7 @@ Future<dynamic> askBVN(
                                                             .pop();
                                                         _loginButtonController
                                                             .reset();
-                                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUp(email: email, payload: a['Payload'])));
+                                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUp(email: email, payload: bvn == '' ? {} : a['Payload'])));
                                             
                                                         // Navigator.of(context)
                                                         //     .pop();
@@ -286,7 +245,7 @@ Future<dynamic> askBVN(
                                                 ],
                                                 title: const Text(
                                                     "Failed"),
-                                                content: Text(toTitleCase(a['Message'])));
+                                                content: Text(toTitleCase(a['Message']??'No Internet access')));
                                           });
                                       // }
         
@@ -295,7 +254,17 @@ Future<dynamic> askBVN(
                                   _loginButtonController.reset();
                                 }
                               },
-                              child: const Text('Send OTP')))
+                              child: const Text('Send OTP'))),
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.shield, color: Colors.blueGrey, size:15),
+                                    SizedBox(width: 5),
+                                    Text('Braket is CBN KYC Compliant', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),),
+                                  ],
+                                ),
+                              )
                     ],
                   ),
                 ],

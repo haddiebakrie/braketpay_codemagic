@@ -1,4 +1,6 @@
+import 'package:braketpay/screen/savingsplandetail.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 
 class RoundButton extends StatelessWidget {
@@ -50,14 +52,25 @@ class SavingsPlanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-      height: 70,
-      width: 70,
-      child: Center(
-          child: Text(title,
-              style: const TextStyle(color: Colors.white, fontSize: 20))),
+    return Hero(
+      tag: 'savings_detail_$title',
+      child: Material(
+        child: InkWell(
+          onTap: () {
+            print('ji');
+            Get.to(() => SavingsPlanDetail(plan: title));
+          },
+          child: Container(
+            decoration:
+                BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+            height: 70,
+            width: 70,
+            child: Center(
+                child: Text(title,
+                    style: const TextStyle(color: Colors.white))),
+          ),
+        ),
+      ),
     );
   }
 }

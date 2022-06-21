@@ -9,6 +9,7 @@ import 'package:convert/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:icon_badge/icon_badge.dart';
 import 'package:iconly/iconly.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -17,7 +18,15 @@ import '../classes/user.dart';
 import '../api_callers/merchant.dart';
 import '../uix/contractmodeselect.dart';
 import '../uix/listitemseparated.dart';
+import '../uix/merchantcontractmodeselect.dart';
+import '../uix/themedcontainer.dart';
+import 'merchanttemplateloan.dart';
 import 'merchanttemplateservice.dart';
+import 'dart:async';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import '../uix/askpin.dart';
+import 'notifications.dart';
+
 
 class Merchant extends StatefulWidget {
   const Merchant({Key? key, required this.user, required this.pin}) : super(key: key);
@@ -55,11 +64,6 @@ class _MerchantState extends State<Merchant> {
   late Future<Map> templates = fetchMerchantContract('', '', merchantID,
       widget.user.payload!.walletAddress ?? '', widget.pin, 'all');
 
-  void refreshPage() {
-    print('HI Refe');
-    _refreshKey.currentState!.show();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,35 +74,62 @@ class _MerchantState extends State<Merchant> {
           toolbarHeight: 65,
           leading: Container(),
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+            Obx(() => IconBadge(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: ((context) =>
+                        Notifications(user: widget.user, pin: widget.pin))));
+              },
+              maxCount: 9,
+              icon: const Icon(Icons.notifications),
+              itemCount: brakey.notiCount.toInt(),
+              right: 10.0,
+              hideZero: true,
+              top: 10.0
+
+              // hideZero: true,
+
+              ))
           ],
           title: Text(merchantName,
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
-        floatingActionButton: Container(
-          height: 60,
-          width: 60,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Theme.of(context).primaryColor),
-          child: IconButton(
-              color: Colors.white,
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                if (merchantID != '') {
-                  contractMode();
+        floatingActionButton: FutureBuilder<Map>(
+          future: merchant,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.containsKey('Status') &&
+                                  snapshot.data!['Status'] == 'successful') {
+              return Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Theme.of(context).primaryColor),
+                child: IconButton(
+                    color: Colors.white,
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      if (merchantID != '') {
+                        contractMode();
 
-                }
-              }),
+                      }
+                    } 
+              ));
+              
+            } else {
+              return Container();
+            }
+
+                                } else {
+                    return Container();
+                  }
+          }
         ),
         body: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(20), bottom: Radius.zero),
-              color: Colors.white,
-            ),
+            decoration: ContainerBackgroundDecoration(),
             child: RefreshIndicator(
               key: brakey.refreshMerchant.value,
                 onRefresh: () async {
@@ -113,7 +144,17 @@ class _MerchantState extends State<Merchant> {
                       widget.user.payload!.walletAddress ?? '',
                       widget.pin,
                       'all');
-
+                  //     if (_merchant.containsKey('Payload')) {
+                  //       setState(() {
+                  //   merchant = Future.value(_merchant);
+                  // });
+                  //     }
+                  //     if (_templates.containsKey('Payload')) {
+                  //       setState(() {
+                  //                             templates = Future.value(_templates);
+                  // });
+                      // }
+ 
                   setState(() {
                     merchant = Future.value(_merchant);
                     templates = Future.value(_templates);
@@ -137,7 +178,6 @@ class _MerchantState extends State<Merchant> {
                                               BorderRadius.vertical(
                                                   top: Radius.circular(20),
                                                   bottom: Radius.zero),
-                                          color: Colors.white,
                                         ),
                                         child: const Center(
                                             child: Text(
@@ -146,7 +186,7 @@ class _MerchantState extends State<Merchant> {
                                 case ConnectionState.done:
                                   {
                           if (snapshot.hasData && snapshot.data.containsKey('Status')) {
-                            print(snapshot.data);
+                            // print(snapshot.data);
                             if (snapshot.data.containsKey('Status') &&
                                 snapshot.data['Status'] == 'successful') {
                               merchantID =
@@ -157,19 +197,7 @@ class _MerchantState extends State<Merchant> {
                                   padding: const EdgeInsets.all(10),
                                   child: Column(children: [
                                     Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.2),
-                                                spreadRadius: 3,
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 0),
-                                              )
-                                            ]),
+                                        decoration: ContainerDecoration(),
                                         child: Column(
                                           children: [
                                             const SizedBox(height: 10),
@@ -208,7 +236,7 @@ class _MerchantState extends State<Merchant> {
                                           child: Column(
                                             children: const [
                                               Text(
-                                                'Your saved templates',
+                                                'Your Registered contracts',
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight:
@@ -231,6 +259,9 @@ class _MerchantState extends State<Merchant> {
                                           _dummytemplates.addAll(
                                               templateSnapshot
                                                   .data['Service']);
+                                          _dummytemplates.addAll(
+                                              templateSnapshot
+                                                  .data['Loan']);
                                           // print("${_templates.length}, 99999999999999999999 ${template_snapshot.data['Product'].length}");
                                           if (templateSnapshot.data
                                                   .containsKey('Product') &&
@@ -247,46 +278,98 @@ class _MerchantState extends State<Merchant> {
                                               itemCount: _templates.length,
                                               itemBuilder:
                                                   (BuildContext context,
-                                                      int index) {
+                                                      int index) { 
                                                 List<int> image;
+                                            // print(_templates[index]['Payload'].keys.toList());
                                                 try {
-                                                  List<dynamic> ld = jsonDecode(
-                                                      utf8.decode(hex.decode(
-                                                          _templates[index][
-                                                                  'Payload']
-                                                              [
-                                                              'product_picture'])));
-                                                  image = ld
-                                                      .map((s) => s as int)
-                                                      .toList();
+                                                  if (_templates[index]['Payload']['contract_type'] == 'product') {
+                                                      List<dynamic> ld = jsonDecode(
+                                                          utf8.decode(hex.decode(
+                                                              _templates[index][
+                                                                      'Payload']
+                                                                  [
+                                                                  'product_picture'])));
+                                                      image = ld
+                                                          .map((s) => s as int)
+                                                          .toList();
+
+                                                    } else if (_templates[index]['Payload']['contract_type'] == 'service') {
+                                                      List<dynamic> ld = jsonDecode(
+                                                          utf8.decode(hex.decode(
+                                                              _templates[index][
+                                                                      'Payload']
+                                                                  [
+                                                                  'service_picture'])));
+                                                      image = ld
+                                                          .map((s) => s as int)
+                                                          .toList();
+                                                    
+                                                    
+                                                    } else if (_templates[index]['Payload'].containsKey('loan_link')) {
+                                                      List<dynamic> ld = jsonDecode(
+                                                          utf8.decode(hex.decode(
+                                                              _templates[index][
+                                                                      'Payload']
+                                                                  [
+                                                                  'loan_picture'])));
+                                                      image = ld
+                                                          .map((s) => s as int)
+                                                          .toList();
+                                                    } else {
+                                                      List<dynamic> ld = jsonDecode(
+                                                          utf8.decode(hex.decode(
+                                                              _templates[index][
+                                                                      'Payload']
+                                                                  [
+                                                                  'loan_picture'])));
+                                                      image = ld
+                                                          .map((s) => s as int)
+                                                          .toList();
+                                                    }
                                                 } catch (e) {
+                                                  print(e);
+                                                  // return;
+                                                  print(hex.decode(
+                                                          _templates[index][
+                                                                  'Payload']
+                                                              [
+                                                              'loan_picture']));
                                                   List<dynamic> ld = jsonDecode(
                                                       utf8.decode(hex.decode(
                                                           _templates[index][
                                                                   'Payload']
                                                               [
-                                                              'service_picture'])));
+                                                              'loan_picture']??'')));
                                                   image = ld
                                                       .map((s) => s as int)
                                                       .toList();
                                                 }
-                                                return GestureDetector(
+                                                return InkWell(
                                                   onTap: () {
+                                                    if (_templates[index]['Payload']['contract_type'] =='product') {
                                                     Navigator.of(context).push(MaterialPageRoute(
-                                                        builder: (context) => _templates[index]
-                                                                        [
-                                                                        'Payload']
-                                                                    [
-                                                                    'contract_type'] ==
-                                                                'product'
-                                                            ? MerchantProductDetail(
+                                                        builder: (context) => 
+                                                            MerchantProductDetail(
                                                                 product:
                                                                     _templates[
-                                                                        index])
-                                                            : MerchantServiceDetail(
+                                                                        index])));
+                                                            
+
+                                                    } else if (_templates[index]['Payload']['contract_type'] =='service') {
+                                                  print(_templates[index]['Payload']['contract_type']);
+                                                      Navigator.of(context).push(MaterialPageRoute(
+                                                        builder: (context) => MerchantServiceDetail(
                                                                 product:
                                                                     _templates[
                                                                         index]['Payload'])));
+                                                    } else if (_templates[index]['Payload'].containsKey('loan_picture')) {
+                                                      
+                                                      Navigator.of(context).push(MaterialPageRoute(
+                                                        builder: (context) => MerchantLoanDetail(
+                                                                loan:
+                                                                    _templates[
+                                                                        index]['Payload'])));
+                                                    }
                                                   },
                                                   child: Padding(
                                                     padding:
@@ -296,68 +379,45 @@ class _MerchantState extends State<Merchant> {
                                                         padding:
                                                             const EdgeInsets.all(
                                                                 10),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            color: Colors
-                                                                .white,
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .withOpacity(
-                                                                        0.2),
-                                                                spreadRadius:
-                                                                    3,
-                                                                blurRadius:
-                                                                    10,
-                                                                offset:
-                                                                    const Offset(
-                                                                        0,
-                                                                        0),
-                                                              )
-                                                            ]),
+                                                        decoration: ContainerDecoration(),
                                                         child: Column(
                                                           children: [
                                                             Text(_templates[index]
                                                                         [
                                                                         'Payload']
                                                                     [
-                                                                    'contract_type']
-                                                                .toUpperCase()),
+                                                                    'contract_type']?.toUpperCase() ?? 'Loan'),
                                                             const SizedBox(
                                                                 height: 5),
                                                             Container(
                                                               clipBehavior:
                                                                   Clip.antiAliasWithSaveLayer,
-                                                              decoration: BoxDecoration(
-                                                              color: Colors.black,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          20)),
+                                                              decoration: ContainerDecoration(),
                                                               child: Image.memory(Uint8List.fromList(image)),
-                                                              height: 130,
-                                                              width: 130,
+                                                              height: 120,
+                                                              width: 120,
                                                             ),
+                                                                        SizedBox(height:6),
+
                                                             Text(
-                                                                !_templates[index]['Payload'].containsKey(
+                                                                _templates[index]['Payload'].containsKey(
                                                                         'about_service_delivery_stages')
-                                                                    ? _templates[index]['Payload']['product_name']
-                                                                        .toUpperCase()
-                                                                    : _templates[index]['Payload']['contract_title']?.toUpperCase() ??
+                                                                    ? _templates[index]['Payload']['contract_title']?.toUpperCase() ?? ''
+                                                                    :_templates[index]['Payload'].containsKey(
+                                                                        'loan_picture') ? _templates[index]['Payload']['loan_title']?.toUpperCase() : _templates[index]['Payload']['product_title']?.toUpperCase() ??
                                                                         '',
-                                                                maxLines: 2,
+                                                                maxLines: 1,
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center),
+                                                                        SizedBox(height:4),
                                                             Text(
-                                                                !_templates[index]['Payload'].containsKey(
-                                                                        'about_service_delivery_stages')
+                                                                _templates[index]['Payload'].containsKey(
+                                                                        'product_amount')
                                                                     ? formatAmount(_templates[index]['Payload']['product_amount']
-                                                                        .toString())
-                                                                    : '',
+                                                                        .toString()) : ''
+                                                                    ,
+                                                                maxLines: 1,
                                                                 style: const TextStyle(
                                                                     fontFamily:
                                                                         '')),
@@ -370,39 +430,34 @@ class _MerchantState extends State<Merchant> {
                                           } else {
                                             return Container(
                                                 margin: const EdgeInsets.all(40),
-                                                child: const Center(
-                                                    child: Text(
-                                                        'You have not created any template.')));
+                                                child: Center(
+                                                    child: Column(
+                                                      children: [
+                                                        Image.asset('assets/empty.png'),
+                                                        Text(
+                                                            'You have not created any Contract Template yet.\n Click the add button to create.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),),
+                                                      ],
+                                                    )));
                                           }
                                         } else {
-                                          return Container(
-                                        margin: const EdgeInsets.all(30),
-                                          decoration: const BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.vertical(
-                                                    top:
-                                                        Radius.circular(20),
-                                                    bottom: Radius.zero),
-                                            color: Colors.white,
-                                          ),
-                                          child: Center(
+                                          return Center(
                                               child: Column(
                                                 children: [
                                                   Image.asset('assets/sammy-no-connection.gif', height: 200),
                                                   const Text(
-                                                      "Coudn't load contract templates"),
+                                                      "Couldn't load registered templates"),
                                                   const SizedBox(height:10),
                                                   RoundButton(
                                                     text: 'Retry',
-                                                    color1: Colors.black,
-                                                    color2: Colors.black,
+                                                    color1: NeutralButton,
+                                                    color2: NeutralButton,
                                                     onTap: () {
                                                       brakey.refreshMerchant.value!.currentState!.show();
                                                     }
                                                     
                                                   )
                                                 ],
-                                              )));
+                                              ));
                                         }
                                       },
                                     )
@@ -416,10 +471,7 @@ class _MerchantState extends State<Merchant> {
                                 child: Container(
                                   padding:
                                       MediaQuery.of(context).viewInsets,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20))),
+                                  decoration: ContainerBackgroundDecoration(),
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -459,7 +511,7 @@ class _MerchantState extends State<Merchant> {
                                                   'Business Name*',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w400,
                                                       fontSize: 15),
                                                 ),
                                               ),
@@ -525,7 +577,7 @@ class _MerchantState extends State<Merchant> {
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .w600,
+                                                                    .w400,
                                                             fontSize: 15),
                                                       ),
                                                     ),
@@ -602,7 +654,7 @@ class _MerchantState extends State<Merchant> {
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight
-                                                                  .w600,
+                                                                  .w400,
                                                           fontSize: 15),
                                                     ),
                                                   ),
@@ -675,7 +727,7 @@ class _MerchantState extends State<Merchant> {
                                                   'Business Website',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w400,
                                                       fontSize: 15),
                                                 ),
                                               ),
@@ -739,6 +791,14 @@ class _MerchantState extends State<Merchant> {
                                                     ?.unfocus();
                                                 if (_formKey.currentState!
                                                     .validate()) {
+                                                    StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+                        final _pinEditController = TextEditingController();
+                          Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+                          if (pin == null || !pin.containsKey('pin')) {
+                            _loginButtonController.reset();
+                            return;
+                          };
                                                   // print('$username, $pin, $password');
                                                   Map a = await createMerchant(
                                                       website,
@@ -750,9 +810,8 @@ class _MerchantState extends State<Merchant> {
                                                       widget.user.payload!
                                                               .accountNumber ??
                                                           '',
-                                                      widget.pin,
+                                                      pin['pin'],
                                                       bizLoc);
-
                                                   if (a.containsKey(
                                                       'Payload')) {
                                                     _loginButtonController
@@ -849,14 +908,7 @@ class _MerchantState extends State<Merchant> {
                           } else{
                                       return Container(
                                         margin: const EdgeInsets.all(30),
-                                          decoration: const BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.vertical(
-                                                    top:
-                                                        Radius.circular(20),
-                                                    bottom: Radius.zero),
-                                            color: Colors.white,
-                                          ),
+
                                           child: Center(
                                               child: Column(
                                                 children: [
@@ -883,17 +935,9 @@ class _MerchantState extends State<Merchant> {
                 ))));
   }
 
-  Future<dynamic> contractMode() {
-    return showModalBottomSheet(
-        context: context,
-        isDismissible: true,
-        enableDrag: true,
-        backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
-        isScrollControlled: true,
-        builder: (context) {
-          return MerchantContractModeSelect(
-              user: widget.user, pin: widget.pin, merchantID: merchantID);
-        });
+  contractMode() {
+    Get.to(() => MerchantContractModeSelect(
+              user: widget.user, pin: widget.pin, merchantID: merchantID));
   }
   //       // child:
 }

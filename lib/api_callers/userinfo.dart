@@ -15,8 +15,12 @@ Future<Map<String, dynamic>> getUserInfo(
     try {
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/fetch_second_party_credentials?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
-      print('4${response.body}');
+      // print('4${response.body}');
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -48,8 +52,12 @@ Future<Map<String, dynamic>> getUserWith(
     try {
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/fetch_second_party_credentials?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
-    print(response.body);
+    // print(response.body);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -83,6 +91,10 @@ Future<Map> verifyUserAccount(
     try {
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/fetch_second_party_credentials?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
@@ -122,7 +134,12 @@ Future<User> fetchUserAccount(
     // try {
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
+    // print(response.body);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -134,12 +151,12 @@ Future<User> fetchUserAccount(
         return User.fromJson(payloads);
         } 
       else {
-          throw 'Password or Transaction pin not correct!';
+          throw 'Incorrect Password!';
         }
     } else {
       // print(response.body);
       // print("$password, $transactionPin");
-      throw 'Password or Transaction pin not correct!';
+      throw 'Incorrect Password!';
     }
 
   } else {
@@ -171,4 +188,103 @@ Future<User> loginUser(
   }else {
     throw 'Please check your internet connection';
   };
+}
+
+Future<Map> getLoginOtp(
+  String email,
+  String password,
+  String deviceName,
+  String deviceProcessor,
+  String deviceArchi,
+  String location,
+  String operatingSystem,
+)  async {
+  
+   String param = Uri(queryParameters: {
+                  "email_address" : email,
+                  "password": password,
+                  "device_name": deviceName,
+                  "operating_system": operatingSystem,
+                  "device_processor": deviceProcessor,
+                  "device_architecture": deviceArchi,
+                  "location": location
+                  }).query;
+      print(param);
+    try {
+    final response = await http.get(
+      Uri.parse('https://api.braketpay.com/verify_new_device_login?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      );
+    print(response);
+    if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+      Map a = jsonDecode(response.body);
+      print(a);
+        return a;
+
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+      return {'Message':'Please check your internet connection!'};
+  }
+    } catch (e) {
+      print(e);
+      return {'Message':'Please check your internet connection!'};
+    }
+}
+
+
+Future<User> fetchUserRecord(
+  String email,
+  String password,
+  String otp,
+) async {
+  String param = Uri(queryParameters: {
+                      "email_address" : email,
+                      "password" : password,
+                      "verification_code": otp,
+                  }).query;
+    // try {
+    final response = await http.get(
+      Uri.parse('https://api.braketpay.com/fetch_record?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      );
+      print(response);
+    if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+    if (jsonDecode(response.body) is Map) {
+      Map a = jsonDecode(response.body);
+      // print(a['Payload']);
+      if (jsonDecode(response.body).containsKey('Payload')) {
+        Map<String, dynamic> payloads = jsonDecode(response.body);
+        return User.fromJson(payloads);
+        } 
+      else {
+          throw 'Incorrect Password!';
+        }
+    } else {
+      // print(response.body);
+      // print("$password, $transactionPin");
+      throw 'Incorrect Password!';
+    }
+
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw 'Please check your internet connection';
+  }
+    // } catch (e) {
+    //   print(e);
+    //   throw 'No internet Connection';
+
+    // }
+    
 }

@@ -1,3 +1,4 @@
+
 import 'package:braketpay/api_callers/userinfo.dart';
 import 'package:braketpay/api_callers/utilities.dart';
 import 'package:braketpay/api_callers/pay.dart';
@@ -6,6 +7,10 @@ import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 import 'package:braketpay/utils.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+
+import 'package:pin_code_fields/pin_code_fields.dart';
+import 'dart:async';
+import '../uix/askpin.dart';
 
 class CableTV extends StatefulWidget {
   CableTV({Key? key, required this.user, required this.pin}) : super(key: key);
@@ -35,7 +40,121 @@ class _CableTVState extends State<CableTV> {
         centerTitle: true,
       ),
       body: Column(
+        
         children: [
+          SizedBox(height:10),
+          Container(
+            margin: EdgeInsets.all(5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    setState(() {
+                      _networkIndex = 0;
+                      fee = {'total_price': ''};
+                    });
+                    setState(() {
+                    ownerName = 'Fetching Meter detail.';
+                  });
+                  Map a = await getCableTVOwner(
+                      widget.user.payload!.accountNumber ?? '',
+                      widget.pin,
+                      _networkList[_networkIndex],
+                      userName);
+                  setState(() {
+                    ownerName = a.containsKey('Payload')
+                        ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
+                        : a.containsKey('Message')
+                            ? a['Message']
+                            : 'No Internet access';
+                  });
+                  },
+                  child: Container(
+                      padding: _networkIndex == 0
+                          ? EdgeInsets.all(5)
+                          : EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 43, 255, 89),
+                        // borderRadius: BorderRadius.circular(20),
+                      ),
+                      width: 60,
+                      height: 60,
+                      child:
+                          Image.asset('assets/dstv.png', fit: BoxFit.contain)),
+                ),
+                InkWell(
+                  onTap: () async {
+                    setState(() {
+                      _networkIndex = 1;
+                      fee = {'total_price': ''};
+                    });
+                    setState(() {
+                    ownerName = 'Fetching Meter detail.';
+                  });
+                  Map a = await getCableTVOwner(
+                      widget.user.payload!.accountNumber ?? '',
+                      widget.pin,
+                      _networkList[_networkIndex],
+                      userName);
+                  setState(() {
+                    ownerName = a.containsKey('Payload')
+                        ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
+                        : a.containsKey('Message')
+                            ? a['Message']
+                            : 'No Internet access';
+                  });
+                  },
+                  child: Container(
+                      padding: _networkIndex == 1
+                          ? EdgeInsets.all(5)
+                          : EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 43, 255, 89),
+                        // borderRadius: BorderRadius.circular(20),
+                      ),
+                      width: 60,
+                      height: 60,
+                      child: Image.asset('assets/gotv.png', fit: BoxFit.fill)),
+                ),
+                InkWell(
+                  onTap: () async {
+                    setState(() {
+                      _networkIndex = 2;
+                      fee = {'total_price': ''};
+                    });
+                    setState(() {
+                    ownerName = 'Fetching Meter detail.';
+                  });
+                  Map a = await getCableTVOwner(
+                      widget.user.payload!.accountNumber ?? '',
+                      widget.pin,
+                      _networkList[_networkIndex],
+                      userName);
+                  setState(() {
+                    ownerName = a.containsKey('Payload')
+                        ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
+                        : a.containsKey('Message')
+                            ? a['Message']
+                            : 'No Internet access';
+                  });
+                  },
+                  child: Container(
+                      padding: _networkIndex == 2
+                          ? EdgeInsets.all(5)
+                          : EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 43, 255, 89),
+                        // borderRadius: BorderRadius.circular(20),
+                      ),
+                      width: 60,
+                      height: 60,
+                      child: Image.asset('assets/startimes.jpg',
+                          fit: BoxFit.contain)),
+                ),
+              ],
+            ),
+          ),
           Form(
             key: _formKey,
             child: Container(
@@ -89,7 +208,7 @@ class _CableTVState extends State<CableTV> {
               ),
             ),
           ),
-          GestureDetector(
+          InkWell(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               padding: EdgeInsets.all(20),
@@ -115,118 +234,7 @@ class _CableTVState extends State<CableTV> {
                   });
             }
           ),
-          Container(
-            margin: EdgeInsets.all(5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      _networkIndex = 0;
-                      fee = {'total_price': ''};
-                    });
-                    setState(() {
-                    ownerName = 'Fetching Meter detail.';
-                  });
-                  Map a = await getCableTVOwner(
-                      widget.user.payload!.accountNumber ?? '',
-                      widget.pin,
-                      _networkList[_networkIndex],
-                      userName);
-                  setState(() {
-                    ownerName = a.containsKey('Payload')
-                        ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
-                        : a.containsKey('Message')
-                            ? a['Message']
-                            : 'No Internet access';
-                  });
-                  },
-                  child: Container(
-                      padding: _networkIndex == 0
-                          ? EdgeInsets.all(5)
-                          : EdgeInsets.zero,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 43, 255, 89),
-                        // borderRadius: BorderRadius.circular(20),
-                      ),
-                      width: 60,
-                      height: 60,
-                      child:
-                          Image.asset('assets/dstv.png', fit: BoxFit.contain)),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      _networkIndex = 1;
-                      fee = {'total_price': ''};
-                    });
-                    setState(() {
-                    ownerName = 'Fetching Meter detail.';
-                  });
-                  Map a = await getCableTVOwner(
-                      widget.user.payload!.accountNumber ?? '',
-                      widget.pin,
-                      _networkList[_networkIndex],
-                      userName);
-                  setState(() {
-                    ownerName = a.containsKey('Payload')
-                        ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
-                        : a.containsKey('Message')
-                            ? a['Message']
-                            : 'No Internet access';
-                  });
-                  },
-                  child: Container(
-                      padding: _networkIndex == 1
-                          ? EdgeInsets.all(5)
-                          : EdgeInsets.zero,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 43, 255, 89),
-                        // borderRadius: BorderRadius.circular(20),
-                      ),
-                      width: 60,
-                      height: 60,
-                      child: Image.asset('assets/gotv.png', fit: BoxFit.fill)),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      _networkIndex = 2;
-                      fee = {'total_price': ''};
-                    });
-                    setState(() {
-                    ownerName = 'Fetching Meter detail.';
-                  });
-                  Map a = await getCableTVOwner(
-                      widget.user.payload!.accountNumber ?? '',
-                      widget.pin,
-                      _networkList[_networkIndex],
-                      userName);
-                  setState(() {
-                    ownerName = a.containsKey('Payload')
-                        ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
-                        : a.containsKey('Message')
-                            ? a['Message']
-                            : 'No Internet access';
-                  });
-                  },
-                  child: Container(
-                      padding: _networkIndex == 2
-                          ? EdgeInsets.all(5)
-                          : EdgeInsets.zero,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 43, 255, 89),
-                        // borderRadius: BorderRadius.circular(20),
-                      ),
-                      width: 60,
-                      height: 60,
-                      child: Image.asset('assets/startimes.jpg',
-                          fit: BoxFit.contain)),
-                ),
-              ],
-            ),
-          ),
+          
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(_networkList[_networkIndex].toUpperCase(),
@@ -242,7 +250,7 @@ class _CableTVState extends State<CableTV> {
                       [_networkList[_networkIndex]]
                   .length,
               itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
+                return InkWell(
                   onTap: () {
                     setState(() {
                       fee = cable_tv_plan_rate['Cable_TV']
@@ -288,7 +296,6 @@ class _CableTVState extends State<CableTV> {
                                       .split('=')[1] ??
                                   '',
                               style: TextStyle(
-                                fontSize: 17,
                                 color: fee ==
                                         cable_tv_plan_rate['Cable_TV']
                                                 ?[_networkList[_networkIndex]]
@@ -302,7 +309,6 @@ class _CableTVState extends State<CableTV> {
                             Text(
                               "${formatAmount(cable_tv_plan_rate['Cable_TV']?[_networkList[_networkIndex]]?.values.elementAt(index)['total_price'].toInt().toString() ?? '')}",
                               style: TextStyle(
-                                fontSize: 20,
                                 fontFamily: 'Roboto',
                                 fontWeight: FontWeight.bold,
                                 color: fee ==
@@ -350,6 +356,15 @@ class _CableTVState extends State<CableTV> {
                         });
                     _loginButtonController.reset();
                   }
+                  StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
+                        final _pinEditController = TextEditingController();
+                          Map? pin = await askPin(_pinEditController, _pinErrorController);
+                          
+                          if (pin == null || !pin.containsKey('pin')) {
+                            _loginButtonController.reset();
+                            return;
+                          };
+                            _loginButtonController.reset();
                   // print('$username, $pin, $password');
                   // Future<User> a =
                   //     loginUser(username, password, pin);

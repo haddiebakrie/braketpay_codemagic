@@ -13,13 +13,16 @@ Future<Map> fetchNotifications(
       "wallet_address": walletAddress,
       "password" : password,
       "transaction_pin": transactionPin,
-      "observation": "fetch contract",
+      "observation": "fetch notifications",
       "datetime": "Wed, 13 Apr 2001 01:21:07 GMT"
     }).query;
 
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/braket_reciever_notification/v1?$param'),
-      
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
       print(param);
       print(response.body);

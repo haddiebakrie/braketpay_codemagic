@@ -18,6 +18,10 @@ Future<Map<String, dynamic>> getMerchant(
     try {
     final response = await get(
       Uri.parse('https://api.braketpay.com/fetch_merchant_account?$param'),
+       headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
       print(response.body);
       print(param);
@@ -61,7 +65,13 @@ Future<Map> createMerchant (
       print(param);
     final response = await Dio().post(
       'https://api.braketpay.com/create_merchant_account/v1',
-      data: param
+      data: param,
+      options: Options(
+         headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 
@@ -92,6 +102,7 @@ Future<Map> fetchMerchantContract (
   String param = Uri(queryParameters: {
     "product_id": productID,
     "service_id": productID,
+    "loan_id": productID,
     "merchant_id": id,
     "contract_type": contractType,
       "wallet_address":walletAddress,
@@ -100,18 +111,25 @@ Future<Map> fetchMerchantContract (
       
     }).query;
 
-      // print(param);
+      print(param);
 // 
     try {
       final response = await Dio().get(
-        'https://api.braketpay.com/fetch_registered_contract?$param'
+        'http://172.16.81.19:5001/fetch_registered_contract?$param',
+        options: Options(
+          headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+        )
+        
         );
       // print('99090909090');
 
       print('${response.data}%%%%%%%%%%%%%%%%%%%%%%');
 
     if (response.statusCode == 200) {
-      // print(response.data);
+      print(response.data);
       return response.data;
 
     } else {
@@ -123,6 +141,7 @@ Future<Map> fetchMerchantContract (
       return {'Message': 'No internet access'};
     }
 }
+//  LON791973567,
 
 
 Future<bool> createProductContract (
@@ -158,7 +177,13 @@ Future<bool> createProductContract (
       print('99090909090');
     final response = await Dio().post(
       'https://api.braketpay.com/create_product_smart_contract/v1',
-      data: param
+      data: param,
+      options: Options(
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 
@@ -202,7 +227,13 @@ Future<Map> createMerchantProductContract (
     try{
     final response = await Dio().post(
       'https://api.braketpay.com/register_product_contract/v1',
-      data: param
+      data: param,
+      options: Options(
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       print(response.realUri);
 
@@ -249,7 +280,10 @@ Future<Map> createMerchantServiceContract (
     try{
     final response = await post(
       Uri.parse('https://api.braketpay.com/registered_service_contract/v1'),
-      headers: {'Content-Type':'application/json'},
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       body: jsonEncode(param)
       );
       print(response.body);
@@ -297,7 +331,13 @@ Future<Map> activateMerchantContract (
       try {
     final response = await Dio().put(
       'https://api.braketpay.com/activate_seller_contract/v1',
-      data: param
+      data: param,
+      options: Options(
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 
@@ -345,7 +385,13 @@ Future<Map> activateServiceMerchantContract (
       try {
     final response = await Dio().put(
       'https://api.braketpay.com/activate_client_contract/v1',
-      data: param
+      data: param,
+      options: Options(
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 

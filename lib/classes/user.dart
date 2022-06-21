@@ -41,6 +41,7 @@ class Payload {
   String? qrCode;
   String? walletAddress;
   String? bvn;
+  String? pin;
 
   Payload(
       {this.accountBalance,
@@ -56,6 +57,7 @@ class Payload {
       this.publicKey,
       this.qrCode,
       this.bvn,
+      this.pin,
       this.walletAddress});
 
   Payload.fromJson(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class Payload {
     fullname = json['fullname'];
     password = json['password'];
     bvn = json['bvn'];
+    pin = json['transaction_pin'];
     username = json['user_name'];
     qrCode = json['account_qr_code'];
     phoneNumber = json['phone_number'];
@@ -86,6 +89,7 @@ class Payload {
     data['fullname'] = this.fullname;
     data['password'] = this.password;
     data['bvn'] = this.bvn;
+    data['transaction_pin'] = this.pin;
     data['user_name'] = this.username;
     data['account_qr_code'] = this.qrCode;
     data['phone_number'] = this.phoneNumber;

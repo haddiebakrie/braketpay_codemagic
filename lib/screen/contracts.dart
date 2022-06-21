@@ -1,16 +1,24 @@
 import 'package:braketpay/brakey.dart';
+import 'package:braketpay/screen/notifications.dart';
 import 'package:braketpay/screen/profile.dart';
 import 'package:braketpay/uix/contractmodeselect.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:grouped_list/grouped_list.dart';
+import 'package:icon_badge/icon_badge.dart';
 import 'package:iconly/iconly.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../api_callers/contracts.dart';
 import '../classes/product_contract.dart';
 import '../classes/user.dart';
 import '../uix/contractlistcard.dart';
 import '../uix/roundbutton.dart';
+import '../uix/shimmerwidgets.dart';
 
 class Contracts extends StatefulWidget {
   const Contracts({Key? key, required this.user, required this.pin})
@@ -23,8 +31,11 @@ class Contracts extends StatefulWidget {
 }
 
 class _ContractsState extends State<Contracts> {
+  int asc = 0;
+  int showOnly = 0;
+  int hide = 0; 
   Brakey brakey = Get.put(Brakey());
-  late Future<List<dynamic>> _transactions = fetchContracts(
+  late Future<List<dynamic>> transactions = fetchContracts(
       widget.user.payload!.accountNumber ?? "",
       widget.user.payload!.password ?? "",
       widget.pin);
@@ -36,12 +47,193 @@ class _ContractsState extends State<Contracts> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
+        centerTitle: true,
         titleSpacing: 5,
         toolbarHeight: 65,
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-        ],
+        // actions: [
+        //   IconButton(icon:const Icon(CupertinoIcons.sort_down), onPressed:(){
+        //     Get.bottomSheet(
+        //       BottomSheet(
+        //         backgroundColor: Colors.transparent,
+        //         enableDrag: false,
+        //         onClosing: () {}, 
+        //         builder: (context) {
+        //         return StatefulBuilder(
+        //           builder: (context, changeState) {
+        //             return Container(
+        //               padding: const EdgeInsets.all(20),
+        //               decoration: const BoxDecoration(
+        //               color: Colors.white,
+        //               borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight:Radius.circular(20))
+        //             ),
+        //             child: Column(
+        //               mainAxisSize: MainAxisSize.min,
+        //               children: [
+        //                const Text(
+        //                     'Filter',
+        //                     style: TextStyle(
+        //                         fontSize: 20, fontWeight: FontWeight.w300),
+        //                   ),
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(8.0),
+        //                     child: Row(children: [
+        //                       const Expanded(child: Text('Sort by')),
+        //                       Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: asc == 0 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('ASC', style: TextStyle(color: asc == 0 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             asc = 0;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                       Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: asc == 1 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('DESC', style: TextStyle(color: asc == 1 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             asc = 1;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                     ],),
+        //                   ),
+        //                   Row(children: [
+        //                     const Expanded(child: Text('Show')),
+        //                     Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: showOnly == 0 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('All', style: TextStyle(color: showOnly == 0 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             showOnly = 0;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                     Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: showOnly == 1 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('Approved', style: TextStyle(color: showOnly == 1 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             showOnly = 1;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                     Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: showOnly == 2 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('Pending', style: TextStyle(color: showOnly == 2 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             showOnly = 2;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                   ],),
+        //                   Row(children: [
+        //                     const Expanded(child: Text('Hide')),
+        //                     Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: hide == 0 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('None', style: TextStyle(color: hide == 0 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             hide = 0;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                     Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: hide == 1 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('Product', style: TextStyle(color: hide == 1 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             hide = 1;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                     Container(
+        //                         height: 35,
+        //                         margin: EdgeInsets.all(5),
+        //                         color: hide == 2 ? Colors.black : Colors.transparent,
+        //                         child: TextButton(child: Text('Service', style: TextStyle(color: hide == 2 ? Colors.white : Colors.black)), 
+                                
+        //                         onPressed: () {
+        //                           setState(() {
+        //                             hide = 2;
+        //                           });
+        //                           changeState(() {
+
+        //                           });
+        //                         }),
+        //                       ),
+        //                   ],),
+        //             ],)
+        //             );
+        //           }
+        //         );}
+        //       )
+
+        //     );
+        //   })
+        // ],
+        // // actions: [
+        // //   Obx(() => IconBadge(
+        // //     onTap: () {
+        // //       Navigator.of(context).push(MaterialPageRoute(builder: 
+        //     ((context) => Notifications(user:widget.user, pin: widget.pin)
+        //     )));
+        //     },
+        //     maxCount: 9,
+        //     icon: Icon(Icons.notifications),
+        //     itemCount: brakey.notiCount.toInt(),
+        //     right: 10.0,
+        //     hideZero: true,
+        //     top:10.0
+
+        //     // hideZero: true,
+            
+        //     ))
+        // ],
         title: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.0),
           child: Text('Contracts',
@@ -69,37 +261,44 @@ class _ContractsState extends State<Contracts> {
         // ),
       ),
       body: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20), bottom: Radius.zero),
-            color: Colors.white,
-          ),
+        padding: const EdgeInsets.symmetric(vertical:10),
+          decoration: ContainerBackgroundDecoration(),
           child: RefreshIndicator(
             key: brakey.refreshContracts.value,
             onRefresh: () async {
-              final transactions = await fetchContracts(
+              final _transactions = await fetchContracts(
                   widget.user.payload!.accountNumber ?? "",
                   widget.user.payload!.password ?? "",
                   widget.pin);
+                  // if (transactions.isNotEmpty) {
               setState(() {
-                _transactions = Future.value(transactions);
+                transactions = Future.value(_transactions);
               });
+                  // }
             },
             child: FutureBuilder<List>(
-              future: _transactions,
+              future: transactions,
               builder: (context, snapshot) {
+                List _data = List.from(snapshot.data??[]);
+                  // if (snapshot.hasData && hide==2 && snapshot.data!.isNotEmpty) {
+                  // _data.removeWhere((element) => element.isService());
+                  // }
+                  // else if (snapshot.hasData && hide==1 && snapshot.data!.isNotEmpty) {
+                  // _data.removeWhere((element) => !element.isService());
+                  // }
+                  // if (snapshot.hasData && showOnly==2 && snapshot.data!.isNotEmpty) { 
+                  //   _data.removeWhere((element) => element.payload!.states!.approvalState.toLowerCase() == 'approved');
+                  // } else if (snapshot.hasData && showOnly==1 && snapshot.data!.isNotEmpty) { 
+                  //   _data.removeWhere((element) => element.payload!.states!.approvalState!.toLowerCase() == 'not approved');
+                  // }
+                  // print(_data);
                 if (snapshot.hasData) {
-                  return snapshot.data!.isNotEmpty
+                  return _data.isNotEmpty
                       ? ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: snapshot.data?.length,
-                          itemBuilder: (context, index) {
-                            ProductContract product = snapshot.data![index];
-                            return ContractListCard(
-                                product: product,
-                                pin: widget.pin,
-                                user: widget.user);
-                          })
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, index) {
+                    ProductContract transaction = snapshot.data![index];
+                    return ContractListCard(pin: widget.pin, product: snapshot.data![index], user: widget.user);})
                       : ListView(
                         children: [
                           SizedBox(
@@ -108,8 +307,8 @@ class _ContractsState extends State<Contracts> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset('assets/empty.png', width: 140),
-                                SizedBox(height:20),
-                                Center(
+                                const SizedBox(height:20),
+                                const Center(
                                   child: Text('You have not created any contract!'),
                                 ),
                               ],
@@ -127,41 +326,26 @@ class _ContractsState extends State<Contracts> {
                         Image.asset('assets/sammy-no-connection.gif',
                             width: 150),
                         const Text(
-                            "No internet access\nCoudn't Load Contract History!",
+                            "No internet access\nCouldn't Load Contract History!",
                             textAlign: TextAlign.center),
                         const SizedBox(height: 20),
-                        const RoundButton(
+                        RoundButton(
                             text: 'Retry',
                             color1: Colors.black,
                             color2: Colors.black,
-                            // onTap: () {
-                            //   brakey.refreshContracts.value!.currentState!
-                            //       .show();
-                            // }
+                            onTap: () {
+                              brakey.refreshContracts.value!.currentState!
+                                  .show();
+                            }
                             )
                       ],
                     )),
                   );
                 }
-                print(snapshot.data);
-                return Container(
-                    height: double.infinity,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20), bottom: Radius.zero),
-                      color: Colors.white,
-                    ),
-                    child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.all(15.0),
-                          child: CircularProgressIndicator(color: Colors.grey),
-                        ),
-                        Text("Loading your Contracts..."),
-                      ],
-                    )));
+
+                return ListView.builder(itemBuilder: (builder, index) {
+                  return const ContractCardShimmer();
+                });
               },
             ),
           )),

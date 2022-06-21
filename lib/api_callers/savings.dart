@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 Future<Map<String, dynamic>> getSavings(
   String accountNumber,
   String pin,
+  String password,
   String volume,
   String id,
 ) async {
@@ -13,15 +14,23 @@ Future<Map<String, dynamic>> getSavings(
     "account_number": accountNumber,
     "transaction_pin": pin,
     "savings_id": id,
+    "password": password,
     "volume": volume
   }).query;
   print(param);
   try {
     final response = await get(
       Uri.parse('https://api.braketpay.com/fetch_savings/p?$param'),
+    headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
     );
     print(response.body);
     if (response.statusCode == 200) {
+      if (volume == 'all_savings_amount') {
+        return jsonDecode(response.body);
+      }
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       Map<String, List> newPayload = {'Savings': []};
@@ -76,7 +85,14 @@ Future<Map> createSavings(
 
     print(param);
     final response = await Dio()
-        .post('https://api.braketpay.com/create_savings/v1', data: param);
+        .post('https://api.braketpay.com/create_savings/v1', data: param,
+        options: Options(
+          headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+        )
+        );
     // print('99090909090');
 
     // print(response.data);
@@ -110,7 +126,14 @@ Future<Map> savingsCommit(
 
     print(param);
     final response = await Dio()
-        .put('https://api.braketpay.com/new_commit_savings/v1', data: param);
+        .put('https://api.braketpay.com/new_commit_savings/v1', data: param, 
+        options: Options(
+          headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+        )
+        );
     // print('99090909090');
 
     // print(response.data);

@@ -22,9 +22,13 @@ Future<List> fetchContracts(
 
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
-      
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+
       );
-      print(param);
+      print(response.body);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
@@ -33,13 +37,9 @@ Future<List> fetchContracts(
     for (Map<String, dynamic> item in payloads) {
       print(payloads);
       if (item.containsKey('Payload')) {
-        if (item['Payload']['Terms'].containsKey('product amount')) {
-          newPayloads.add(ProductContract.fromJson(jsonDecode(jsonEncode(item))));
-
-        } else {
 
           newPayloads.add(ProductContract.fromJson(jsonDecode(jsonEncode(item))));
-        }
+        
       }else {
         // payloads.remove(item);
       };
@@ -93,7 +93,13 @@ Future<Map> createProductContract (
       print('99090909090');
     final response = await Dio().post(
       'https://api.braketpay.com/create_product_smart_contract/v1',
-      data: param
+      data: param,
+      options: Options(
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 
@@ -138,11 +144,17 @@ Future<Map> createServiceContract (
       "down_payment": 0,
       "delivery_datetime": deliveryDate
     };
-
-      print('99090909090');
+    try {
+      print(param);
     final response = await Dio().post(
-      'https://api.braketpay.com/create_service_smart_contract/v1',
-      data: param
+      'http://172.16.81.38:5001/create_service_smart_contract/v1',
+      data: param,
+      options: Options(
+         headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 
@@ -156,7 +168,12 @@ Future<Map> createServiceContract (
     } else {
       return {'Message': 'No Internet access'};
     }
-}
+    } catch (e) {
+      print(e);
+
+      return {'Message': 'No Internet access'};
+    }
+ }
 
 
 Future<Map> contractAction (
@@ -183,7 +200,13 @@ Future<Map> contractAction (
       try {
     final response = await Dio().put(
       'https://api.braketpay.com/contract_execution_instructions/v1',
-      data: param
+      data: param,
+      options: Options(
+         headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      )
       );
       // print('99090909090');
 
@@ -197,6 +220,6 @@ Future<Map> contractAction (
     }
     } catch (e) {
       print(e);
-      throw {'Message':'No internet access'};
+      return {'Message':'No internet access'};
     }
 }

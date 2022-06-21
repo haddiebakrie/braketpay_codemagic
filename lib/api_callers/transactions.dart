@@ -20,7 +20,10 @@ Future<List> fetchTransactions(
     Brakey brakey = Get.put(Brakey());
     final response = await http.get(
       Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
-      
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
       );
       // print(response.request.url);
     if (response.statusCode == 200) {
