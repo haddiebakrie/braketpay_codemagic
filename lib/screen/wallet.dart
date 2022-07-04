@@ -216,8 +216,8 @@ class _WalletState extends State<Wallet> {
                               const Text('You have not added any card yet', style: TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(height:10),
                               RoundButton(
-                              color1: Colors.black,
-                              color2: Colors.black,
+                              color1: NeutralButton,
+                              color2: NeutralButton,
                               width: 200,
                               text: 'Fund wallet',
                               onTap: () {
@@ -434,138 +434,144 @@ class _AddBankCardState extends State<AddBankCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(elevation: 0,),
-          body: SingleChildScrollView(
-            child: Container(
-              padding: MediaQuery.of(context).viewInsets,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                ),
-                child: Builder(
-                  builder: (context) {
-                    return Column(
-                      children: [
-                        CreditCardWidget(
-                          cardBgColor: Colors.transparent,
-                          isHolderNameVisible: true,
-                          cardNumber: cardNumber, expiryDate: expiryDate, cardHolderName: cardHolderName, cvvCode: cvvCode, showBackView: false, onCreditCardWidgetChange: (e) {
-                          }),
-                        BraketCreditCardForm(
-                          cardNumber: cardNumber,
-                          expiryDate: expiryDate,
-                          cardHolderName: cardHolderName,
-                          cvvCode: cvvCode,
-                          cvvCodeDecoration: const InputDecoration(
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: 'CVV',
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                          expiryDateDecoration: const InputDecoration(
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: 'Expired date',
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                          cardHolderDecoration: const InputDecoration(
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: 'Card Name',
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                          cardNumberDecoration: const InputDecoration(
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: 'Card number',
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                          onCreditCardModelChange: (e) {
-                            setState(() {
-                              cardNumber = e.cardNumber;
-                              cardHolderName = e.cardHolderName;
-                              expiryDate = e.expiryDate;
-                              cvvCode = e.cvvCode;
-                            });
+          body: Container(
+            // padding: MediaQuery.of(context).viewInsets,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+              decoration: ContainerBackgroundDecoration(),
+              child: Builder(
+                builder: (context) {
+                  return ListView(
+                    children: [
+                      CreditCardWidget(
+                        cardBgColor: Color.fromARGB(255, 0, 135, 202),
+                        backgroundImage: 'assets/star-bg.png',
+                        
+                        isHolderNameVisible: true,
+                        cardNumber: cardNumber, expiryDate: expiryDate, cardHolderName: cardHolderName, cvvCode: cvvCode, showBackView: false, onCreditCardWidgetChange: (e) {
+                        }),
+                      BraketCreditCardForm(
+                        textColor: Get.isDarkMode ? Colors.white : Colors.black,
+                        cardNumber: cardNumber,
+                        expiryDate: expiryDate,
+                        cardHolderName: cardHolderName,
+                        cvvCode: cvvCode,
+                        cvvCodeDecoration: const InputDecoration(
+                              fillColor: Color.fromARGB(24, 158, 158, 158),
+                              filled: true,
+                              
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              hintText: 'CVV',
+                              hintStyle: TextStyle(color: Colors.grey,),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                        expiryDateDecoration: const InputDecoration(
+                              fillColor: Color.fromARGB(24, 158, 158, 158),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              hintText: 'Expired date',
+                              hintStyle: TextStyle(color: Colors.grey,),
+
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                        cardHolderDecoration: const InputDecoration(
+                              fillColor: Color.fromARGB(24, 158, 158, 158),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              hintText: 'Card Name',
+                              hintStyle: TextStyle(color: Colors.grey,),
+
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                        cardNumberDecoration: const InputDecoration(
+                              fillColor: Color.fromARGB(24, 158, 158, 158),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              hintText: 'Card number',
+                              hintStyle: TextStyle(color: Colors.grey,),
+
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                        onCreditCardModelChange: (e) {
+                          setState(() {
                             cardNumber = e.cardNumber;
-                              cardHolderName = e.cardHolderName;
-                              expiryDate = e.expiryDate;
-                              cvvCode = e.cvvCode;
-                          },
-                          formKey: _formKey,
-                          themeColor: Theme.of(context).primaryColor,
+                            cardHolderName = e.cardHolderName;
+                            expiryDate = e.expiryDate;
+                            cvvCode = e.cvvCode;
+                          });
+                          cardNumber = e.cardNumber;
+                            cardHolderName = e.cardHolderName;
+                            expiryDate = e.expiryDate;
+                            cvvCode = e.cvvCode;
+                        },
+                        formKey: _formKey,
+                        themeColor: Theme.of(context).primaryColor,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        Container(
-                          margin: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: RoundButton(
-                              color1: Colors.black,
-                              color2: Colors.black,
-                              width: 300,
-                              text: 'Fund wallet',
-                              onTap: () {
-                                showDialog(context: context, builder: 
-                                (_) {
-                                  return AlertDialog(
-                                    title: Text('Try again later'),
-                                    content: Text('Not available, Please use bank transfer'), 
-                                    actions: [
-                                      TextButton(child: Text('Cancel'), onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                      })
-                                    ]
-                                  );
-                                }
+                        child: RoundButton(
+                            color1: NeutralButton,
+                            color2: NeutralButton,
+                            width: 300,
+                            text: 'Fund wallet',
+                            onTap: () {
+                              showDialog(context: context, builder: 
+                              (_) {
+                                return AlertDialog(
+                                  title: Text('Try again later'),
+                                  content: Text('Not available, Please use bank transfer'), 
+                                  actions: [
+                                    TextButton(child: Text('Cancel'), onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    })
+                                  ]
                                 );
-                              })),
-                          Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(Icons.shield, color: Colors.blueGrey),
-                                      const SizedBox(width: 5),
-                                      // Text('Braket is CBN KYC Compliant', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),),
-                                      Container(padding: const EdgeInsets.all(8), child: const Text('Your security is important to us. Our payment processor is PCI compliant which ensures that your information is being handled in accordance with the security standards ', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),)),
-                                    ],
-                                  ),
+                              }
+                              );
+                            })),
+                        Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.shield, color: Colors.blueGrey),
+                                    const SizedBox(width: 5),
+                                    // Text('Braket is CBN KYC Compliant', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),),
+                                    Container(padding: const EdgeInsets.all(8), child: const Text('Your security is important to us. Our payment processor is PCI compliant which ensures that your information is being handled in accordance with the security standards ', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),)),
+                                  ],
                                 ),
-                                      const SizedBox(height: 40),
-                      ],
-                    );
-                  }
-                )),
-          ),
+                              ),
+                                    const SizedBox(height: 40),
+                    ],
+                  );
+                }
+              )),
         );
       
   }

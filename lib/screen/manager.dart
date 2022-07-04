@@ -20,10 +20,11 @@ import '../uix/contractlistcard.dart';
 import 'contracts.dart';
 
 class Manager extends StatefulWidget {
-  const Manager({Key? key, required this.user, required this.pin, this.mcurrentIndex = 0}) : super(key: key);
+  const Manager({Key? key, required this.user, required this.pin, this.mcurrentIndex = 0, this.askSaveBiometric=false}) : super(key: key);
   final User user;
   final String pin;
   final int mcurrentIndex;
+  final bool askSaveBiometric;
 
 
   @override
@@ -67,7 +68,7 @@ class _ManagerState extends State<Manager> {
       Wallet(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
       Merchant(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
     ];
-    
+    // promptSaveBiometric();
   }
 
   int currentIndex = 0;
@@ -75,10 +76,9 @@ class _ManagerState extends State<Manager> {
   gotoWallet() {
       setState(() {brakey.changeManagerIndex(3);});
   }
-
-  
   @override
   Widget build(BuildContext context) {
+
     Timer.periodic(Duration(seconds: 10), (timer) {
       brakey.listenToAccountChanges();
      });

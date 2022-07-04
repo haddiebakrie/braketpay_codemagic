@@ -1,5 +1,6 @@
 import 'package:braketpay/api_callers/registration.dart';
 import 'package:braketpay/screen/bvn.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -30,10 +31,7 @@ Future<dynamic> askOTP(
           child: Form(
             key: _formKey,
             child: Container(
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(20))),
+              decoration: ContainerBackgroundDecoration(),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
               child: ListView(
                 children: [
@@ -49,7 +47,7 @@ Future<dynamic> askOTP(
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                             keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),

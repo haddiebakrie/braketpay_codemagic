@@ -206,7 +206,7 @@ class _RechargeState extends State<SendMoney> {
                             
                             TextFormField(
                               maxLength: 10,
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                               keyboardType: TextInputType.number,
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 decoration: const InputDecoration(
@@ -375,10 +375,10 @@ class _RechargeState extends State<SendMoney> {
                             ),
                             TextFormField(
                               controller: _amountController,
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                              helperText: "Current balance: ${formatAmount(widget.user.payload!.accountBalance.toString())}",
+                              helperText: "Current balance: ${formatAmount(brakey.user.value!.payload!.accountBalance.toString())}",
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
                                 focusedBorder: OutlineInputBorder(
@@ -396,8 +396,8 @@ class _RechargeState extends State<SendMoney> {
                                 });
                               },
                               validator: (value) {
-                                if (value == null || value.isEmpty || double.parse(value) > widget.user.payload!.accountBalance!) {
-                                  return 'Please enter an amount below ${formatAmount(widget.user.payload!.accountBalance.toString())}';
+                                if (value == null || value.isEmpty || double.parse(value) > brakey.user.value!.payload!.accountBalance!) {
+                                  return 'Please enter an amount below ${formatAmount(brakey.user.value!.payload!.accountBalance.toString())}';
                                 }
                               },
                             ),])),
@@ -417,7 +417,7 @@ class _RechargeState extends State<SendMoney> {
                               ),
                             ),
                             TextFormField(
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
@@ -671,7 +671,7 @@ class _RechargeState extends State<SendMoney> {
                             return Column(
                                       children: [
                                         TextFormField(
-                                          cursorColor: Colors.black,
+                                          cursorColor: Colors.grey,
                                           decoration: const InputDecoration(
                                             fillColor: Color.fromARGB(24, 158, 158, 158),
                                             filled: true,

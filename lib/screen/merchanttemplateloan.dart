@@ -33,77 +33,83 @@ class _MerchantLoanDetailState extends State<MerchantLoanDetail> {
         elevation: 0
       ),
       body: SingleChildScrollView(
-        child: Padding(padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-          Image.memory(
-            Uint8List.fromList(image), height: 200,
-          ),
-        Container(
-                decoration: ContainerDecoration(),
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      'Contract Details',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    ListItemSeparated(
-                        text: widget.loan['loan_id'],
-                        title: 'Loan ID'),
-                    ListItemSeparated(
-                        text: widget.loan['loan_title'],
-                        title: 'Loan Title'),
-                    ListItemSeparated(
-                        text: 'LOAN CONTRACT',
-                        title: 'Contract Type'),
-                        ListTile(
-                          subtitle: Text(widget.loan['loan_description'],),
-                          title: Text('Loan Description'),
-                        ),
-                    // ListItemSeparated(
-                    //     text: 
-                    //     title: ),
-                    ListItemSeparated(
-                        text: toTitleCase(widget.loan['interest_rate'].toString()+'%'),
-                        title: 'Interest Rate'),
-                    ListItemSeparated(
-                        text: toTitleCase(widget.loan['loan_type']),
-                        title: 'Loan Type'),
-                    ListItemSeparated(
-                        text: toTitleCase(widget.loan['loan_period']),
-                        title: 'Loan Peroid'),
-                    ListItemSeparated(
-                        text: formatAmount(widget.loan['loan_amount_range']['min'].toString()),
-                        title: 'Minimum Loan Amount'),
-                    ListItemSeparated(
-                        text: formatAmount(widget.loan['loan_amount_range']['max'].toString()),
-                        title: 'Maximum Loan Amount'),
-                  ],
-                )),
-                SizedBox(height: 20),
-                Container(
-                decoration: ContainerDecoration(),
-                    child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      'Loan QRCODE',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),),
-                      Image.memory(
-            Uint8List.fromList(hex.decode(widget.loan['loan_qr_code']??'')),
-          ),
-                  ])),
-                   
-        ],
-        
-        )),
+        child: Container(
+          decoration: ContainerBackgroundDecoration(),
+          child: Padding(padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+            Hero(
+              tag: 'merchant_product_image',
+              child: Image.memory(
+                Uint8List.fromList(image), height: 200,
+              ),
+            ),
+          Container(
+                  decoration: ContainerDecoration(),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Text(
+                        'Contract Details',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      ListItemSeparated(
+                          text: widget.loan['loan_id'],
+                          title: 'Loan ID'),
+                      ListItemSeparated(
+                          text: widget.loan['loan_title'],
+                          title: 'Loan Title'),
+                      ListItemSeparated(
+                          text: 'LOAN CONTRACT',
+                          title: 'Contract Type'),
+                          ListTile(
+                            subtitle: Text(widget.loan['loan_description'],),
+                            title: Text('Loan Description'),
+                          ),
+                      // ListItemSeparated(
+                      //     text: 
+                      //     title: ),
+                      ListItemSeparated(
+                          text: toTitleCase(widget.loan['interest_rate'].toString()+'%'),
+                          title: 'Interest Rate'),
+                      ListItemSeparated(
+                          text: toTitleCase(widget.loan['loan_type']),
+                          title: 'Loan Type'),
+                      ListItemSeparated(
+                          text: toTitleCase(widget.loan['loan_period']),
+                          title: 'Loan Peroid'),
+                      ListItemSeparated(
+                          text: formatAmount(widget.loan['loan_amount_range']['min'].toString()),
+                          title: 'Minimum Loan Amount'),
+                      ListItemSeparated(
+                          text: formatAmount(widget.loan['loan_amount_range']['max'].toString()),
+                          title: 'Maximum Loan Amount'),
+                    ],
+                  )),
+                  SizedBox(height: 20),
+                  Container(
+                  decoration: ContainerDecoration(),
+                      child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Text(
+                        'Loan QRCODE',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),),
+                        Image.memory(
+              Uint8List.fromList(hex.decode(widget.loan['loan_qr_code']??'')),
+            ),
+                    ])),
+                     
+          ],
+          
+          )),
+        ),
       )
     );
   }

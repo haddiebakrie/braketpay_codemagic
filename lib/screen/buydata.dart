@@ -2,6 +2,7 @@ import 'package:braketpay/api_callers/pay.dart';
 import 'package:braketpay/api_callers/utilities.dart';
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/user.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 import 'package:braketpay/utils.dart';
@@ -42,11 +43,7 @@ class _BuyDataState extends State<BuyData> {
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
+              decoration: ContainerBackgroundDecoration(),
         child: Column(
           children: [
             Form(
@@ -54,7 +51,7 @@ class _BuyDataState extends State<BuyData> {
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 child: TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: Colors.grey,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -236,12 +233,12 @@ class _BuyDataState extends State<BuyData> {
                                         ?.values
                                         .elementAt(index)
                                 ? Theme.of(context).primaryColor
-                                : Colors.white,
+                                : Get.isDarkMode ? Color.fromARGB(255, 15, 15, 21) : Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
+                                color: Colors.black.withOpacity(0.04),
+                                spreadRadius: 8,
                                 blurRadius: 10,
                                 offset: const Offset(0, 0),
                               )
@@ -272,7 +269,7 @@ class _BuyDataState extends State<BuyData> {
                                               ?.values
                                               .elementAt(index)
                                       ? Colors.white
-                                      : Colors.black,
+                                      : Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -287,7 +284,7 @@ class _BuyDataState extends State<BuyData> {
                                               ?.values
                                               .elementAt(index)
                                       ? Colors.white
-                                      : Colors.black,
+                                      : Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                               ),
                             ],
@@ -407,7 +404,7 @@ class _BuyDataState extends State<BuyData> {
                                       )
                                     ],
                                     title: const Text("Can't complete transaction!"),
-                                    content: Text(toTitleCase(a['Message']??'Something went wrong, Please try again')));
+                                    content: Text(toTitleCase(a['Message']??'Failed to connect to Network, Please try again')));
                               });
 
                               // {Message: {data: {destination.amount: {message: destination.amount must be greater than or equal to 100}}, error: bad_request, message: invalid request data, status: false}, Response code: 400, Status: failed}

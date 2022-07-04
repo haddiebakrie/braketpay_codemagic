@@ -12,6 +12,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../brakey.dart';
 import '../uix/askpin.dart';
+import '../uix/themedcontainer.dart';
 
 class Recharge extends StatefulWidget {
   const Recharge({Key? key, required this.user, required this.pin}) : super(key: key);
@@ -43,11 +44,7 @@ class _RechargeState extends State<Recharge> {
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
+              decoration: ContainerBackgroundDecoration(),
         child: Column(
           children: [
             
@@ -147,7 +144,7 @@ class _RechargeState extends State<Recharge> {
                   Container(
                             margin: const EdgeInsets.symmetric(vertical: 15, horizontal:10),
                             child: TextFormField(
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -177,7 +174,7 @@ class _RechargeState extends State<Recharge> {
                 Container(
                             margin: const EdgeInsets.symmetric(vertical: 15, horizontal:10),
                             child: TextFormField(
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 fillColor: const Color.fromARGB(24, 158, 158, 158),
@@ -300,7 +297,7 @@ class _RechargeState extends State<Recharge> {
                                       )
                                     ],
                                     title: const Text("Can't complete transaction!"),
-                                    content: Text(toTitleCase(a['Message']??'Something went wrong, Please try again')));
+                                    content: Text(toTitleCase(a['Message']??'Failed to connect to Network, Please try again')));
                               });
 
                               // {Message: {data: {destination.amount: {message: destination.amount must be greater than or equal to 100}}, error: bad_request, message: invalid request data, status: false}, Response code: 400, Status: failed}

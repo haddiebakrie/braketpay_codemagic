@@ -51,7 +51,7 @@ Future<dynamic> askSignup(
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -81,7 +81,7 @@ Future<dynamic> askSignup(
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -112,7 +112,7 @@ Future<dynamic> askSignup(
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -167,7 +167,7 @@ Future<dynamic> askSignup(
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -198,7 +198,7 @@ Future<dynamic> askSignup(
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -232,7 +232,7 @@ Future<dynamic> askSignup(
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: TextFormField(
                           obscureText: true,
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           // controller: _userPasswordController,
                           decoration: const InputDecoration(
                             // suffixIcon: IconButton(onPressed: () {
@@ -277,7 +277,7 @@ Future<dynamic> askSignup(
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: TextFormField(
                           obscureText: true,
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           // controller: _userPasswordController,
                           decoration: const InputDecoration(
                             // suffixIcon: IconButton(onPressed: () {

@@ -71,9 +71,9 @@ class ContractListCard extends StatelessWidget {
               maxLines: 1,
               text: TextSpan(
                   text: product.isContractCreator(user.payload!.walletAddress??'') ? "To: " : "From: ", 
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                   children: <TextSpan>[
                     TextSpan(

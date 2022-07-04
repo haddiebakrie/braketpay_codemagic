@@ -18,6 +18,7 @@ final wallets = [{
 final format_currency = new NumberFormat('#,##0.00');
 
 String formatAmount(String amount) {
+
     var currency = NumberFormat.simpleCurrency(locale: Platform.localeName, name: 'NGN');
     return currency.format(double.parse(amount));
   }

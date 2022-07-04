@@ -21,6 +21,8 @@ class Brakey extends GetxController{
   var savedBalance = '0'.obs;
   late Box prefs;
   Rx<bool> showSavingsBalance = true.obs;
+  Rx<bool> useBiometric = false.obs;
+  Rx<bool> darkMode = false.obs;
   Rx<bool> showWalletBalance = true.obs;
   Function? refreshApp;
   Rx<bool> showRefBalance = true.obs;
@@ -39,9 +41,42 @@ class Brakey extends GetxController{
     final fcmToken = await FirebaseMessaging.instance.getToken();
     print(fcmToken);
     prefs = await Hive.openBox('preferences');
-    showWalletBalance = RxBool(prefs.get('showWalletBalance'));
-    showRefBalance = RxBool(prefs.get('showRefBalance'));
-    showSavingsBalance = RxBool(prefs.get('showSavingsBalance'));
+    showWalletBalance.value = prefs.get('showWalletBalance');
+    showRefBalance.value = prefs.get('showRefBalance');
+    darkMode.value = prefs.get('darkMode');
+    showSavingsBalance.value = prefs.get('showSavingsBalance');
+    useBiometric.value = await getBiometric();
+  }
+
+  Future<bool> getBiometric() async {
+  var box = await Hive.openBox('isBioEnabled');
+  if (box.containsKey(user.value!.payload!.username)) {
+    return box.get(user.value!.payload!.username);
+  } else {
+    box.put(user.value!.payload!.username, false);
+    return false;
+  }
+    
+  }
+
+  toggleDarkMode() async {
+    prefs = await Hive.openBox('preferences');
+    prefs.put('darkMode', !darkMode.value);
+    darkMode.value = !darkMode.value;
+    print("$darkMode ggggggggggggggggggggggggggggg");
+  }
+
+  toggleBiometric(bool? value) async {
+    
+    var box = await Hive.openBox('isBioEnabled');
+    bool _ = await getBiometric();
+    if (value != null) {
+      _ = !value;
+    }
+    box.put(user.value!.payload!.username, !_);
+    useBiometric.value = !_;
+
+
   }
 
   setUser(Rxn<User> _user, String _pin) {
@@ -275,6 +310,7 @@ AwesomeNotifications().createNotification(
       title: title,
       displayOnBackground: true,
       displayOnForeground: true,
+      notificationLayout: NotificationLayout.BigText,
       body: message,
       criticalAlert: true,
       category: NotificationCategory.Social,

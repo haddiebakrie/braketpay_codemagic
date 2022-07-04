@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../uix/listitemseparated.dart';
 import '../uix/themedcontainer.dart';
@@ -40,9 +43,12 @@ class _MerchantProductDetailState extends State<MerchantProductDetail> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            Image.memory(
-              Uint8List.fromList(image),
-              height: 200,
+            Hero(
+              tag: 'merchant_product_image',
+              child: Image.memory(
+                Uint8List.fromList(image),
+                height: 200,
+              ),
             ),
           Container(
                   decoration: ContainerDecoration(),
@@ -55,22 +61,56 @@ class _MerchantProductDetailState extends State<MerchantProductDetail> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
-                      ListItemSeparated(
+                      SizedBox(height:10),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                        child: Column(
+                          children: [
+                          ListTile(title: Text('Product ID'), subtitle: Padding(
+                            padding: const EdgeInsets.symmetric(vertical:10),
+                            child: Text(widget.product['Payload']['product_id'], style: TextStyle(fontFamily: '')),
+                          ),
+                          trailing: Column(
+                            children: [
+                            Icon(CupertinoIcons.doc_on_doc_fill, size: 16, color: Theme.of(context).primaryColor),
+                            Text('copy', style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
+                            ]
+                          ),
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(
+                                    text: widget.product['Payload']['product_id']));
+                                Get.showSnackbar(const GetSnackBar(
+                                    duration: Duration(seconds: 1),
+                                    animationDuration: Duration(milliseconds: 10),
+                                    forwardAnimationCurve: Curves.ease,
+                                    messageText: Text(
+                                        'Product ID has been copied',
+                                        style:
+                                            TextStyle(color: Colors.white))));
+                          },
+                          ),
+                          Container(
+                              color:Colors.grey.withOpacity(.5),
+                              height: 1,
+                              width: double.infinity)
+                        ])),
+                      
+                      ListSeparated(
                           text: widget.product['Payload']['contract_title'],
                           title: 'Contract Title'),
-                      ListItemSeparated(
+                      ListSeparated(
                           text: '${widget.product['Payload']['contract_type'].toUpperCase()} CONTRACT',
                           title: 'Contract Type'),
-                      ListItemSeparated(
+                      ListSeparated(
                           text: widget.product['Payload']['product_name'],
                           title: 'Product Name'),
-                      ListItemSeparated(
+                      ListSeparated(
                           text: widget.product['Payload']['product_details'],
                           title: 'Product Detail'),
-                      ListItemSeparated(
+                      ListSeparated(
                           text: 'NGN ${(widget.product['Payload']['product_amount'].toString())}',
                           title: 'Product Amount'),
-                      ListItemSeparated(
+                      ListSeparated(
                           text: widget.product['Payload']['minimum_delivery_date'],
                           title: 'Delivers In', isLast: true,),
                     ],

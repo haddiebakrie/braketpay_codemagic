@@ -24,7 +24,7 @@ Future<Map<String, dynamic>> getUserInfo(
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
-    Map<String, dynamic> payloads = jsonDecode(response.body);
+    Map<String, dynamic> payloads = jsonDecode(response.body.replaceAll('incorect caller password', 'Incorrect password, Please try again'));
     return payloads;
   } else {
     // If the server did not return a 201 CREATED response,
@@ -141,6 +141,7 @@ Future<User> fetchUserAccount(
       );
     // print(response.body);
     if (response.statusCode == 200) {
+        print('success - (fetch account)');
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
     if (jsonDecode(response.body) is Map) {
@@ -162,6 +163,8 @@ Future<User> fetchUserAccount(
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
+    print('failed - (fetch account)');
+
     throw 'Please check your internet connection';
   }
     // } catch (e) {

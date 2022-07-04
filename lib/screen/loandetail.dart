@@ -46,11 +46,11 @@ class _LoanDetailState extends State<LoanDetail> {
   @override
   Widget build(BuildContext context) {
   int contractStateIndex = widget.contract.payload!.states!.approvalState?.toLowerCase() == 'rejected' ? 2 :
-                                widget.contract.payload!.states!.approvalState?.toLowerCase() == 'approved' ? 1 : 0;
-  
+                                widget.contract.payload!.states!.approvalState?.toLowerCase() == 'approved' ? 1 : 3;
+  // print(widget.contract.payload!.states!.approvalState);
+  contractStateIndex = widget.contract.payload!.states!.approvalState == 'Not approved' ? 0 : contractStateIndex;
   Map stages = widget.contract.payload!.privilledges!.loanStages == null ? {} : jsonDecode(jsonDecode(widget.contract.payload!.privilledges!.loanStages!));
   Map status = widget.contract.payload!.privilledges!.borrowerRepayment == null ? {} : jsonDecode(jsonDecode(widget.contract.payload!.privilledges!.borrowerRepayment!));
-  print(widget.contract.payload!.toJson());
     final PageController _controller = PageController();
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -175,9 +175,9 @@ class _LoanDetailState extends State<LoanDetail> {
                         children: [
                           const SizedBox(),
                           // SizedBox(),
-                          Text(contractStateIndex == 2 ? 'Rejected' : 'Accepted', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex >= 3 || contractStateIndex == 1  ? Colors.green.shade400 : contractStateIndex == 2 ? Colors.red : Colors.grey,)),
+                          Text(contractStateIndex == 2 ? 'Rejected' : contractStateIndex == 0 ? 'Pending' : 'Confirmed', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex >= 3 || contractStateIndex == 1  ? Colors.green.shade400 : contractStateIndex == 2 ? Colors.red : Colors.orange,)),
                           const SizedBox(),
-                          Text(contractStateIndex == 4 ? '     Terminated' : '    Paid', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 4 ? Colors.red : Colors.grey)),
+                          Text(contractStateIndex == 4 ? '     Terminated' : '    Approved', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 4 ? Colors.red : Colors.grey)),
                           const SizedBox(),
                           Text('Completed', style: TextStyle(fontWeight: FontWeight.bold, color: contractStateIndex == 3 ? Colors.green.shade400 : contractStateIndex == 6 ? Colors.red : Colors.grey)),
                           const SizedBox(),
@@ -237,7 +237,7 @@ class _LoanDetailState extends State<LoanDetail> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Amount Paid'),
+                            const Text('Amount Paid by Borrower'),
                             Text(formatAmount(widget.contract.payload?.terms?.balance??''))
                           ]
                         ),

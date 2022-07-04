@@ -50,9 +50,9 @@ class TransactionListCard extends StatelessWidget {
             subtitle: RichText(
               text: TextSpan(
                   text: "",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black
+                    color: Theme.of(context).textTheme.bodyLarge?.color
 
                   ),
                   children: <TextSpan>[

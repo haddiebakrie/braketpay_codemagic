@@ -153,7 +153,7 @@ class _MerchantCreateServiceFromScanState extends State<MerchantCreateServiceFro
                                   ),
                                   TextFormField(
                                     controller: _shipDestFieldController,
-                                    cursorColor: Colors.black,
+                                    cursorColor: Colors.grey,
                                     decoration: const InputDecoration(
                                       fillColor:
                                           Color.fromARGB(24, 158, 158, 158),

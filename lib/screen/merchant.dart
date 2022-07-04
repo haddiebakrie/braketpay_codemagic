@@ -376,40 +376,31 @@ class _MerchantState extends State<Merchant> {
                                                         const EdgeInsets
                                                             .all(5.0),
                                                     child: Container(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                                10),
+                                                       
+                                                              clipBehavior:
+                                                                  Clip.antiAliasWithSaveLayer,
                                                         decoration: ContainerDecoration(),
                                                         child: Column(
                                                           children: [
-                                                            Text(_templates[index]
-                                                                        [
-                                                                        'Payload']
-                                                                    [
-                                                                    'contract_type']?.toUpperCase() ?? 'Loan'),
-                                                            const SizedBox(
-                                                                height: 5),
+                                                          
                                                             Container(
-                                                              clipBehavior:
-                                                                  Clip.antiAliasWithSaveLayer,
-                                                              decoration: ContainerDecoration(),
-                                                              child: Image.memory(Uint8List.fromList(image)),
+                                                              // decoration: ContainerDecoration(),
+                                                              child: Hero(
+                                                                tag: 'merchant_product_image',
+                                                                child: Image.memory(Uint8List.fromList(image), fit: BoxFit.cover,)),
                                                               height: 120,
-                                                              width: 120,
+                                                              width: double.infinity,
                                                             ),
-                                                                        SizedBox(height:6),
+                                                                        SizedBox(height:10),
 
                                                             Text(
                                                                 _templates[index]['Payload'].containsKey(
-                                                                        'about_service_delivery_stages')
-                                                                    ? _templates[index]['Payload']['contract_title']?.toUpperCase() ?? ''
-                                                                    :_templates[index]['Payload'].containsKey(
-                                                                        'loan_picture') ? _templates[index]['Payload']['loan_title']?.toUpperCase() : _templates[index]['Payload']['product_title']?.toUpperCase() ??
-                                                                        '',
+                                                                        'loan_picture') ? toTitleCase(_templates[index]['Payload']['loan_title']): toTitleCase(_templates[index]['Payload']['contract_title']),
                                                                 maxLines: 1,
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center),
+                                                            Text(_templates[index]['Payload']['contract_type']??'loan', style: TextStyle(color: Colors.grey)),
                                                                         SizedBox(height:4),
                                                             Text(
                                                                 _templates[index]['Payload'].containsKey(
@@ -445,7 +436,7 @@ class _MerchantState extends State<Merchant> {
                                                 children: [
                                                   Image.asset('assets/sammy-no-connection.gif', height: 200),
                                                   const Text(
-                                                      "Couldn't load registered templates"),
+                                                      "Couldn't load registered Contracts"),
                                                   const SizedBox(height:10),
                                                   RoundButton(
                                                     text: 'Retry',
@@ -516,7 +507,7 @@ class _MerchantState extends State<Merchant> {
                                                 ),
                                               ),
                                               TextFormField(
-                                                cursorColor: Colors.black,
+                                                cursorColor: Colors.grey,
                                                 decoration:
                                                     const InputDecoration(
                                                   fillColor: Color.fromARGB(
@@ -735,7 +726,7 @@ class _MerchantState extends State<Merchant> {
                                                 keyboardType:
                                                     TextInputType.url,
 
-                                                cursorColor: Colors.black,
+                                                cursorColor: Colors.grey,
                                                 decoration:
                                                     const InputDecoration(
                                                   fillColor: Color.fromARGB(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/screen/bvnprompt.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,10 +44,7 @@ Future<Map?> askPin(TextEditingController _pinEditController, StreamController<E
     builder: (pinContext) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight:Radius.circular(20))
-      ),
+      decoration: ContainerBackgroundDecoration(),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -86,6 +84,7 @@ Future<Map?> askPin(TextEditingController _pinEditController, StreamController<E
                 }),
             ),
             NumericKeyboard(
+              textColor: Get.isDarkMode ? Colors.white : Colors.black,
             rightIcon: const Icon(CupertinoIcons.delete_left_fill),
             rightButtonFn: () {
               _pinEditController.text = _pinEditController.text.substring(0, _pinEditController.text.length - 1);

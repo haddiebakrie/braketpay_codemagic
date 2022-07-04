@@ -8,6 +8,8 @@ import 'package:braketpay/screen/transfer.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 
+import '../uix/themedcontainer.dart';
+
 class Utilities extends StatefulWidget {
   Utilities({Key? key, required this.user, required this.pin}) : super(key: key);
 
@@ -29,7 +31,7 @@ class _UtilitiesState extends State<Utilities> {
       ),
       body: Container(
         padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        decoration:ContainerBackgroundDecoration(),
         child: Center(
           child: GridView(
             gridDelegate:

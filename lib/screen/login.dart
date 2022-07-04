@@ -2,6 +2,8 @@ import 'package:braketpay/api_callers/userinfo.dart';
 import 'package:braketpay/screen/bvn.dart';
 import 'package:braketpay/screen/manager.dart';
 import 'package:braketpay/screen/signup.dart';
+import 'package:braketpay/screen/userlogin.dart';
+import 'package:braketpay/screen/welcome.dart';
 import 'package:braketpay/uix/roundbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,364 +45,190 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
           if (widget.hasUser==true) {
-      Get.bottomSheet(
-        BottomSheet(
-          backgroundColor: Colors.transparent,
-          enableDrag: false,
-          onClosing: () {}, 
-          builder: (context) {
-          return StatefulBuilder(
-            builder: (context, changeState) {
-              return Container(
-                decoration: ContainerBackgroundDecoration(),
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Container(
-                      // padding: MediaQuery.of(context).viewInsets,
-                      decoration: ContainerBackgroundDecoration(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: AutofillGroup(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [  
-                            SizedBox(
-                              width: double.infinity,
-                              child: Text(
-                                  '👋',
-                                  textAlign: TextAlign.center,
-                                  style:
-                                      TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-                                ),
-                            ),
-                              SizedBox(height:10),
-                              SizedBox(
-                              width: double.infinity,
-                                child: Text(
-                                  'Welcome back, ${brakey.user.value!.payload!.fullname!.split(' ')[0]}',
-                                  textAlign: TextAlign.center,
-                                  style:
-                                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              SizedBox(height:30),
-                              Text(
-                                '@${brakey.user.value!.payload!.username}',
-                                style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,),
-                              ),
-                              
-                              Container(
-                                height: 50,
-                                margin: const EdgeInsets.symmetric(vertical: 10),
-                                child: TextFormField(
-                                  obscureText: passwordVisible,
-                                  cursorColor: Colors.black,
-                                  autofillHints: const [AutofillHints.password],
-                        
-                                  // controller: _userPasswordController,
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(onPressed: () {
-                                      print(passwordVisible);
-                                     changeState(() {
-                                       passwordVisible = !passwordVisible;
-                                     });
-                                      // print(passwordVisible);
-                                    },
-                                     icon: passwordVisible ? Icon(Icons.visibility_off) : Icon(Icons.visibility)
-                                    ),
-                                    hintText: 'Password',
-                                    fillColor: const Color.fromARGB(24, 158, 158, 158),
-                                    filled: true,
-                                    focusedBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(10))),
-                                    border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(10))),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                  ),
-                                  onChanged: (text) {
-                                    password = text;
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Enter your Password';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              
-                              Container(
-                                margin: const EdgeInsets.all(10),
-                                child: RoundedLoadingButton(
-                                    borderRadius: 10,
-                                    color: Theme.of(context).primaryColor,
-                                    elevation: 0,
-                                    controller: _loginButtonController,
-                                    onPressed: () async {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                      if (_formKey.currentState!.validate()) {
-                                        // print('$username, $pin, $password');
-                                        try {
-                                          User a =
-                                              await loginUser(brakey.user.value!.payload!.username??'', password, pin);
-                                              print(a.payload?.pin??"");
-                                          _loginButtonController.success();
-                                          brakey.setUser(Rxn(a), pin);
-                                          Get.offUntil(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Manager(user: a, pin: ''),
-                                                maintainState: true),
-                                            (route) => false);
-                                          // Navigator.pushAndRemoveUntil(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) =>
-                                          //             Manager(user: a, pin: "")), Manager(user:a, pin:''));
-                                        } catch (e) {
-                                          print(e);
-                                          _loginButtonController.reset();
-                                          showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                    actions: [
-                                                      TextButton(
-                                                        child: const Text('Okay'),
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                      )
-                                                    ],
-                                                    title: const Text("Can't Login!"),
-                                                    content: Text(toTitleCase(e.toString())));
-                                              });
-                                        }
-                                      } else {
-                                        setState(() {
-                                          passwordVisible = !passwordVisible;
-                                        });
-                                        _loginButtonController.reset();
-                                      }
-                                    },
-                                    child: const Text('Login')),
-                                    
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextButton(onPressed: () {
-                                    Navigator.of(context).pop();
-                                    askLogin();
-                                  }, 
-                                  style: ButtonStyle(alignment: Alignment.center),
-                                  child: Text('Not @${brakey.user.value!.payload!.username}? Login with Username')),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),);
-            }
-          );
-          }
-        )
-      );
+      Get.to(() => WelcomeBack());
     }
-    });
   }
 
 
 
-  Future<dynamic> askLogin() {
+  askLogin() {
+    Get.to(UserLogin());
 
-    bool _passwordVisibility = true;
-    return showModalBottomSheet(
-        context: context,
-        isDismissible: false,
-        // enableDrag: false,
-        useRootNavigator: true,
-        backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
-        isScrollControlled: true,
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, StateSetter changeState) {
-              return Form(
-                key: _formKey,
-                child: Container(
-                  padding: MediaQuery.of(context).viewInsets,
-                  decoration: ContainerBackgroundDecoration(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: AutofillGroup(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Enter your Details to Login',
-                            style:
-                                TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            _errorMessage,
-                            style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 15),
-                            child: TextFormField(
-                              autofillHints: const [AutofillHints.username],
-                              cursorColor: Colors.black,
-                              decoration: const InputDecoration(
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                hintText: 'Username',
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                              onChanged: (text) {
-                                username = text.trim();
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Enter your username';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Container(
-                            height: 50,
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: TextFormField(
-                              obscureText: passwordVisible,
-                              cursorColor: Colors.black,
-                              autofillHints: const [AutofillHints.password],
+    // bool _passwordVisibility = true;
+    // return showModalBottomSheet(
+    //     context: context,
+    //     isDismissible: false,
+    //     // enableDrag: false,
+    //     useRootNavigator: true,
+    //     backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
+    //     isScrollControlled: true,
+    //     builder: (context) {
+    //       return StatefulBuilder(
+    //         builder: (context, StateSetter changeState) {
+    //           return Form(
+    //             key: _formKey,
+    //             child: Container(
+    //               padding: MediaQuery.of(context).viewInsets,
+    //               decoration: ContainerBackgroundDecoration(),
+    //               child: Padding(
+    //                 padding: const EdgeInsets.all(20.0),
+    //                 child: AutofillGroup(
+    //                   child: Column(
+    //                     mainAxisSize: MainAxisSize.min,
+    //                     children: [
+    //                       const Text(
+    //                         'Enter your Details to Login',
+    //                         style:
+    //                             TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    //                       ),
+    //                       Text(
+    //                         _errorMessage,
+    //                         style: const TextStyle(
+    //                             color: Colors.red,
+    //                             fontSize: 15,
+    //                             fontWeight: FontWeight.bold),
+    //                       ),
+    //                       Container(
+    //                         margin: const EdgeInsets.symmetric(vertical: 15),
+    //                         child: TextFormField(
+    //                           autofillHints: const [AutofillHints.username],
+    //                           cursorColor: Colors.grey,
+    //                           decoration: const InputDecoration(
+    //                             fillColor: Color.fromARGB(24, 158, 158, 158),
+    //                             filled: true,
+    //                             focusedBorder: OutlineInputBorder(
+    //                                 borderSide: BorderSide.none,
+    //                                 borderRadius:
+    //                                     BorderRadius.all(Radius.circular(10))),
+    //                             hintText: 'Username',
+    //                             border: OutlineInputBorder(
+    //                                 borderSide: BorderSide.none,
+    //                                 borderRadius:
+    //                                     BorderRadius.all(Radius.circular(10))),
+    //                             contentPadding: EdgeInsets.symmetric(horizontal: 10),
+    //                           ),
+    //                           onChanged: (text) {
+    //                             username = text.trim();
+    //                           },
+    //                           validator: (value) {
+    //                             if (value == null || value.isEmpty) {
+    //                               return 'Enter your username';
+    //                             }
+    //                             return null;
+    //                           },
+    //                         ),
+    //                       ),
+    //                       Container(
+    //                         height: 50,
+    //                         margin: const EdgeInsets.symmetric(vertical: 10),
+    //                         child: TextFormField(
+    //                           obscureText: passwordVisible,
+    //                           cursorColor: Colors.grey,
+    //                           autofillHints: const [AutofillHints.password],
                     
-                              // controller: _userPasswordController,
-                              decoration: InputDecoration(
-                                suffixIcon: IconButton(onPressed: () {
-                                  print(passwordVisible);
-                                 changeState(() {
-                                   passwordVisible = !passwordVisible;
-                                 });
-                                  // print(passwordVisible);
-                                },
-                                 icon: passwordVisible ? Icon(Icons.visibility_off) : Icon(Icons.visibility)
-                                ),
-                                hintText: 'Password',
-                                fillColor: const Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                              onChanged: (text) {
-                                password = text;
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Enter your Password';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.all(10),
-                            child: RoundedLoadingButton(
-                                borderRadius: 10,
-                                color: Theme.of(context).primaryColor,
-                                elevation: 0,
-                                controller: _loginButtonController,
-                                onPressed: () async {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  if (_formKey.currentState!.validate()) {
-                                    // print('$username, $pin, $password');
-                                    try {
-                                      User a =
-                                          await loginUser(username, password, pin);
-                                          print(a.payload?.pin??"");
-                                      _loginButtonController.success();
-                                      brakey.setUser(Rxn(a), pin);
-                                      Get.offUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                Manager(user: a, pin: ''),
-                                            maintainState: true),
-                                        (route) => false);
-                                      // Navigator.pushAndRemoveUntil(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             Manager(user: a, pin: "")), Manager(user:a, pin:''));
-                                    } catch (e) {
-                                      print(e);
-                                      _loginButtonController.reset();
-                                      showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                                actions: [
-                                                  TextButton(
-                                                    child: const Text('Okay'),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  )
-                                                ],
-                                                title: const Text("Can't Login!"),
-                                                content: Text(toTitleCase(e.toString())));
-                                          });
-                                    }
-                                  } else {
-                                    setState(() {
-                                      passwordVisible = !passwordVisible;
-                                    });
-                                    _loginButtonController.reset();
-                                  }
-                                },
-                                child: const Text('Login')),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }
-          );
-        });
+    //                           // controller: _userPasswordController,
+    //                           decoration: InputDecoration(
+    //                             suffixIcon: IconButton(onPressed: () {
+    //                               print(passwordVisible);
+    //                              changeState(() {
+    //                                passwordVisible = !passwordVisible;
+    //                              });
+    //                               // print(passwordVisible);
+    //                             },
+    //                              icon: passwordVisible ? Icon(Icons.visibility_off) : Icon(Icons.visibility)
+    //                             ),
+    //                             hintText: 'Password',
+    //                             fillColor: const Color.fromARGB(24, 158, 158, 158),
+    //                             filled: true,
+    //                             focusedBorder: const OutlineInputBorder(
+    //                                 borderSide: BorderSide.none,
+    //                                 borderRadius:
+    //                                     BorderRadius.all(Radius.circular(10))),
+    //                             border: const OutlineInputBorder(
+    //                                 borderSide: BorderSide.none,
+    //                                 borderRadius:
+    //                                     BorderRadius.all(Radius.circular(10))),
+    //                             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+    //                           ),
+    //                           onChanged: (text) {
+    //                             password = text;
+    //                           },
+    //                           validator: (value) {
+    //                             if (value == null || value.isEmpty) {
+    //                               return 'Enter your Password';
+    //                             }
+    //                             return null;
+    //                           },
+    //                         ),
+    //                       ),
+    //                       Container(
+    //                         margin: const EdgeInsets.all(10),
+    //                         child: RoundedLoadingButton(
+    //                             borderRadius: 10,
+    //                             color: Theme.of(context).primaryColor,
+    //                             elevation: 0,
+    //                             controller: _loginButtonController,
+    //                             onPressed: () async {
+    //                               FocusManager.instance.primaryFocus?.unfocus();
+    //                               if (_formKey.currentState!.validate()) {
+    //                                 // print('$username, $pin, $password');
+    //                                 try {
+    //                                   User a =
+    //                                       await loginUser(username, password, pin);
+    //                                       print(a.payload?.pin??"");
+    //                                   _loginButtonController.success();
+    //                                   brakey.setUser(Rxn(a), pin);
+    //                                   Get.offUntil(
+    //                                     MaterialPageRoute(
+    //                                         builder: (context) =>
+    //                                             Manager(user: a, pin: ''),
+    //                                         maintainState: true),
+    //                                     (route) => false);
+    //                                   // Navigator.pushAndRemoveUntil(
+    //                                   //     context,
+    //                                   //     MaterialPageRoute(
+    //                                   //         builder: (context) =>
+    //                                   //             Manager(user: a, pin: "")), Manager(user:a, pin:''));
+    //                                 } catch (e) {
+    //                                   print(e);
+    //                                   _loginButtonController.reset();
+    //                                   showDialog(
+    //                                       context: context,
+    //                                       barrierDismissible: false,
+    //                                       builder: (context) {
+    //                                         return AlertDialog(
+    //                                             actions: [
+    //                                               TextButton(
+    //                                                 child: const Text('Okay'),
+    //                                                 onPressed: () {
+    //                                                   Navigator.of(context).pop();
+    //                                                 },
+    //                                               )
+    //                                             ],
+    //                                             title: const Text("Can't Login!"),
+    //                                             content: Text(toTitleCase(e.toString())));
+    //                                       });
+    //                                 }
+    //                               } else {
+    //                                 setState(() {
+    //                                   passwordVisible = !passwordVisible;
+    //                                 });
+    //                                 _loginButtonController.reset();
+    //                               }
+    //                             },
+    //                             child: const Text('Login')),
+    //                       )
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+             
+    //           );
+    //         }
+    //       );
+    //     });
   }
 
   @override
@@ -411,13 +239,14 @@ class _LoginState extends State<Login> {
     );
       // print(widget.showOnboarding);
     return Scaffold(
+      backgroundColor: Colors.white,
       
       extendBody: false,
       // backgroundColor: _controller.page!.toInt() == 0 ? Color.fromARGB(255, 201, 233, 249) : _controller.page!.toInt() == 1 ? Color.fromARGB(255, 255, 187, 187) : Color.fromARGB(255, 255, 255, 255),
       bottomSheet: !isLastPage && !widget.showOnboarding
           ? Container(
               padding: const EdgeInsets.all(20),
-              // color: Color.fromARGB(255, 201, 233, 249),
+              color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -444,6 +273,7 @@ class _LoginState extends State<Login> {
               ))
           : Container(
               height: 90,
+              color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Stack(
                 children: [
@@ -472,7 +302,7 @@ class _LoginState extends State<Login> {
                                 radius: 10.0,
                                 textColor: Colors.white,
                                 onTap: () {
-                                  askBVN(context);
+                                  Get.to(() => AskBVN());
                                 }),
                           ),
                         ],

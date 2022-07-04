@@ -15,6 +15,7 @@ import '../api_callers/savings.dart';
 import '../brakey.dart';
 import '../uix/listitemseparated.dart';
 import '../uix/roundbutton.dart';
+import '../uix/themedcontainer.dart';
 import '../utils.dart';
 
 class Savings extends StatefulWidget {
@@ -138,11 +139,7 @@ class _SavingsState extends State<Savings> {
           },
           child: Container(
               padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
+              decoration: ContainerBackgroundDecoration(),
               child: FutureBuilder<Map>(
                   future: savings,
                   builder: (context, snapshot) {
@@ -153,12 +150,6 @@ class _SavingsState extends State<Savings> {
                         {
                           return Container(
                               height: double.infinity,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                    bottom: Radius.zero),
-                                color: Colors.white,
-                              ),
                               child: Center(
                                   child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -183,19 +174,7 @@ class _SavingsState extends State<Savings> {
                                   itemBuilder: (context, index) {
                                     return Container(
                                       margin: const EdgeInsets.symmetric(vertical: 5),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.2),
-                                              spreadRadius: 3,
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 0),
-                                            )
-                                          ]),
+                                      decoration: ContainerDecoration(),
                                       child: ListTile(
                                         onTap: () {
                                           Navigator.of(context).push(
@@ -350,7 +329,7 @@ class _SavingsState extends State<Savings> {
                                               ),
                                             ),
                                             TextFormField(
-                                              cursorColor: Colors.black,
+                                              cursorColor: Colors.grey,
                                               decoration: const InputDecoration(
                                                 fillColor: Color.fromARGB(
                                                     24, 158, 158, 158),
@@ -399,7 +378,7 @@ class _SavingsState extends State<Savings> {
                                                 ),
                                               ),
                                               TextFormField(
-                                                cursorColor: Colors.black,
+                                                cursorColor: Colors.grey,
                                                 decoration: const InputDecoration(
                                                   fillColor: Color.fromARGB(
                                                       24, 158, 158, 158),
@@ -453,7 +432,7 @@ class _SavingsState extends State<Savings> {
                                               ),
                                             ),
                                             TextFormField(
-                                              cursorColor: Colors.black,
+                                              cursorColor: Colors.grey,
                                               decoration: const InputDecoration(
                                                 fillColor: Color.fromARGB(
                                                     24, 158, 158, 158),
@@ -526,7 +505,7 @@ class _SavingsState extends State<Savings> {
                                               ),
                                             ),
                                             TextFormField(
-                                              cursorColor: Colors.black,
+                                              cursorColor: Colors.grey,
                                               decoration: const InputDecoration(
                                                 fillColor: Color.fromARGB(
                                                     24, 158, 158, 158),

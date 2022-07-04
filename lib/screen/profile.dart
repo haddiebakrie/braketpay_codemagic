@@ -5,6 +5,7 @@ import 'package:braketpay/api_callers/registration.dart';
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/screen/changepassword.dart';
 import 'package:braketpay/screen/changepin.dart';
+import 'package:braketpay/screen/welcome.dart';
 import 'package:braketpay/uix/listitemseparated.dart';
 import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:convert/convert.dart';
@@ -48,10 +49,7 @@ class _ProfileState extends State<Profile> {
             height: double.infinity,
             padding: const EdgeInsets.all(10),
             width: double.infinity,
-            decoration: ContainerBackgroundDecoration().copyWith(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(29),
-                    topRight: Radius.circular(20))),
+            decoration: ContainerBackgroundDecoration(),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -131,7 +129,7 @@ class _ProfileState extends State<Profile> {
                               children: [
                                 Text(brakey.user.value!.payload!.bvn !=
                                         'Not added'
-                                    ? '${widget.user.payload!.accountNumber} '
+                                    ? '${brakey.user.value!.payload!.accountNumber} '
                                     : '**********'),
                                 brakey.user.value!.payload!.bvn != 'Not added'
                                     ? Icon(CupertinoIcons.doc_on_doc_fill,
@@ -217,10 +215,7 @@ class _ProfileState extends State<Profile> {
                               onClosing: () {}, builder: (context) {
                               return Container(
                                 padding: const EdgeInsets.all(20),
-                                  decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight:Radius.circular(20))
-                                  ),
+                                  decoration: ContainerBackgroundDecoration(),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -249,6 +244,7 @@ class _ProfileState extends State<Profile> {
 
                               }, child: const Text('Cancel')),
                           TextButton(onPressed: () {
+                            forgotPINOtp('Transaction pin', brakey.user.value!.payload!.email??'', brakey.user.value!.payload!.publicKey??'');
                             Get.to(() => ChangePin(email: brakey.user.value!.payload!.email??''));
 
                           }, child: const Text('Ok, Send')),
@@ -285,9 +281,12 @@ class _ProfileState extends State<Profile> {
                       // ListTile(
                       //     title: const Text('Pay with biometric'),
                       //     trailing: Switch(value: false, onChanged: (a) => {})),
-                      // ListTile(
-                      //     title: const Text('Unlock app with biometric'),
-                      //     trailing: Switch(value: false, onChanged: (a) => {})),
+                      ListTile(
+                          title: const Text('Unlock app with Fingerprint'),
+                          trailing: Obx( () => Switch(value: brakey.useBiometric.value, onChanged: (a) => {
+                              brakey.toggleBiometric(null)
+                            }),
+                          )),
 
                     ]),
                   ),
@@ -308,24 +307,25 @@ class _ProfileState extends State<Profile> {
                       ListTile(
                           title: const Text('Dark mode'),
                           trailing: Switch(
-                              value: isDark,
+                              value: Get.isDarkMode,
                               onChanged: (a) => {
                                     // setState(() {
-                                    //   isDark = !isDark;
+                                      isDark = !isDark,
                                     // }),
-                                    // print(isDark),
-                                    // print(Get.isDarkMode),
+                                    print(isDark),
+                                    print(Get.isDarkMode),
                                     
-                                    // Get.changeThemeMode(isDark ? ThemeMode.light : ThemeMode.dark)
+                                    Get.changeThemeMode(isDark ? ThemeMode.light : ThemeMode.dark),
+                                    brakey.toggleDarkMode()
                                   })),
                       ListTile(
                           title: const Text('Hide balance'),
-                          trailing: Switch(value: brakey.showWalletBalance(), onChanged: (a) => {
+                          trailing: Switch(value: brakey.showWalletBalance.value, onChanged: (a) => {
                             setState(() {
                             brakey.toggleBalance();
 
                             })
-                          })),
+                          })),     
                       // ListTile(
                       //     title: const Text('Show balance'),
                       //     trailing: Switch(value: brakey.showWalletBalance.value, onChanged: (a) => {
@@ -348,10 +348,11 @@ class _ProfileState extends State<Profile> {
                         Get.offUntil(
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const Login(showOnboarding: true, hasUser: true),
+                                    WelcomeBack(),
                                 maintainState: false),
                             (route) => false);
                         brakey.logoutUser();
+                        brakey.toggleBiometric(false);
                       },
                       text: 'Logout')
                 ],
@@ -403,8 +404,9 @@ class _ProfileState extends State<Profile> {
           valueColor: Theme.of(context).primaryColor,
           controller: _sendOTPButtonController,
           onPressed: () async {
-          Map a = await sendOTP(brakey.user.value!.payload!.email??'', '', 'forgot password', '');
+          Map a = await forgotPINOtp('Password' ,brakey.user.value!.payload!.email??'', brakey.user.value!.payload!.publicKey??'');
             if (a.containsKey('Status')) {
+              Get.close(1);
                     if (a['Status'] == 'successfull' || a['Response Code'] == 202 || a['Response Code'] == 422 || a['Response Code'] == 406 || a['Status'] == 'successful') {
                       _sendOTPButtonController.success();
                       showDialog(
@@ -497,4 +499,5 @@ class _ProfileState extends State<Profile> {
 
         );
   }
+
 }

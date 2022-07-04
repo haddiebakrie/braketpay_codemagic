@@ -6,10 +6,12 @@ import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 import 'package:braketpay/utils.dart';
+import 'package:get/get.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../uix/askpin.dart';
+import '../uix/themedcontainer.dart';
 
 
 class Electricity extends StatefulWidget {
@@ -43,11 +45,7 @@ class _ElectricityState extends State<Electricity> {
       ),
       body: Container(
             // padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
+                  decoration: ContainerBackgroundDecoration(),
             child: ListView(
               
               children: [
@@ -93,7 +91,7 @@ class _ElectricityState extends State<Electricity> {
                   child: Container(
                             margin: const EdgeInsets.symmetric(vertical: 15, horizontal:10),
                             child: TextFormField(
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -195,13 +193,13 @@ class _ElectricityState extends State<Electricity> {
                                             ?.values
                                             .elementAt(index)
                                     ? Theme.of(context).primaryColor
-                                    : Colors.white,
+                                : Get.isDarkMode ? Color.fromARGB(255, 15, 15, 21) : Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             
-                            boxShadow: [
+                            boxShadow: [ 
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
+                                color: Colors.black12.withOpacity(0.04),
+                                spreadRadius: 8,
                                 blurRadius: 10,
                                 offset: const Offset(0, 0),
                               )
@@ -224,13 +222,13 @@ class _ElectricityState extends State<Electricity> {
                                           .split('=')[1] ??
                                       '',
                                     style: TextStyle(color: fee == electricity_plan_rate['ServiceType']
-                                             ?.values.elementAt(index) ? Colors.white : Colors.black, ),
+                                             ?.values.elementAt(index) ? Colors.white : Theme.of(context).textTheme.bodyLarge?.color, ),
                                     textAlign: TextAlign.center,
                                       ),
                                   Text(
                                     "${formatAmount(electricity_plan_rate['ServiceType']?.values.elementAt(index)['total_price'].toInt().toString() ?? '')}",
                                     style: TextStyle(fontFamily: 'Roboto',fontWeight: FontWeight.bold,color: fee == electricity_plan_rate['ServiceType']
-                                              ?.values.elementAt(index) ? Colors.white : Colors.black, ),
+                                              ?.values.elementAt(index) ? Colors.white : Theme.of(context).textTheme.bodyLarge?.color, ),
                                   ),
                                 ],
                               ),

@@ -1,7 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -115,7 +111,7 @@ Future<Map> fetchMerchantContract (
 // 
     try {
       final response = await Dio().get(
-        'http://172.16.81.19:5001/fetch_registered_contract?$param',
+        'http://172.16.23.9:5001/fetch_registered_contract?$param',
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -124,7 +120,7 @@ Future<Map> fetchMerchantContract (
         )
         
         );
-      // print('99090909090');
+      print(response.realUri);
 
       print('${response.data}%%%%%%%%%%%%%%%%%%%%%%');
 

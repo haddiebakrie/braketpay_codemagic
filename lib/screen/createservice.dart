@@ -138,7 +138,7 @@ class _CreateServiceState extends State<CreateService> {
                                 ),
                                 TextFormField(
                                   controller: _titleFieldController,
-                                  cursorColor: Colors.black,
+                                  cursorColor: Colors.grey,
                                   decoration: const InputDecoration(
                                     fillColor: Color.fromARGB(24, 158, 158, 158),
                                     filled: true,
@@ -223,7 +223,7 @@ class _CreateServiceState extends State<CreateService> {
                             
                                   TextFormField(
                                     controller: _dummyController,
-                                    cursorColor: Colors.black,
+                                    cursorColor: Colors.grey,
                                     decoration: const InputDecoration(
                                       fillColor: Color.fromARGB(24, 158, 158, 158),
                                       filled: true,
@@ -257,7 +257,7 @@ class _CreateServiceState extends State<CreateService> {
                                   ),
                                   TextFormField(
                                     controller: _dummyCController,
-                                    cursorColor: Colors.black,
+                                    cursorColor: Colors.grey,
                                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     keyboardType: TextInputType.number,
                             
@@ -470,7 +470,7 @@ class _CreateServiceState extends State<CreateService> {
                                 ),
                                 TextFormField(
                                   controller: _priceFieldController,
-                                  cursorColor: Colors.black,
+                                  cursorColor: Colors.grey,
                                   style: TextStyle(
                                   fontSize: 60,
                                 ),
@@ -519,6 +519,7 @@ class _CreateServiceState extends State<CreateService> {
                     
             
                     ),
+                      
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
@@ -584,7 +585,7 @@ class _CreateServiceState extends State<CreateService> {
                               margin: EdgeInsets.symmetric(vertical: 10),
                               child: TextFormField(
                                 controller: _usernameFieldController,
-                                cursorColor: Colors.black,
+                                cursorColor: Colors.grey,
                                 decoration: const InputDecoration(
                                   prefixText: '@',
                                   fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -1078,7 +1079,7 @@ class ServicePhaseField extends StatelessWidget {
               ),
             TextFormField(
               initialValue: phaseTitle,
-              cursorColor: Colors.black,
+              cursorColor: Colors.grey,
               decoration: const InputDecoration(
                 fillColor: Color.fromARGB(24, 158, 158, 158),
                 filled: true,
@@ -1106,7 +1107,7 @@ class ServicePhaseField extends StatelessWidget {
             ),
             TextFormField(
               initialValue: phaseCost,
-              cursorColor: Colors.black,
+              cursorColor: Colors.grey,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.numberWithOptions(),
 

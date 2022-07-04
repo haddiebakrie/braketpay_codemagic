@@ -1,4 +1,4 @@
-Map FAQItems = {" What is Braket Contract?":
+Map fAQItems = {" What is Braket Contract?":
 "Braket contract is a method of payment that serve as a middle engine " + 
  "between two people engage in business transaction, to help prevent fraud and scam.",
 
@@ -16,7 +16,9 @@ Map FAQItems = {" What is Braket Contract?":
 	"Braket Vault is a Blockchain that holds funds neither control by the both parties and can only be release when both party fulfill their terms, such as a buyer & a seller.",
 
 // Braket Product Delivery Contract (FAQ)
+};
 
+Map productFAQ = {
 "What is Braket Buying & Selling contract?":
 	 "It is a payment contract between a buyer & seller that make sure the buyer received the exact product paid for, and the seller receive the exact payment for the the same products sold, without story.",
 
@@ -74,20 +76,21 @@ Map FAQItems = {" What is Braket Contract?":
 	
 	"If a buyer cancel an oder, you automatically receive your delivery fee from Braket Vault.",
 
-  "What is Braket Service contract?":
-  "It is a payment contract between a serivice provider and client, the service provider, renders the exact service agreed and the client paid the exact amount for the service",
+};
+
+Map serviceFAQ ={
 
   "Why create a payment contract as a Service Provider?":
   [
   "To prevent you as the Service provider from delivering a service without getting paid for it",
 	"To prevent a client from terminating your work without getting paid for the once you have already done for the client.",
-	"To make sure you get paid for your remaining balance, even when client doesnt want to work with you again.",
-	"To get adavance payment, even before you start the the work",
+	"To make sure you get paid for your remaining balance even when client doesnt want to work with you again.",
+	"To get adavance payment even before you start the the work",
 
   ],
   "Why create a payment contract as a Client?":
   [
-  "To prevent you as the Client to pay someone to get a job done, without getting the job done.",
+  "To prevent you as the Client to pay someone to get a job done without getting the job done.",
 	"To prevent you from making a complete payment to a service provider",
 	"To prevent a service provider from using low grade materials in executing your work",
 	"To prvent a service provider not meeting up the deadline agreed",
@@ -113,4 +116,40 @@ Map FAQItems = {" What is Braket Contract?":
   "If a service provider cancel your contract, you as the Client will automatically receive the the remaining fund left in the payment contract.",
 
 
+};
+
+
+Map loanFAQ ={
+
+  // "Who is a Lender?":
+  // "Yes, as a Borrower you must first apply for a loan using a lender loan ID. After which a notification will be sent to the lender "+ 
+	// "to either confirm or reject your loan application.",
+  "Why create a payment contract as a Lender?":
+  [
+  "To prevent unnecessary loan defaults",
+	"To make artificial intelligence base decision before lending",
+	"To manage risk and increase your lending rate ",
+	"To help you reduce cost in KYC, due deligence and chasing after defaulters",
+	"To be immediately refunded for bad loans.",
+  ],
+  "Why create a payment contract as a Borrower?":
+  [
+
+  "To help you receive loan without threat and stress from a lender.",
+	"To help you utilise the loan for the said need",
+	"To expose you with market opportunities, cotten edge technologie and business support that will help you maximise the use and 	return on investment of the loan ",
+
+  ],
+
+  "Can I Apply for any Loan on Braket ?":
+  "Yes, as a Borrower you must first apply for a loan using a lender loan ID. After which a notification will be sent to the lender to either confirm or reject your loan application.",
+
+  "What happens if a lender confirm my loan.":
+  "If a lender confirm your loan, Braket will take it up from there, to conduct eligibility assesment.",
+
+  "What happens if a lender reject my loan.":
+  "Braket can only invlove in loans that have been confirmed by the lender, so If a lender reject your loan. Nothing can be done, unless try again with another lender.",
+
+  "Can I Apply for any Loan on Braket ?":
+  "Yes, as a Borrower you must first apply for a loan using a lender loan ID. After which a notification will be sent to the lender to either confirm or reject your loan application.",
 };

@@ -110,11 +110,7 @@ class _HistoryState extends State<History> {
                       );
             } else if (snapshot.hasError) {
               return Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20), bottom: Radius.zero),
-                  color: Colors.white,
-                ),
+                
                 child: ListView(
                   children: [
                     Center(

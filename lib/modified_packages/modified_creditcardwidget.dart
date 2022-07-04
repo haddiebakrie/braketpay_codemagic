@@ -81,14 +81,14 @@ class _BraketCreditCardFormState extends State<BraketCreditCardForm> {
   late void Function(CreditCardModel) onCreditCardModelChange;
   late CreditCardModel creditCardModel;
 
-  final MoneyMask _cardNumberController =
-      MoneyMask(mask: '0000 0000 0000 0000 0000');
+  final TextEditingController _cardNumberController =
+      MaskedTextController(mask: '0000 0000 0000 0000 0000');
   final TextEditingController _expiryDateController =
-      MoneyMask(mask: '00/00');
+      MaskedTextController(mask: '00/00');
   final TextEditingController _cardHolderNameController =
       TextEditingController();
   final TextEditingController _cvvCodeController =
-      MoneyMask(mask: '0000');
+      MaskedTextController(mask: '0000');
 
   FocusNode cvvFocusNode = FocusNode();
   FocusNode expiryDateNode = FocusNode();

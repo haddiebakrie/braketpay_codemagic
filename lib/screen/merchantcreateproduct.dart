@@ -72,24 +72,24 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          ListItemSeparated(
+                          ListSeparated(
                               text: widget.product['contract_title'],
                               title: 'Contract Title'),
-                          ListItemSeparated(
+                          ListSeparated(
                               text:
                                   '${widget.product['contract_type'].toUpperCase()} CONTRACT',
                               title: 'Contract Type'),
-                          ListItemSeparated(
+                          ListSeparated(
                               text: widget.product['product_name'],
                               title: 'Product Name'),
-                          ListItemSeparated(
+                          ListSeparated(
                               text: widget.product['product_details'],
                               title: 'Product Detail'),
-                          ListItemSeparated(
+                          ListSeparated(
                               text:
                                   'NGN ${(widget.product['product_amount'].toString())}',
                               title: 'Product Amount'),
-                          ListItemSeparated(
+                          ListSeparated(
                             text: widget.product['minimum_delivery_date'],
                             title: 'Delivers In',
                             isLast: true,
@@ -136,7 +136,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                 ),
                                 TextFormField(
                                   controller: _shipDestFieldController,
-                                  cursorColor: Colors.black,
+                                  cursorColor: Colors.grey,
                                   decoration: const InputDecoration(
                                     fillColor:
                                         Color.fromARGB(24, 158, 158, 158),
@@ -182,7 +182,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                 ),
                                 TextFormField(
                                   controller: _shipFeeFieldController,
-                                  cursorColor: Colors.black,
+                                  cursorColor: Colors.grey,
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
                                     prefixText: 'NGN',

@@ -100,10 +100,20 @@ class _TransactionDetailState extends State<TransactionDetail> {
                     Container(
                       // margin: const EdgeInsets.all(5),
                       width: double.infinity,
-                      child: Text("Receipt ID: ${widget.transaction.payload!.receiptId}", textAlign: TextAlign.end, style: const TextStyle(fontWeight: FontWeight.bold),)),
+                      child: Text("Receipt ID: ${widget.transaction.payload!.receiptId}", textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold),)),
+                    SizedBox(height:30),
                     Column(
                       children: [
-                      ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text('Transaction Date'), trailing: Text(widget.transaction.payload!.dateMade())),
+                      ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, 
+                      title: const Text('Transaction Date'), 
+                      trailing: Column(
+                        mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(widget.transaction.payload!.dateMade()),
+                          Text(widget.transaction.payload!.timeMade(),  style: TextStyle(color: Colors.grey)),
+                        ],
+                      )),
                       Container(color: Colors.grey, height: 1, width: double.infinity)
                       ] 
                     ),

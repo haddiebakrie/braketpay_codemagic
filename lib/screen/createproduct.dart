@@ -143,7 +143,7 @@ class _CreateProductState extends State<CreateProduct> {
                           ),
                           TextFormField(
                             controller: _titleFieldController,
-                            cursorColor: Colors.black,
+                            cursorColor: Colors.grey,
                             decoration: const InputDecoration(
                               fillColor: Color.fromARGB(24, 158, 158, 158),
                               hintStyle: TextStyle(fontFamily: ''),
@@ -191,8 +191,8 @@ class _CreateProductState extends State<CreateProduct> {
                             minLines: null,
                             style: TextStyle(height: 1.5),
                             maxLines: null,
-                            maxLength: 300,
-                            cursorColor: Colors.black,
+                            maxLength: 3000,
+                            cursorColor: Colors.grey,
                             decoration: const InputDecoration(
                               fillColor: Color.fromARGB(24, 158, 158, 158),
                               filled: true,
@@ -238,7 +238,7 @@ class _CreateProductState extends State<CreateProduct> {
                           ),
                           TextFormField(
                                 controller: _priceTextController,
-                                cursorColor: Colors.black,
+                                cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
                                   // textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -457,7 +457,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 ),
                               ),
                               TextFormField(
-                                    cursorColor: Colors.black,
+                                    cursorColor: Colors.grey,
                                     keyboardType: TextInputType.number,
                                       // textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -578,7 +578,7 @@ class _CreateProductState extends State<CreateProduct> {
                             margin: EdgeInsets.symmetric(vertical: 10),
                             child: TextFormField(
                               controller: _usernameFieldController,
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                               decoration: const InputDecoration(
                                 prefixText: '@',
                                 fillColor: Color.fromARGB(24, 158, 158, 158),

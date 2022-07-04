@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../uix/themedcontainer.dart';
 import '../utils.dart';
 
 class SavingsPlanDetail extends StatelessWidget {
@@ -50,28 +51,24 @@ class SavingsPlanDetail extends StatelessWidget {
         backgroundColor: planColor[plan],
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Hero(
-              tag: 'savings_detail_$plan',
-              child: SizedBox(
-                  width: double.infinity,
-                  height: 250,
-                  child: Center(
-                      child: Material(
-                          color: Colors.transparent,
-                          child: Text(plan,
-                              style: const TextStyle(
-                                  fontSize: 40, color: Colors.white))))),
-            ),
-            Container(
+      body: Column(
+        children: [
+          Hero(
+            tag: 'savings_detail_$plan',
+            child: SizedBox(
+                width: double.infinity,
+                height: 250,
+                child: Center(
+                    child: Material(
+                        color: Colors.transparent,
+                        child: Text(plan,
+                            style: const TextStyle(
+                                fontSize: 40, color: Colors.white))))),
+          ),
+          Expanded(
+            child: Container(
               padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight:Radius.circular(20)),
-              
-              ),
+              decoration: ContainerBackgroundDecoration(),
               child: Column(
                 children: [
                    Container(
@@ -85,17 +82,7 @@ class SavingsPlanDetail extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.all(5),
                     padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          )
-                        ]),
+                    decoration: ContainerDecoration(),
                     child: Column(
                       children: [
                         CircleAvatar(
@@ -103,7 +90,7 @@ class SavingsPlanDetail extends StatelessWidget {
                           child: Icon(Icons.lightbulb, color: Colors.white,)),
                         SizedBox(height: 10,),
                         Text('Save over ${formatAmount(savingsDetail[plan]["minimum"])} for ${savingsDetail[plan]["month"]} months and earn ${savingsDetail[plan]["interest"]}% of your savings',
-                        style: const TextStyle(fontSize:18, fontFamily: '', color: Colors.black), 
+                        style: TextStyle(fontSize:18, fontFamily: '', color: adaptiveColor), 
                   textAlign: TextAlign.center),
                       ],
                     ),),
@@ -114,17 +101,7 @@ class SavingsPlanDetail extends StatelessWidget {
             //       textAlign: TextAlign.left),
             SizedBox(height: 20,),
                     Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          )
-                        ]),
+                      decoration: ContainerDecoration(),
                       child: Column(
                         children: [
                           ListTile(
@@ -152,13 +129,13 @@ class SavingsPlanDetail extends StatelessWidget {
                       ),
                     ),
             SizedBox(height: 40,),
-      
+                
                 ],
               ),
                 
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

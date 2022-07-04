@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
-import 'package:braketpay/classes/service_contract.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import "package:http/http.dart" as http;
@@ -40,9 +39,7 @@ Future<List> fetchContracts(
 
           newPayloads.add(ProductContract.fromJson(jsonDecode(jsonEncode(item))));
         
-      }else {
-        // payloads.remove(item);
-      };
+      }
 
       
     }
@@ -90,7 +87,7 @@ Future<Map> createProductContract (
     };
 
     try {
-      print('99090909090');
+      print(param);
     final response = await Dio().post(
       'https://api.braketpay.com/create_product_smart_contract/v1',
       data: param,
@@ -147,7 +144,7 @@ Future<Map> createServiceContract (
     try {
       print(param);
     final response = await Dio().post(
-      'http://172.16.81.38:5001/create_service_smart_contract/v1',
+      'https://api.braketpay.com/create_service_smart_contract/v1',
       data: param,
       options: Options(
          headers: {

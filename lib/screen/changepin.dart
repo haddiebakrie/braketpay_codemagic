@@ -1,5 +1,8 @@
+import 'package:braketpay/api_callers/registration.dart';
+import 'package:braketpay/brakey.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../utils.dart';
@@ -17,6 +20,7 @@ class ChangePin extends StatefulWidget {
 
 class _ChangePinState extends State<ChangePin> {
   String pin = '';
+  Brakey brakey = Get.put(Brakey());
   bool passwordVisible = true;
   String otp = '';
     final _formKey = GlobalKey<FormState>();
@@ -40,6 +44,7 @@ class _ChangePinState extends State<ChangePin> {
                   BorderRadius.vertical(top: Radius.circular(20))),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Form(
+            key: _formKey,
             child: Column(children: [
                             const SizedBox(height:10),
               Container(
@@ -163,20 +168,21 @@ class _ChangePinState extends State<ChangePin> {
                               ],
                             ),
                           ),
-                          const SizedBox(height:20),
+                      const SizedBox(height:20),
                       RoundedLoadingButton(
                                     borderRadius: 10,
                                     color: pin.length == 4 && otp.length > 3 ? Theme.of(context).primaryColor : Colors.grey.withAlpha(100),
                                     elevation: 0,
                                     controller: _loginButtonController,
                                     onPressed: () async {
-                                      if (pin == '') {
-                                        return;
-                                      }
+                                      // print(pin+'8980');
+                                      // if (pin == '') {
+                                      //   return;
+                                      // }
                                       if (_formKey.currentState!.validate()) {
                   
-                                        Map a = await Future(() => {});
-                                      //   print(a);
+                                        Map a = await changePIN('pin', widget.email, brakey.user.value!.payload!.publicKey??'', otp, pin, '');
+                                        print(a);
                                         if (a.containsKey('Status')) {
                                           if (a['Status'] == 'successfull' || a['Status'] == 'successful') {
                                             _loginButtonController.success();
@@ -266,7 +272,9 @@ class _ChangePinState extends State<ChangePin> {
                                       }
                                       },
                                     child: const Text('Set PIN')),
-          
+                      TextButton(onPressed: () {
+                        forgotPINOtp('Transaction pin', brakey.user.value!.payload!.email??'', brakey.user.value!.payload!.publicKey??'');
+                      }, child: Text('Resent OTP'))
           
             ],),
           )

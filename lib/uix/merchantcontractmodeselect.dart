@@ -34,7 +34,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
   bool showPension = false;
   bool showGovernment = false;
   bool showProduct = false;
-  final List<FAQs> _faqs = generateFAQs(FAQItems.length);
+  final List<FAQs> _faqs = generateFAQs(fAQItems.length);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +45,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
             // Icon(CupertinoIcons.doc_plaintext, size: 40),
             Image.asset('assets/stamp.png', width: 70),
             const SizedBox(height:10),
-            const Text('Create Payment contracts'),
+            const Text('Register Payment contracts'),
           ],
         ),
         elevation: 0,
@@ -75,15 +75,15 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                 child: Column(
                   children: [
                     const Text(
-                      'What type of template are you creating',
+                      'What type of contract are you creating',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height:20),
-                GridView(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
+                    const SizedBox(height: 10),
+                        GridView(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, childAspectRatio: 1.5),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
@@ -836,8 +836,8 @@ class FAQs {
 List<FAQs> generateFAQs(int length) {
   return List<FAQs>.generate(length, (int index) {
       return FAQs(
-        headerValue: FAQItems.keys.toList()[index],
-        expandedValue: FAQItems.values.toList()[index].runtimeType != String ? FAQItems.values.toList()[index].toString().replaceAll('[', '●  ').replaceAll(',', '.\n\n●  ').replaceAll(']', '') : FAQItems.values.toList()[index],
+        headerValue: fAQItems.keys.toList()[index],
+        expandedValue: fAQItems.values.toList()[index].runtimeType != String ? fAQItems.values.toList()[index].toString().replaceAll('[', '●  ').replaceAll(',', '.\n\n●  ').replaceAll(']', '') : fAQItems.values.toList()[index],
       );
     });
 }

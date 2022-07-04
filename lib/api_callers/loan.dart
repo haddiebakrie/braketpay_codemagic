@@ -17,11 +17,13 @@ Future<Map> createLoanContract (
   bool visibility,
   String type,
   String transactionPin,  
+  String loanCategory
   ) async {
   Map param = {
       "merchant_id": merchantID,
       "transaction_pin" : transactionPin,
       "account_number": accountNumber,
+      "loan_category": loanCategory,
       "account_password": password,
       "loan_amount_range": range,
       "interest_rate":interest,
@@ -36,7 +38,7 @@ Future<Map> createLoanContract (
     try {
       print('99090909090');
     final response = await Dio().post(
-      'https://api.braketpay.com/register_loan_contract/v1',
+      'http://172.16.23.9:5001/register_loan_contract/v1',
       data: param,
       options: Options(
         headers: {
@@ -45,7 +47,7 @@ Future<Map> createLoanContract (
         },
       )
       );
-      // print('99090909090');
+      print(param);
 
       print(response.data);
 
@@ -73,6 +75,16 @@ Future<Map> activateLoanContract (
   String nokName,
   String nokNIN,
   String nokPhone,
+  String phone,
+  bool maritalStatus,
+  String levelOfEducation,
+  String bankStatement,
+  String state,
+  String lga,
+  String street,
+  String paybackStatement,
+  int noOfDependent,
+  String employment,
   ) async {
   Map param = {
       "loan_id": loanID,
@@ -83,14 +95,25 @@ Future<Map> activateLoanContract (
       "use_of_funds":useOfFunds,
       "next_of_kin_name": nokName,
       "next_of_kin_nin": nokNIN,
-      "next_of_kin_phone_number": nokPhone
+      "next_of_kin_phone_number": nokPhone,
+      "borrower_active_phone_number": phone,
+      "marital_status": maritalStatus,
+      "level_of_education": levelOfEducation,
+      "upload_bank_statement": bankStatement,
+      "current_address_state": state,
+      "current_address_city": '',
+      "current_address_lga": lga,
+      "current_address_street": street,
+      "paying_back_statement": paybackStatement,
+      "number_of_dependent": noOfDependent,
+      "employment_status": employment
     };
 
     try {
       print(param);
       // "ca417768436ff0183085b3d7c382773f"
     final response = await post(
-      Uri.parse('https://api.braketpay.com/activate_registered_loan/v1'),
+      Uri.parse('http://172.16.23.9:5001/activate_registered_loan/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"

@@ -112,19 +112,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                     height: 200,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          )
-                        ]),
+                    decoration: ContainerDecoration(),
                         child: image == '' ? Container(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +154,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                       ),
                       TextFormField(
                         controller: _titleFieldController,
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                           fillColor: Color.fromARGB(24, 158, 158, 158),
                           filled: true,
@@ -251,7 +239,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                   
                         TextFormField(
                           controller: _dummyController,
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -285,7 +273,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                         ),
                         TextFormField(
                           controller: _dummyCController,
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           keyboardType: TextInputType.numberWithOptions(),
                   
                           decoration: const InputDecoration(
@@ -365,7 +353,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                       ),
                       TextFormField(
                         controller: _locFieldController,
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.grey,
                         keyboardType: TextInputType.streetAddress,
                         decoration: const InputDecoration(
                           prefixIcon: Icon(IconlyBold.location),
@@ -412,7 +400,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                       ),
                       TextFormField(
                         controller: downPaymentController,
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.grey,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           prefixText: 'NGN',
@@ -459,7 +447,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                       ),
                       TextFormField(
                         controller: _priceFieldController,
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.grey,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           prefixStyle: TextStyle(color: Colors.grey),
@@ -673,7 +661,7 @@ class ServicePhaseField extends StatelessWidget {
               ),
             TextFormField(
               initialValue: phaseTitle,
-              cursorColor: Colors.black,
+              cursorColor: Colors.grey,
               decoration: const InputDecoration(
                 fillColor: Color.fromARGB(24, 158, 158, 158),
                 filled: true,
@@ -701,7 +689,7 @@ class ServicePhaseField extends StatelessWidget {
             ),
             TextFormField(
               initialValue: phaseCost,
-              cursorColor: Colors.black,
+              cursorColor: Colors.grey,
               keyboardType: TextInputType.numberWithOptions(),
 
               decoration: const InputDecoration(

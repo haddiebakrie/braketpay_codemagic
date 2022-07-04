@@ -1,5 +1,6 @@
 import 'package:braketpay/api_callers/registration.dart';
 import 'package:braketpay/brakey.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class _BVNPromptState extends State<BVNPrompt> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
         backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
           title: const Text('Set Transaction PIN'),
@@ -39,10 +41,7 @@ class _BVNPromptState extends State<BVNPrompt> {
         body: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(10),
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          decoration: ContainerBackgroundDecoration(),
           child: ListView(
             children: [
               Form(
@@ -71,7 +70,7 @@ class _BVNPromptState extends State<BVNPrompt> {
                               Expanded(
                                 // height: 100,
                                 child: TextFormField(
-                                  cursorColor: Colors.black,
+                                  cursorColor: Colors.grey,
                                     maxLength:11,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
@@ -188,7 +187,7 @@ class _BVNPromptState extends State<BVNPrompt> {
                                     child: TextFormField(
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                      cursorColor: Colors.black,
+                                      cursorColor: Colors.grey,
                                       // controller: _userPasswordController,
                                       decoration: InputDecoration(
                                         hintText: '${demoPhone != '' ? demoPhone.substring(0, 5): ''}XXXXXX',
@@ -230,7 +229,7 @@ class _BVNPromptState extends State<BVNPrompt> {
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 obscureText: passwordVisible,
                                 maxLength: 4,
-                                cursorColor: Colors.black,
+                                cursorColor: Colors.grey,
                                 // controller: _userPasswordController,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(onPressed: () {
@@ -366,8 +365,8 @@ class _BVNPromptState extends State<BVNPrompt> {
                                                                 .pop();
                                                               Navigator.of(context)
                                                                 .pop();
-                                                              Navigator.of(context)
-                                                                .pop();
+                                                              // Navigator.of(context)
+                                                              //   .pop();
                                                             _loginButtonController
                                                                 .reset();
                                                             brakey.refreshUserDetail();

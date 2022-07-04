@@ -208,3 +208,87 @@ Future<Map> setBVN (
       return {'Message': 'No internet access'};
     }
 }
+
+Future<Map> forgotPINOtp (
+  String changeType,
+  String email,
+  String publicKey,
+  ) async {
+      try {
+      // Map wallet_address = await getUserInfo(username);
+      // print(wallet_address);
+      // String w_addr = wallet_address['Payload']['wallet_address'];
+  String param = Uri(queryParameters: {
+      "email_address": email,
+      "change_type": changeType,
+      'public_key': publicKey
+    }).query;
+
+      print(param);
+    final response = await get(
+      Uri.parse('http://172.16.23.9:5001/pin_password_change_otp?$param'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      );
+
+      print(response.body);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+
+    } else {
+      return {'Message': 'No internet access'};
+    }
+    } catch (e) {
+      print(e);
+      return {'Message': 'No internet access'};
+    }
+}
+
+
+Future<Map> changePIN (
+  String changeType,
+  String email,
+  String publicKey,
+  String otp,
+  String newPin,
+  String dob,
+  ) async {
+      try {
+      // Map wallet_address = await getUserInfo(username);
+      // print(wallet_address);
+      // String w_addr = wallet_address['Payload']['wallet_address'];
+  Map param = {
+      "email_address": email,
+      "verification_code":otp,
+      "date_of_birth": dob,
+      "change_type": changeType,
+      "new_password": newPin,
+      "new_pin": newPin
+    };
+
+      print(param);
+    final response = await put(
+      Uri.parse('http://172.16.23.9:5001/change_pin_or_password/v1'),
+      headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+        body: jsonEncode(param)
+      );
+
+      print(response.body);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+
+    } else {
+      return {'Message': 'No internet access'};
+    }
+    } catch (e) {
+      print(e);
+      return {'Message': 'No internet access'};
+    }
+}

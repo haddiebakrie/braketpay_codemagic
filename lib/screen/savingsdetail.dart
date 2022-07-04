@@ -61,6 +61,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
         });
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
           floatingActionButton: RoundButton(
               text: 'Save',
               onTap: () {
@@ -72,29 +73,29 @@ class _SavingsDetailState extends State<SavingsDetail> {
                     isScrollControlled: true,
                     builder: (context) {
                       return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
                         appBar: AppBar(
                           title: Text(''),
                           toolbarHeight: 90,
                           elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.black,
+                          // backgroundColor: Colors.transparent,
+                          // foregroundColor: Colors.black,
                         ),
                         body: Form(
                           key: _formKey,
                           child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20))),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
+                            decoration: ContainerBackgroundDecoration(),
+                                  padding: const EdgeInsets.all(8.0),
                             child: Column(children: [
                               Column(mainAxisSize: MainAxisSize.min, children: [
-                                const Text(
-                                  'How much do you want to save',
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: const Text(
+                                    'How much do you want to save',
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ]),
                               SizedBox(height: 10),
@@ -103,7 +104,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                     const EdgeInsets.symmetric(vertical: 15),
                                 child: TextFormField(
                                   keyboardType: TextInputType.number,
-                                  cursorColor: Colors.black,
+                                  cursorColor: Colors.grey,
                                   decoration: const InputDecoration(
                                     fillColor:
                                         Color.fromARGB(24, 158, 158, 158),
@@ -262,93 +263,82 @@ class _SavingsDetailState extends State<SavingsDetail> {
               elevation: 0,
               centerTitle: true,
               title: Text(widget.savings['name_of_savings'] ?? '')),
-          body: ListView(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20), bottom: Radius.zero),
-                  color: Colors.white,
+          body: Container(
+            decoration: ContainerBackgroundDecoration(),
+            child: ListView(
+              children: [
+                Container(
+                  child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Column(children: [
+                        Container(
+                            decoration: ContainerDecoration(),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10),
+                                Text(
+                                  'Savings Detail',
+                                  style: TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                ListItemSeparated(
+                                    text:
+                                        '${DateFormat('MMM, dd yyyy').format(dateCreated)}',
+                                    title: 'Start date'),
+                                ListItemSeparated(
+                                    text:
+                                        '${DateFormat('MMM, dd yyyy').format(maturityDate)}',
+                                    title: 'Maturity date'),
+                                ListItemSeparated(
+                                    text: formatAmount(
+                                        '${widget.savings['savings_target']}'),
+                                    title: 'Savings target'),
+                                ListItemSeparated(
+                                    text: formatAmount(
+                                        '${widget.savings['money_saved']}'),
+                                    title: 'You have saved'),
+                                ListItemSeparated(
+                                  isLast: true,
+                                    text: formatAmount(
+                                        '${widget.savings['total_saving_interest']}'),
+                                    title: 'Total interest earned'),
+                              ],
+                            ))
+                      ])),
                 ),
-                child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Column(children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 3,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 0),
-                                )
-                              ]),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 10),
-                              Text(
-                                'Savings Detail',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              ListItemSeparated(
-                                  text:
-                                      '${DateFormat('MMM, dd yyyy').format(dateCreated)}',
-                                  title: 'Start date'),
-                              ListItemSeparated(
-                                  text:
-                                      '${DateFormat('MMM, dd yyyy').format(maturityDate)}',
-                                  title: 'Maturity date'),
-                              ListItemSeparated(
-                                  text: formatAmount(
-                                      '${widget.savings['savings_target']}'),
-                                  title: 'Savings target'),
-                              ListItemSeparated(
-                                  text: formatAmount(
-                                      '${widget.savings['money_saved']}'),
-                                  title: 'You have saved'),
-                              ListItemSeparated(
-                                  text: formatAmount(
-                                      '${widget.savings['total_saving_interest']}'),
-                                  title: 'Total interest earned'),
-                            ],
-                          ))
-                    ])),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                decoration: ContainerDecoration(),
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      'Committments',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: commitments.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListItemSeparated(
-                            title: DateFormat('MMMM, dd yyyy')
-                                .format(DateTime.parse(commitments[
-                                        commitments.keys.toList()[
-                                            commitments.length - index - 1]]
-                                    ['date_committed']))
-                                .toString(),
-                            text: formatAmount(
-                                '${commitments[commitments.keys.toList()[commitments.length - index - 1]]['amount']}'));
-                      },
-                    ),
-                  ],
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  decoration: ContainerDecoration(),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Text(
+                        'Committments',
+                        style:
+                            TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: commitments.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListItemSeparated(
+                              title: DateFormat('MMMM, dd yyyy')
+                                  .format(DateTime.parse(commitments[
+                                          commitments.keys.toList()[
+                                              commitments.length - index - 1]]
+                                      ['date_committed']))
+                                  .toString(),
+                              text: formatAmount(
+                                  '${commitments[commitments.keys.toList()[commitments.length - index - 1]]['amount']}'));
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 40)
-            ],
+                SizedBox(height: 40)
+              ],
+            ),
           )),
     );
   }

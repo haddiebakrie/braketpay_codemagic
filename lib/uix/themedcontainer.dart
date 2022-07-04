@@ -7,7 +7,7 @@ class ContainerBackgroundDecoration extends BoxDecoration {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20));
   @override
-  final color = Get.isDarkMode ? Colors.black : Colors.white;
+  final color = Get.isDarkMode ? Color.fromARGB(255, 5, 1, 18) : Colors.white;
   
   
 }
@@ -16,7 +16,7 @@ class ContainerDecoration extends BoxDecoration {
   @override
   final BorderRadius borderRadius = BorderRadius.circular(20);
   @override
-  final color = Get.isDarkMode ? const Color.fromARGB(255, 18, 17, 17) : Colors.white;
+  final color = Get.isDarkMode ? Color.fromARGB(255, 15, 15, 21) : Colors.white;
   @override
   final List<BoxShadow> boxShadow = [
     BoxShadow(
@@ -31,4 +31,5 @@ class ContainerDecoration extends BoxDecoration {
 }
 
 Color NeutralButton = Get.isDarkMode ? Get.theme.primaryColor : Colors.black;
+Color adaptiveColor = Get.isDarkMode ? Colors.white : Colors.black;
 Color ThemedBackgroundColor = Get.isDarkMode ? Colors.black : Colors.white;

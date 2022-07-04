@@ -12,6 +12,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import 'package:im_stepper/main.dart';
 import 'package:im_stepper/stepper.dart';
+import '../uix/themedcontainer.dart';
 import '../utils.dart';
 import 'manager.dart';
 
@@ -81,10 +82,7 @@ class _SignupState extends State<SignUp> {
       body: Form(
         key: _formKey,
         child: Container(
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(20))),
+          decoration: ContainerBackgroundDecoration(),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: PageView(
             controller: pageController,
@@ -112,7 +110,7 @@ class _SignupState extends State<SignUp> {
                                 autofillHints: const [AutofillHints.telephoneNumber],
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              cursorColor: Colors.black,
+                              cursorColor: Colors.grey,
                               decoration: InputDecoration(
                                 fillColor: const Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
@@ -263,7 +261,7 @@ class _SignupState extends State<SignUp> {
                         ),
                               TextFormField(
                                 initialValue: fullname.trim() == '' ? null : fullname,
-                                cursorColor: Colors.black,
+                                cursorColor: Colors.grey,
                                 decoration: const InputDecoration(
                                   fillColor: Color.fromARGB(24, 158, 158, 158),
                                   filled: true,
@@ -307,7 +305,7 @@ class _SignupState extends State<SignUp> {
                           ),
                         ),
                               TextFormField(
-                                cursorColor: Colors.black,
+                                cursorColor: Colors.grey,
                                 initialValue: phoneConfirm,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 keyboardType: TextInputType.number,
@@ -464,7 +462,7 @@ class _SignupState extends State<SignUp> {
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         child: TextFormField(
                           autofillHints: [AutofillHints.newUsername],
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -499,7 +497,7 @@ class _SignupState extends State<SignUp> {
                         child: TextFormField(
                           autofillHints: [AutofillHints.newPassword],
                           obscureText: true,
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.grey,
                           // controller: _userPasswordController,
                           decoration: const InputDecoration(
                             // suffixIcon: IconButton(onPressed: () {
@@ -549,7 +547,7 @@ class _SignupState extends State<SignUp> {
                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             obscureText: true,
                             maxLength: 4,
-                            cursorColor: Colors.black,
+                            cursorColor: Colors.grey,
                             // controller: _userPasswordController,
                             decoration: const InputDecoration(
                               // suffixIcon: IconButton(onPressed: () {
