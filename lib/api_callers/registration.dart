@@ -226,7 +226,7 @@ Future<Map> forgotPINOtp (
 
       print(param);
     final response = await get(
-      Uri.parse('http://172.16.23.9:5001/pin_password_change_otp?$param'),
+      Uri.parse('https://api.braketpay.com/pin_password_change_otp?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -271,7 +271,7 @@ Future<Map> changePIN (
 
       print(param);
     final response = await put(
-      Uri.parse('http://172.16.23.9:5001/change_pin_or_password/v1'),
+      Uri.parse('https://api.braketpay.com/change_pin_or_password/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"

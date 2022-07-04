@@ -111,7 +111,7 @@ Future<Map> fetchMerchantContract (
 // 
     try {
       final response = await Dio().get(
-        'http://172.16.23.9:5001/fetch_registered_contract?$param',
+        'https://api.braketpay.com/fetch_registered_contract?$param',
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -138,6 +138,7 @@ Future<Map> fetchMerchantContract (
     }
 }
 //  LON791973567,
+//  LON3203862416,
 
 
 Future<bool> createProductContract (

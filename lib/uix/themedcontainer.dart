@@ -16,7 +16,7 @@ class ContainerDecoration extends BoxDecoration {
   @override
   final BorderRadius borderRadius = BorderRadius.circular(20);
   @override
-  final color = Get.isDarkMode ? Color.fromARGB(255, 15, 15, 21) : Colors.white;
+  final color = Get.isDarkMode ? Color.fromARGB(255, 42, 42, 59).withOpacity(0.5) : Colors.white;
   @override
   final List<BoxShadow> boxShadow = [
     BoxShadow(

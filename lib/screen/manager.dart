@@ -105,6 +105,7 @@ class _ManagerState extends State<Manager> {
         ),
         //         ])),
         bottomNavigationBar: Obx(() => (BottomNavigationBar(
+          
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(IconlyBold.home), label: 'Home'),
               BottomNavigationBarItem(
@@ -121,6 +122,7 @@ class _ManagerState extends State<Manager> {
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             showUnselectedLabels: true,
+            // backgroundColor: Color.fromARGB(255, 5, 1, 18),
             currentIndex: brakey.managerIndex.value,
             type: BottomNavigationBarType.fixed,
             onTap: (index) {

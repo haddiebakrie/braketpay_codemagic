@@ -603,6 +603,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     child: DropdownSearch<dynamic>(
                                         onChanged:(e) {
                                           employment = e;
+                                          if (e == 'Unemployed') {
+                                            e = 'None';
+                                          }
                                         },
                                       dropdownSearchDecoration: InputDecoration(
                                         hintText: 'Select Employment status',
@@ -613,7 +616,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                       // showClearButton: true,
                                       mode: Mode.MENU,
                                       searchDelay: Duration.zero,
-                                      items: ['Unemployed', 'Employed', 'Student', ],
+                                      items: ['Unemployed', 'Employed', 'Self Employed', ],
                                       selectedItem: employment != '' ? employment : '--------'
                                     ),
                                   ),

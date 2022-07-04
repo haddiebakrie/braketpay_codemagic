@@ -38,7 +38,7 @@ Future<Map> createLoanContract (
     try {
       print('99090909090');
     final response = await Dio().post(
-      'http://172.16.23.9:5001/register_loan_contract/v1',
+      'https://api.braketpay.com/register_loan_contract/v1',
       data: param,
       options: Options(
         headers: {
@@ -113,7 +113,7 @@ Future<Map> activateLoanContract (
       print(param);
       // "ca417768436ff0183085b3d7c382773f"
     final response = await post(
-      Uri.parse('http://172.16.23.9:5001/activate_registered_loan/v1'),
+      Uri.parse('https://api.braketpay.com/activate_registered_loan/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"

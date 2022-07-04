@@ -57,7 +57,7 @@ class _UserLoginState extends State<UserLogin> {
                     children: [
                       Text('Hello', style: TextStyle(fontSize: 40, fontFamily: 'Impact', color: Colors.white),),
                   SizedBox(height: 10,),
-                  Text('Welcome back to safety \nfrom the online payment world', style: TextStyle(fontFamily: 'Impact', color: Colors.white),),
+                  Text('Welcome back to safety from the online payment world', style: TextStyle(fontFamily: 'Impact', color: Colors.white, fontSize: 19),),
                     ],
                   ),
                 ),

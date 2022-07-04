@@ -223,12 +223,6 @@ class _SavingsState extends State<Savings> {
                             } else if (snapshot.data!.containsKey('Message') &&
                                 snapshot.data!['Message'] != 'Empty') {
                               return Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20),
-                                        bottom: Radius.zero),
-                                    color: Colors.white,
-                                  ),
                                   child: Center(
                                       child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -641,12 +635,7 @@ class _SavingsState extends State<Savings> {
                             }
                           } else {
                             return Container(
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20),
-                                      bottom: Radius.zero),
-                                  color: Colors.white,
-                                ),
+
                                 child: Center(
                                     child: Column(
                                   children: [

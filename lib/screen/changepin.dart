@@ -1,5 +1,6 @@
 import 'package:braketpay/api_callers/registration.dart';
 import 'package:braketpay/brakey.dart';
+import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -38,10 +39,7 @@ class _ChangePinState extends State<ChangePin> {
 
       ),
       body: Container(
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(20))),
+          decoration: ContainerBackgroundDecoration(),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Form(
             key: _formKey,

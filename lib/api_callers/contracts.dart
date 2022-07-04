@@ -20,7 +20,7 @@ Future<List> fetchContracts(
     Brakey brakey = Get.put(Brakey());
 
     final response = await http.get(
-      Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
+      Uri.parse('http://172.16.23.74:5001/braket_electronic_notification/v1?$param'),
         headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
