@@ -545,6 +545,9 @@ class _ProductDetailState extends State<ProductDetail> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
               actionsAlignment: MainAxisAlignment.spaceBetween,
               actions: [
                 TextButton(
@@ -563,6 +566,9 @@ class _ProductDetailState extends State<ProductDetail> {
                           barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 title: const Text("Approving contract"),
                                 content: Row(
                                   children: const [
@@ -594,6 +600,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -615,6 +624,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -635,6 +647,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -657,6 +672,9 @@ class _ProductDetailState extends State<ProductDetail> {
                             barrierDismissible: false,
                             builder: (error) {
                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                   actions: [
                                     TextButton(
                                       child: const Text('Okay'),
@@ -696,6 +714,9 @@ class _ProductDetailState extends State<ProductDetail> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
               actionsAlignment: MainAxisAlignment.spaceBetween,
               actions: [
                 TextButton(
@@ -713,6 +734,9 @@ class _ProductDetailState extends State<ProductDetail> {
                           barrierDismissible: false,
                           builder: (loading) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 title: const Text("Rejecting contract"),
                                 content: Row(
                                   children: const [
@@ -744,6 +768,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -765,6 +792,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -785,6 +815,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -807,6 +840,9 @@ class _ProductDetailState extends State<ProductDetail> {
                             barrierDismissible: false,
                             builder: (error) {
                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                   actions: [
                                     TextButton(
                                       child: const Text('Okay'),
@@ -844,6 +880,9 @@ class _ProductDetailState extends State<ProductDetail> {
         barrierDismissible: false,
         builder: (confirm) {
           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
               title: const Text("Enter Confirmation code"),
               content: TextFormField(
                 onChanged: (text) {
@@ -860,6 +899,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         barrierDismissible: false,
                         builder: (context) {
                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               actionsAlignment: MainAxisAlignment.spaceBetween,
                               actions: [
                                 TextButton(
@@ -877,6 +919,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                           barrierDismissible: false,
                                           builder: (loading) {
                                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                 title: const Text(
                                                     "Confirming contract"),
                                                 content: Row(
@@ -914,6 +959,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(
@@ -946,6 +994,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(
@@ -975,6 +1026,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -997,6 +1051,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                             barrierDismissible: false,
                                             builder: (error) {
                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                   actions: [
                                                     TextButton(
                                                       child: const Text('Okay'),
@@ -1049,6 +1106,9 @@ class _ProductDetailState extends State<ProductDetail> {
         barrierDismissible: false,
         builder: (confirm) {
           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
               title: const Text("Enter Termination code"),
               content: TextFormField(
                 onChanged: (text) {
@@ -1065,6 +1125,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         barrierDismissible: false,
                         builder: (context) {
                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               actionsAlignment: MainAxisAlignment.spaceBetween,
                               actions: [
                                 
@@ -1077,6 +1140,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                           barrierDismissible: false,
                                           builder: (loading) {
                                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                 title: const Text(
                                                     "Rejecting contract"),
                                                 content: Row(
@@ -1115,6 +1181,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(
@@ -1147,6 +1216,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(
@@ -1176,6 +1248,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -1198,6 +1273,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                             barrierDismissible: false,
                                             builder: (error) {
                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                   actions: [
                                                     TextButton(
                                                       child: const Text('Okay'),
@@ -1255,6 +1333,9 @@ class _ProductDetailState extends State<ProductDetail> {
         barrierDismissible: false,
         builder: (confirm) {
           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               actionsAlignment: MainAxisAlignment.spaceBetween,
                               actions: [
                                 TextButton(
@@ -1272,6 +1353,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                           barrierDismissible: false,
                                           builder: (loading) {
                                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                 title: const Text(
                                                     "Rejecting contract"),
                                                 content: Row(
@@ -1310,6 +1394,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(
@@ -1342,6 +1429,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(
@@ -1371,6 +1461,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -1393,6 +1486,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                             barrierDismissible: false,
                                             builder: (error) {
                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                   actions: [
                                                     TextButton(
                                                       child: const Text('Okay'),

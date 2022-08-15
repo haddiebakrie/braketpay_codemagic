@@ -1,42 +1,55 @@
 import 'dart:convert';
+import 'package:braketpay/api_callers/addr.dart';
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import "package:http/http.dart" as http;
+import 'package:http/http.dart';
 
+Brakey brakey = Get.put(Brakey());
 Future<List> fetchContracts(
   String accountNumber,
   String password,
   String transactionPin,  
   ) async {
-  String param = Uri(queryParameters: {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+  final deviceInfo = await deviceInfoPlugin.deviceInfo;
+  final map = deviceInfo.toMap();
+  Map newMap = {"deviceID": map['id']??'', 'fingerprint':map['fingerprint']??'' };
+  Map param = {
       "account_number" : accountNumber,
       "password" : password,
       "transaction_pin": transactionPin,
       "observation": "fetch contract",
-      "datetime": "Wed, 13 Apr 2001 01:21:07 GMT"
-    }).query;
-    Brakey brakey = Get.put(Brakey());
+      "date_time": "Wed, 13 Apr 2001 01:21:07 GMT",
+      "login_token": await brakey.getUserToken(accountNumber),
+      "device_data": newMap
+      // ""
+    };
 
-    final response = await http.get(
-      Uri.parse('http://172.16.23.74:5001/braket_electronic_notification/v1?$param'),
+    final response = await http.post(
+      Uri.parse('${BRAKETAPI}braket_electronic_notification/v1'),
         headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
         },
-
+      body: jsonEncode(param)
       );
-      print(response.body);
+      // 750
+      // print(response.body);
     if (response.statusCode == 200) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
     List payloads = jsonDecode(response.body);
     List<ProductContract> newPayloads = [];
     for (Map<String, dynamic> item in payloads) {
-      print(payloads);
+      // print(payloads);
       if (item.containsKey('Payload')) {
+          item['Payload']['Terms'].keys.forEach((v) {print(v);});
 
+          // print(item.toString() + "asdfkasdlfj");
           newPayloads.add(ProductContract.fromJson(jsonDecode(jsonEncode(item))));
         
       }
@@ -50,6 +63,7 @@ Future<List> fetchContracts(
     brakey.setContracts(newPayloads);
     return (newPayloads);
   } else {
+    print('${response.body} uuuuuuuuuuuuu');
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
     throw Exception(response.statusCode);
@@ -69,6 +83,7 @@ Future<Map> createProductContract (
   String logisticTo,
   String deliveryDate,
   String transactionPin,  
+  String quantity,
   ) async {
   Map param = {
       "smart_contract_type": 'product',
@@ -77,6 +92,8 @@ Future<Map> createProductContract (
       "seller_address": sellerAddress,
       "transaction_pin": transactionPin,
       "bvn": bvn,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
+      "product_quantity":quantity,
       "product_contract_title": contractTitle,
       "product_details": productDetail,
       "product_amount": productAmount,
@@ -88,27 +105,26 @@ Future<Map> createProductContract (
 
     try {
       print(param);
-    final response = await Dio().post(
-      'https://api.braketpay.com/create_product_smart_contract/v1',
-      data: param,
-      options: Options(
-        headers: {
+    final response = await post(
+      Uri.parse('${BRAKETAPI}create_product_smart_contract/v1'),
+      body: jsonEncode(param),
+      headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
         },
-      )
       );
       // print('99090909090');
 
       // print(response.data);
 
     if (response.statusCode == 200) {
-      print(response.data);
+      print(response.body);
 
-      return response.data;
+      return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No Internet access, Please try again'};
+      print(response.body);
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -135,6 +151,7 @@ Future<Map> createServiceContract (
       "service_provider_address": providerAddress,
       "transaction_pin": transactionPin,
       "bvn": bvn,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       "service_contract_title": contractTitle,
       "delivery_location": deliveryLoc,
       "delivery_stages": stages,
@@ -144,7 +161,7 @@ Future<Map> createServiceContract (
     try {
       print(param);
     final response = await Dio().post(
-      'https://api.braketpay.com/create_service_smart_contract/v1',
+      '${BRAKETAPI}create_service_smart_contract/v1',
       data: param,
       options: Options(
          headers: {
@@ -163,7 +180,7 @@ Future<Map> createServiceContract (
       return response.data;
 
     } else {
-      return {'Message': 'No Internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -190,13 +207,14 @@ Future<Map> contractAction (
       "transaction_pin": pin,
       "contract_id": contractID,
       "contract_type": contractType,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       "instruction": instruction
     };
 
       print(param);
       try {
     final response = await Dio().put(
-      'https://api.braketpay.com/contract_execution_instructions/v1',
+      '${BRAKETAPI}contract_execution_instructions/v1',
       data: param,
       options: Options(
          headers: {
@@ -213,7 +231,7 @@ Future<Map> contractAction (
       return response.data;
 
     } else {
-      return {'Message':'No internet access'};
+      return {'Message':'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);

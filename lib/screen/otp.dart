@@ -2,6 +2,7 @@ import 'package:braketpay/api_callers/registration.dart';
 import 'package:braketpay/screen/bvn.dart';
 import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import 'manager.dart';
@@ -49,6 +50,8 @@ Future<dynamic> askOTP(
                         child: TextFormField(
                           cursorColor: Colors.grey,
                             keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                           decoration: const InputDecoration(
                             fillColor: Color.fromARGB(24, 158, 158, 158),
                             filled: true,
@@ -96,7 +99,10 @@ Future<dynamic> askOTP(
                                     otp,
                                     '',
                                     '',
-                                    ""
+                                    '',
+                                    {},
+                                    "",
+                                    "",
                                   );
                                   print(a);
                                   if (a.containsKey('Status')) {

@@ -4,6 +4,7 @@ import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/ngstates.dart';
 import 'package:braketpay/screen/productprocess.dart';
+import 'package:easy_mask/easy_mask.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -20,6 +21,8 @@ import '../uix/themedcontainer.dart';
 import '../utils.dart';
 import '../uix/roundbutton.dart';
 import 'package:flutter/services.dart';
+
+import 'manager.dart';
 
 
 
@@ -138,7 +141,7 @@ class _CreateProductState extends State<CreateProduct> {
                             child: const Text(
                               'Contract title',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 15),
+                                  fontWeight: FontWeight.w600, fontSize: 15),
                             ),
                           ),
                           TextFormField(
@@ -152,7 +155,7 @@ class _CreateProductState extends State<CreateProduct> {
                                   borderSide: BorderSide.none,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
-                              hintText: 'Ex Contract for Hilion Tourchlight',
+                              hintText: 'Eg, Contract for Hilion Tourchlight',
                               border: OutlineInputBorder(
                                   borderSide: BorderSide.none,
                                   borderRadius:
@@ -182,7 +185,7 @@ class _CreateProductState extends State<CreateProduct> {
                             child: const Text(
                               'Product Detail',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 15),
+                                  fontWeight: FontWeight.w600, fontSize: 15),
                             ),
                           ),
                           TextFormField(
@@ -201,7 +204,7 @@ class _CreateProductState extends State<CreateProduct> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               hintText:
-                                  'Ex Color: Black\nMaterial: Plastic\nLasts for 24 hours with a single charge',
+                                  'Eg, Color: Black\nMaterial: Plastic\nLasts for 24 hours with a single charge',
                               border: OutlineInputBorder(
                                   borderSide: BorderSide.none,
                                   borderRadius:
@@ -233,7 +236,7 @@ class _CreateProductState extends State<CreateProduct> {
                               'Product Price',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 15),
+                                  fontWeight: FontWeight.w600, fontSize: 15),
                             ),
                           ),
                           TextFormField(
@@ -244,7 +247,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 style: TextStyle(
                                   fontSize: 60,
                                 ),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, ],
                                 decoration: InputDecoration(
                                   icon: Text(nairaSign(), style:TextStyle(fontSize: 40, color: Colors.grey)),
                                   prefixStyle: TextStyle(color: Colors.grey),
@@ -281,7 +284,7 @@ class _CreateProductState extends State<CreateProduct> {
                         ],
                       ),
                     ),
-                    
+                     
                 ]
                 ),
                 ),
@@ -311,7 +314,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 child: const Text(
                                   'Shipping from',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w400, fontSize: 15),
+                                      fontWeight: FontWeight.w600, fontSize: 15),
                                 ),
                               ),
                                   Container(
@@ -348,7 +351,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 child: const Text(
                                   'Shipping to',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w400, fontSize: 15),
+                                      fontWeight: FontWeight.w600, fontSize: 15),
                                 ),
                               ),
                                   Container(
@@ -383,6 +386,7 @@ class _CreateProductState extends State<CreateProduct> {
                              
                             ],
                           ), 
+                         
                           Container(
                           margin: const EdgeInsets.symmetric(vertical: 5),
                           child: Column(
@@ -398,7 +402,7 @@ class _CreateProductState extends State<CreateProduct> {
                                   child: const Text(
                                     'Choose delivery date',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),
                                 InkWell(
@@ -453,17 +457,17 @@ class _CreateProductState extends State<CreateProduct> {
                                   'Cost of shipping',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w400, fontSize: 15),
+                                      fontWeight: FontWeight.w600, fontSize: 15),
                                 ),
                               ),
                               TextFormField(
                                     cursorColor: Colors.grey,
                                     keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, ],
                                       // textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 60,
                                     ),
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.zero,
                                       icon: Text(nairaSign(), style:TextStyle(fontSize: 40, color: Colors.grey)),
@@ -747,6 +751,9 @@ class _CreateProductState extends State<CreateProduct> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),
@@ -772,6 +779,9 @@ class _CreateProductState extends State<CreateProduct> {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),
@@ -801,6 +811,9 @@ class _CreateProductState extends State<CreateProduct> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),
@@ -822,6 +835,9 @@ class _CreateProductState extends State<CreateProduct> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),
@@ -853,6 +869,9 @@ class _CreateProductState extends State<CreateProduct> {
                                 barrierDismissible: false,
                                 builder: (_) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       title: Text(
                                         
                                         'YOU ARE CREATING A PRODUCT CONTRACT \nWITH\n ${receiverName.toUpperCase()}',
@@ -883,7 +902,9 @@ class _CreateProductState extends State<CreateProduct> {
                                 logisticFrom,
                                 logisticTo,
                                 deliveryDate,
-                                pin['pin']);
+                                pin['pin'],
+                                ''
+                                );
                             if (a.containsKey('Payload')) {
                               _loginButtonController.success();
                               showDialog(
@@ -891,16 +912,18 @@ class _CreateProductState extends State<CreateProduct> {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
                                             onPressed: () {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).pop();
-                                              brakey.changeManagerIndex(1);
-                                              brakey.refreshUserDetail();
+                                              Get.offUntil(MaterialPageRoute(
+                                            builder: (_) => 
+                                            Manager(user: widget.user, pin: widget.pin)), (route) => false);
+                                            // brakey.changeManagerIndex(0);
+                                            brakey.refreshUserDetail();
                                               
                                             },
                                           )
@@ -916,6 +939,9 @@ class _CreateProductState extends State<CreateProduct> {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),

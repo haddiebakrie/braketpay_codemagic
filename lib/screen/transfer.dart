@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:braketpay/api_callers/pay.dart';
 import 'package:braketpay/api_callers/userinfo.dart';
+import 'package:easy_mask/easy_mask.dart';
 import 'package:flutter/services.dart';
 import 'package:grouped_list/grouped_list.dart';
 
@@ -72,13 +73,14 @@ class _RechargeState extends State<SendMoney> {
     
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
+      extendBody: true,
       appBar: AppBar(
         title: const Text('Send Money'),
         elevation: 0,
         centerTitle: true,
       ),
       body: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(15),
         height: MediaQuery.of(context).size.height,
         decoration: ContainerBackgroundDecoration(),
         child: SingleChildScrollView(
@@ -136,6 +138,17 @@ class _RechargeState extends State<SendMoney> {
                             onTap: () {
                                 setState(() {
                                   bankName =
+                                      'GTBank';
+                                  bankCode =
+                                      '058';
+                                });
+
+                            },
+                            child: const BankAvatar(title: 'GTBank', code: '058')),
+                          InkWell(
+                            onTap: () {
+                                setState(() {
+                                  bankName =
                                       'Access Bank Nigeria';
                                   bankCode =
                                       '044';
@@ -148,12 +161,13 @@ class _RechargeState extends State<SendMoney> {
                     ),
                         TextButton(onPressed: () {
                           Future a = askBankName();
+                         
                           setState((){
                           userName = '';
                           query = '';
 
                           });
-                        }, child: const Text('more'))
+                        }, child: const Text('more', style: TextStyle(color: Colors.teal),))
                   ],
                 ),
               ),
@@ -164,7 +178,7 @@ class _RechargeState extends State<SendMoney> {
                     children: [
                       Container(
                         // margin: EdgeInsets.symmetric(horizontal: 10),
-                        padding: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(20).copyWith(top: 0),
                         margin: const EdgeInsets.symmetric(vertical:15),
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -176,105 +190,108 @@ class _RechargeState extends State<SendMoney> {
                           children: [
                             ListTile(
                               horizontalTitleGap: 0,
-                              title: Text(bankName, style: const TextStyle(fontSize: 18)),
+                              minLeadingWidth: 30,
+                              contentPadding: EdgeInsets.zero,
+                              minVerticalPadding: 0,
+                              title: Text(bankName, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                             leading: Container(
-                                    width: 30,
-                                    height: 30,
+                                    width: 25,
+                                    height: 25,
                                     // margin: EdgeInsets.all(8),
 
                                     clipBehavior: Clip.antiAliasWithSaveLayer,
                                     decoration:
                                         BoxDecoration(
-                                          color: Theme.of(context).primaryColorLight,
-                                          borderRadius: BorderRadius.circular(10)),
+                                          borderRadius: BorderRadius.circular(6)),
                                     child: Image.asset(
                                       'bank_images/$bankCode.png',
                                       width: 30,
                                       height: 30,
                                       fit: BoxFit.fill,
                                       errorBuilder: (context, exception, stackTrace) {
-                                        return Icon(Icons.account_balance, size:20, color: Theme.of(context).primaryColor);
+                                        return Icon(Icons.account_balance, size:20,);
                                       },
                                     )),
                               ),
-                                                    Container(
-                        margin:
-                            const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            
-                            TextFormField(
-                              maxLength: 10,
-                              cursorColor: Colors.grey,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                decoration: const InputDecoration(
-                                fillColor: Color.fromARGB(24, 158, 158, 158),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: 'Enter Account number',
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                              onChanged: (text) async {
-                                print(text);
-                                if (text.length < 10) {
-                                  return;
-                                }
-                                userName = 'Checking Account Number';
-                                accountNumber = text.trim();
-                                setState(() {
-                                });
-                                Map a;
-                                if (bankName == 'Braket Wallet') {
-                                  a = await getUserWith(text.trim(), 'account number');
-                                  userName = a.containsKey('Payload')
-                                      ? a['Payload']['fullname']
-                                      : 'Incorrect Braket Account';
-                                  setState(() {
-                                    userName = a.containsKey('Payload')
-                                        ? 'Name: ${a['Payload']['fullname']}'
-                                        : a.containsKey('Message')
-                                            ? a['Message']
-                                            : 'No Internet access (Tap to Retry)';
-                                  });
-                                } else {
-                                  a = await getBanks(
-                                      widget.user.payload!.email ?? '',
-                                      widget.user.payload!.password ?? '',
-                                      'account',
-                                      bankCode,
-                                      text.trim());
-                                  print(a);
-                                  // userName = a.containsKey('status') && a['status'] == 'true'
-                                  //     ? a['data']['account_name']['message']
-                                  //     : 'Incorrect Account number';
-                                  setState(() {
-                                    userName = a.containsKey('status') &&
-                                            a['status'] == true
-                                        ? 'Name: ${a['data']['account_name']}'
-                                        : a.containsKey('status') && a['status'] == false
-                                            ? 'Invalid Account Number'
-                                            : 'No Internet access (Tap to Retry)';
-                                  });
-                                }
+                                                    Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        
+                                                        TextFormField(
+                                                          maxLength: 10,
+                                                          cursorColor: Colors.grey,
+                                                          minLines: null,
+                                                          maxLines: null,
+                                                          keyboardType: TextInputType.number,
+                                                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                            decoration: const InputDecoration(
+                                                            fillColor: Color.fromARGB(24, 158, 158, 158),
+                                                            counter: SizedBox(),
+                                                            filled: true,
+                                                            hintStyle: TextStyle(
+                                                                        fontWeight: FontWeight.w600),
+                                                            focusedBorder: OutlineInputBorder(
+                                                                borderSide: BorderSide.none,
+                                                                borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                            hintText: 'Enter Account number\n',
+                                                            border: OutlineInputBorder(
+                                                                borderSide: BorderSide.none,
+                                                                borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                            contentPadding: EdgeInsets.all(10),
+                                                          ),
+                                                          onChanged: (text) async {
+                                                            print(text);
+                                                            if (text.length < 10) {
+                                                              return;
+                                                            }
+                                                            userName = 'Checking Account Number';
+                                                            accountNumber = text.trim();
+                                                            setState(() {
+                                                            });
+                                                            Map a;
+                                                            if (bankName == 'Braket Wallet') {
+                                                              a = await getUserWith(text.trim(), 'account number');
+                                                              userName = a.containsKey('Payload')
+                                                                  ? a['Payload']['fullname']
+                                                                  : 'Incorrect Braket Account';
+                                                              setState(() {
+                                                                userName = a.containsKey('Payload')
+                                                                    ? 'Name: ${a['Payload']['fullname']}'
+                                                                    : a.containsKey('Message')
+                                                                        ? a['Message']
+                                                                        : 'No Internet access (Tap to Retry)';
+                                                              });
+                                                            } else {
+                                                              a = await getBanks(
+                                                                  widget.user.payload!.email ?? '',
+                                                                  widget.user.payload!.password ?? '',
+                                                                  'account',
+                                                                  bankCode,
+                                                                  text.trim());
+                                                              print(a);
+                                                              // userName = a.containsKey('status') && a['status'] == 'true'
+                                                              //     ? a['data']['account_name']['message']
+                                                              //     : 'Incorrect Account number';
+                                                              setState(() {
+                                                                userName = a.containsKey('status') &&
+                                                                        a['status'] == true
+                                                                    ? 'Name: ${a['data']['account_name']}'
+                                                                    : a.containsKey('status') && a['status'] == false
+                                                                        ? 'Invalid Account Number'
+                                                                        : 'No Internet access (Tap to Retry)';
+                                                              });
+                                                            }
 
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'This field is required';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                                                          },
+                                                          validator: (value) {
+                                                            if (value == null || value.isEmpty) {
+                                                              return 'This field is required';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
                       
                       InkWell(
                         onTap: () async {
@@ -317,39 +334,13 @@ class _RechargeState extends State<SendMoney> {
                                 }
 
                         },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          padding: const EdgeInsets.all(5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          color: const Color.fromARGB(24, 158, 158, 158),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                padding: const EdgeInsets.all(5),
-                
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                decoration:
-                                    BoxDecoration(
-                                      // color: Theme.of(context).primaryColorLight,
-                                      borderRadius: BorderRadius.circular(40)),
-                                child: Image.asset(
-                                  'assets/avatar-03.png',
-                                  width: 30,
-                                  height: 30,
-                                  fit: BoxFit.fill,
-                                  errorBuilder: (context, exception, stackTrace) {
-                                    return const SizedBox();
-                                  },
-                                )),
-                                const SizedBox(width:5),
-                              Text(userName=="" ? 'Enter a valid account number' : userName),
-                            ],
-                          ),
+                        child: Row(
+                          children: [
+                            const Icon(CupertinoIcons.profile_circled,
+                                    color: Colors.teal),
+                                const SizedBox(width: 5),
+                            Flexible(child: Text(userName=="" ? 'Enter a valid account number' : userName)),
+                          ],
                         ),
                       ),
                       
@@ -360,8 +351,8 @@ class _RechargeState extends State<SendMoney> {
                       ),
 
                       Container(
-                        margin:
-                            const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        // margin:
+                            // const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -370,25 +361,32 @@ class _RechargeState extends State<SendMoney> {
                               child: const Text(
                                 'Amount',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
                             TextFormField(
                               controller: _amountController,
                               cursorColor: Colors.grey,
+                                style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                              maxLines: null,
                               keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, ],
                               decoration: InputDecoration(
-                              helperText: "Current balance: ${formatAmount(brakey.user.value!.payload!.accountBalance.toString())}",
+                              helperText: "Current balance: ${formatAmount(brakey.user.value?.payload?.accountBalance.toString()??'0')}",
+                                helperStyle: TextStyle(color: fee.toDouble() <=  brakey.user.value!.payload!.accountBalance! ? Colors.green : Colors.redAccent, fontWeight: FontWeight.w600 ),
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: '${nairaSign()} 0.000 ',
+                                hintText: '${nairaSign()} 0.000\n',
+                                hintStyle: TextStyle(
+                                            fontWeight: FontWeight.w600),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                contentPadding: EdgeInsets.all(10),
                               ),
                               onChanged: (text) {
                                 setState(() {
@@ -404,7 +402,7 @@ class _RechargeState extends State<SendMoney> {
 
                       Container(
                         margin:
-                            const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            const EdgeInsets.symmetric(vertical: 5,),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -413,22 +411,26 @@ class _RechargeState extends State<SendMoney> {
                               child: const Text(
                                 'Add a note',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
                             TextFormField(
                               cursorColor: Colors.grey,
+                                maxLines: null,
+                                minLines: null,
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.all(Radius.circular(10))),
-                                hintText: 'Leave a quick note ',
+                                hintText: 'Eg. Have a nice coffee ☕\n\n',
+                                hintStyle: TextStyle(
+                                            fontWeight: FontWeight.w600),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.all(Radius.circular(10))),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                contentPadding: EdgeInsets.all(10),
                               ),
                               onChanged: (text) {
                                 setState(() {
@@ -444,9 +446,21 @@ class _RechargeState extends State<SendMoney> {
                           ],
                         ),
                       ),
-              
+            
+            ],
+          ),
+        ),
+      ),
+        ])),
+        
+        ),
+        bottomNavigationBar:   
               Container(
-                padding: const EdgeInsets.only(top:40),
+                padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+                color: Get.isDarkMode ? Color.fromARGB(255, 42, 42, 59) : Colors.white
+                ),
                 child: RoundedLoadingButton(
                     borderRadius: 10,
                     color: Theme.of(context).primaryColor,
@@ -461,6 +475,9 @@ class _RechargeState extends State<SendMoney> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -481,6 +498,9 @@ class _RechargeState extends State<SendMoney> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -502,6 +522,9 @@ class _RechargeState extends State<SendMoney> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -522,6 +545,9 @@ class _RechargeState extends State<SendMoney> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -542,6 +568,9 @@ class _RechargeState extends State<SendMoney> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -567,10 +596,11 @@ class _RechargeState extends State<SendMoney> {
                           }
                         // print('$username, $pin, $password');
                         Map a = await cashTransfer(
+                          
                             fee.toInt().toString(),
-                            widget.user.payload!.password ?? '',
+                            brakey.user.value!.payload!.password ?? '',
                             pin['pin'],
-                            widget.user.payload!.accountNumber ?? '',
+                            brakey.user.value!.payload!.accountNumber ?? '',
                             accountNumber,
                             bankName == 'Braket Wallet' ? 'Braket' : bankName,
                             userName.replaceAll('Name:', ''),
@@ -584,6 +614,9 @@ class _RechargeState extends State<SendMoney> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         // 2204112769
@@ -592,8 +625,8 @@ class _RechargeState extends State<SendMoney> {
                                           Navigator.of(context).pop();
                                           Navigator.of(context).pop();
                                           // Navigator.of(context).pop();
-                                          brakey.refreshUserDetail();
                                           brakey.changeManagerIndex(2);
+                                          brakey.refreshUserDetail();
                                           // brakey.managerIndex = Rxn(3);
                                         },
                                       )
@@ -610,6 +643,9 @@ class _RechargeState extends State<SendMoney> {
                               builder: (context) {
                                 print(a['Message'].runtimeType);
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -632,12 +668,10 @@ class _RechargeState extends State<SendMoney> {
                     },
                     child: Text('Send ${formatAmount(fee.toString())}',
                         style: const TextStyle(fontFamily: 'Roboto'))),
+              
               )
-            ],
-          ),
-        ),
-      ),
-        ]))));
+            ,
+        );
   }
 
   Future<dynamic> askBankName() {
@@ -790,9 +824,9 @@ class BankAvatar extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 50,
-              height: 50,
-              margin: const EdgeInsets.all(2),
+          width: 40,
+              height: 40,
+              margin: const EdgeInsets.all(4),
     
               clipBehavior: Clip.antiAliasWithSaveLayer,
               decoration:
@@ -803,7 +837,7 @@ class BankAvatar extends StatelessWidget {
                 height: 40,
                 fit: BoxFit.fill,)
         ),
-        Text(title)
+        Text(title.capitalizeFirst!, style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w600, fontSize:12),)
       ],
     );
   }
@@ -819,7 +853,7 @@ class BankListItem extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          title: Text(data['name']),
+          title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),),
           horizontalTitleGap: 5,
           leading: Container(
               width: 40,
@@ -829,7 +863,7 @@ class BankListItem extends StatelessWidget {
               clipBehavior: Clip.antiAliasWithSaveLayer,
               decoration:
                   BoxDecoration(
-                    color: Theme.of(context).primaryColorLight,
+                    // color: Theme.of(context).primaryColorLight,
                     borderRadius: BorderRadius.circular(10)),
               child: Image.asset(
                 data['name'].contains('Braket') ? 'assets/braket_logo.png' : 'bank_images/${data['code']}.png',
@@ -837,7 +871,7 @@ class BankListItem extends StatelessWidget {
                 height: 40,
                 fit: BoxFit.fill,
                 errorBuilder: (context, exception, stackTrace) {
-                  return Icon(Icons.account_balance, size:30, color: Theme.of(context).primaryColor);
+                  return Icon(Icons.account_balance, size:30);
                 },
               )),
         ),

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:get_time_ago/get_time_ago.dart';
 import 'package:intl/intl.dart';
 
 class ProductContract {
@@ -74,7 +76,7 @@ class ProductContract {
     if (payload!.parties==null){
       return '';
     }
-        print(contractType()==2);
+        // print(contractType()==2);
     if (contractType()==1) {
       if (payload!.parties!.clientName == name) {
         return payload!.parties!.providersName??'';
@@ -130,19 +132,22 @@ class ProductContract {
     if (payload!.parties!.buyersName != null) {
       final DateTime formatted =
           HttpDate.parse(payload!.states!.dateContractCreated ?? "");
+          String timeAgo = GetTimeAgo.parse(formatted).replaceAll('a day ago', 'yesterday');
+
       String date = DateFormat('MMM, dd yyyy').format(formatted);
-      return date;
+      return timeAgo.contains('ago') || timeAgo == 'yesterday' ? timeAgo : date;
     } else if(payload!.parties!.borrowerName != null){
       final DateTime formatted = DateTime.parse(
           payload!.states!.dateLastChangeMade ?? "");
           String date = DateFormat('MMM, dd yyyy').format(formatted);
-      return date;
+       String timeAgo = GetTimeAgo.parse(formatted).replaceAll('a day ago', 'yesterday');
+      return timeAgo.contains('ago') || timeAgo == 'yesterday' ? timeAgo : date;
     }  else {
       final DateTime formatted = HttpDate.parse(
           payload!.states!.dateContractCreatedService ?? "");
       String date = DateFormat('MMM, dd yyyy').format(formatted);
-      return date;
-    }
+      String timeAgo = GetTimeAgo.parse(formatted).replaceAll('a day ago', 'yesterday');
+      return timeAgo.contains('ago') || timeAgo == 'yesterday' ? timeAgo : date;    }
   }
 
   DateTime httpDate() {
@@ -157,7 +162,7 @@ class ProductContract {
       return formatted;
 
     } else if(payload!.parties!.borrowerName != null){
-      print("${payload!.contractID}7777");
+      // print("${payload!.contractID}7777");
       final DateTime formatted = DateTime.parse(
           payload!.states!.dateLastChangeMade ?? "");
       return formatted;
@@ -170,7 +175,15 @@ class ProductContract {
     }
   }
 
+  String nextLoanDueDate() {
+    final DateTime formatted = HttpDate.parse(
+          payload!.terms!.nextDueDate ?? "");
+    String date = DateFormat('MMM, dd yyyy').format(formatted);
+      return date;
+  }
+
   DateTime formattedHttpDate() => DateTime(httpDate().year, httpDate().month, httpDate().day);
+
   String deliveryDate() {
     if (payload!.parties!.buyersName != null) {
       final DateTime formatted =
@@ -308,8 +321,8 @@ class Privilledges {
   String? confirmationCode;
   String? terminationCode;
   String? approvalCode;
-  String? borrowerRepayment;
-  String? loanStages;
+  Map? borrowerRepayment;
+  Map? loanStages;
   String? totalRepayment;
   String? borrowerRepaymentStatus;
 
@@ -317,14 +330,15 @@ class Privilledges {
   Privilledges(
       {this.confirmationCode, this.terminationCode, this.approvalCode, this.borrowerRepayment, this.borrowerRepaymentStatus});
   Privilledges.fromJson(Map<String, dynamic> json) {
+    // print(json['borrower_repayments'].runtimeType);
     approvalCode = json.containsKey('approval_code')
         ? json['approval_code']
         : json['approve_code'];
     confirmationCode = json['confirmation_code'];
     loanStages = json['loan_stages'];
     terminationCode = json['termination_code'];
-    totalRepayment = json.containsKey("total_braket_repayments") ? json['total_braket_repayments'] : json['total_borrower_repayments'];
-    borrowerRepayment = json.containsKey('borrower_repayments') ? json['borrower_repayments'] : json['braket_repayments'];
+    totalRepayment = json.containsKey("total_borrower_repayments") ? json['total_borrower_repayments'].toString() : json['total_braket_repayments'].toString();
+    borrowerRepayment = json['borrower_repayments'];
     borrowerRepaymentStatus = json.containsKey("borrower_repayment_status") ? json['borrower_repayment_status'] : json['braket_repayment_status'];
   }
 
@@ -405,6 +419,11 @@ class Terms {
   String? loanType;
   String? paymentLeft;
   String? periodLeft;
+  String? monthlyPayment;
+  String? nextDueDate;
+  List? duePaymentDates;
+  String? productQuantity;
+  String? borrowerRepayment;
 
   Terms(
       {this.contractTitle,
@@ -412,6 +431,7 @@ class Terms {
       this.logisticAmount,
       this.productAmount,
       this.productDetails,
+      this.productQuantity,
       this.shippingDestination,
       this.shippingLocation,
       this.aboutStages,
@@ -424,16 +444,20 @@ class Terms {
       this.stagesAchieved,
       this.totalServiceAmount,
       this.balance,
+      this.borrowerRepayment,
       this.interestRate,
       this.loanAmount,
+      this.nextDueDate,
       this.loanPeriod,
       this.loanType,
       this.paymentLeft,
+      this.monthlyPayment,
+      this.duePaymentDates,
       this.periodLeft,
       });
 
   Terms.fromJson(Map<String, dynamic> json) {
-    print(json['loan_title']);
+    // print(json['loan_title']);
     contractTitle = json.containsKey('loan_title') ? json['loan_title'] : json.containsKey('contract_title')
         ? json['contract_title']
         : json['contract title'];
@@ -441,12 +465,16 @@ class Terms {
         ? json['delivery_datetime']
         : json['execution timeline'];
     balance = json['balance'];
-    interestRate = json['interest_rate'];
-    loanAmount = json['loan_amount'];
-    loanPeriod = json['loan_period'];
+    // print(json['due_payments_dates'].runtimeType == List);
+    duePaymentDates =  json['due_payments_dates'].runtimeType == List ? json['due_payments_dates'] : [];
+    interestRate = json['interest_rate'].toString();
+    loanAmount = json['loan_amount'].toString();
+    loanPeriod = json['loan_period'].toString();
     loanType = json['loan_type'];
-    paymentLeft = json['payment_left'];
-    periodLeft = json['period_left'];
+    nextDueDate = json['next_payment_due_date'];
+    productQuantity = json['product_quantity'].toString();
+    paymentLeft = json['payment_left'].toString();
+    periodLeft = json['period_left'].toString();
     logisticAmount = json['logistic amount'];
     productAmount = json['product amount'];
     productDetails = json['product_details'];
@@ -460,6 +488,8 @@ class Terms {
     remainderPayment = json['remainder_payment'];
     stageCompletionPayment = json['stage_completion_payment'];
     stagesAchieved = json['stages achieved'];
+    borrowerRepayment = json['total_borrower_repayments'];
+    monthlyPayment= json['your_monthly_payment'].toString();
     totalServiceAmount = json['total service amount'];
   }
 
@@ -472,9 +502,12 @@ class Terms {
     data['loan_type'] = loanType;
     data['interest_rate'] = interestRate;
     data['payment_left'] = paymentLeft;
+    data['next_payment_due_date'] = nextDueDate;
     data['loan_amount'] = loanAmount;
     data['period_left'] = periodLeft;
     data['product amount'] = productAmount;
+    data['product_quantity'] = productQuantity;
+    data['due_payments_dates'] = duePaymentDates;
     data['product_details'] = productDetails;
     data['shipping destination'] = shippingDestination;
     data['shipping location'] = shippingLocation;
@@ -486,6 +519,8 @@ class Terms {
     data['remainder_payment'] = remainderPayment;
     data['stage_completion_payment'] = stageCompletionPayment;
     data['stages achieved'] = stagesAchieved;
+    data['total_borrower_repayments'] = borrowerRepayment; 
+    data['your_monthly_payment'] = monthlyPayment;
     data['total service amount'] = totalServiceAmount;
     return data;
   }

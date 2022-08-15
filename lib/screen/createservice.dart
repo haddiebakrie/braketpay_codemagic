@@ -5,6 +5,7 @@ import 'package:braketpay/api_callers/userinfo.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/productprocess.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:easy_mask/easy_mask.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -133,7 +134,7 @@ class _CreateServiceState extends State<CreateService> {
                                   child: Text(
                                     'Contract title',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),
                                 TextFormField(
@@ -146,7 +147,7 @@ class _CreateServiceState extends State<CreateService> {
                                         borderSide: BorderSide.none,
                                         borderRadius:
                                             BorderRadius.all(Radius.circular(10))),
-                                    hintText: 'Ex Contract for Room cleaning',
+                                    hintText: 'Eg, Contract for Room cleaning',
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide.none,
                                         borderRadius:
@@ -178,7 +179,7 @@ class _CreateServiceState extends State<CreateService> {
                                     child: Text(
                                       'Service rendering phases (minimum of 3 phase)',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w400, fontSize: 15),
+                                          fontWeight: FontWeight.w600, fontSize: 15),
                                     ),
                                   ),
                                   Container(
@@ -217,7 +218,7 @@ class _CreateServiceState extends State<CreateService> {
                                     child: Text(
                                       'Rendering Phase ${lastPhase + 1}',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w400, fontSize: 15),
+                                          fontWeight: FontWeight.w600, fontSize: 15),
                                     ),
                                   ),
                             
@@ -258,7 +259,7 @@ class _CreateServiceState extends State<CreateService> {
                                   TextFormField(
                                     controller: _dummyCController,
                                     cursorColor: Colors.grey,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, ],
                                     keyboardType: TextInputType.number,
                             
                                     decoration: const InputDecoration(
@@ -356,7 +357,7 @@ class _CreateServiceState extends State<CreateService> {
                                 child: const Text(
                                   'Location',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w400, fontSize: 15),
+                                      fontWeight: FontWeight.w600, fontSize: 15),
                                 ),
                               ),
                                   Container(
@@ -403,7 +404,7 @@ class _CreateServiceState extends State<CreateService> {
                                   child: const Text(
                                     'Service delivery date',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),
                                 InkWell(
@@ -465,7 +466,7 @@ class _CreateServiceState extends State<CreateService> {
                                   child: Text(
                                     'Downpayment',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),
                                 TextFormField(
@@ -474,7 +475,7 @@ class _CreateServiceState extends State<CreateService> {
                                   style: TextStyle(
                                   fontSize: 60,
                                 ),
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                   icon: Text(nairaSign(), style:TextStyle(fontSize: 40, color: Colors.grey)),
@@ -734,6 +735,9 @@ class _CreateServiceState extends State<CreateService> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),
@@ -760,6 +764,9 @@ class _CreateServiceState extends State<CreateService> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),
@@ -780,6 +787,9 @@ class _CreateServiceState extends State<CreateService> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),
@@ -808,6 +818,9 @@ class _CreateServiceState extends State<CreateService> {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -829,6 +842,9 @@ class _CreateServiceState extends State<CreateService> {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -852,6 +868,9 @@ class _CreateServiceState extends State<CreateService> {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -887,6 +906,9 @@ class _CreateServiceState extends State<CreateService> {
                           barrierDismissible: false,
                           builder: (_) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 title: Text(
                                   'YOU ARE CREATING A SERVICE CONTRACT \nWITH\n ${receiverName.toUpperCase()}',
                                   textAlign: TextAlign.center,
@@ -925,6 +947,9 @@ class _CreateServiceState extends State<CreateService> {
                                             barrierDismissible: false,
                                             builder: (context) {
                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                   actions: [
                                                     TextButton(
                                                       child: const Text('Okay'),
@@ -951,6 +976,9 @@ class _CreateServiceState extends State<CreateService> {
                                             barrierDismissible: false,
                                             builder: (context) {
                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                   actions: [
                                                     TextButton(
                                                       child: const Text('Okay'),
@@ -974,6 +1002,9 @@ class _CreateServiceState extends State<CreateService> {
                                             barrierDismissible: false,
                                             builder: (context) {
                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                   actions: [
                                                     TextButton(
                                                       child: const Text('Okay'),
@@ -1074,7 +1105,7 @@ class ServicePhaseField extends StatelessWidget {
                 child: Text(
                   'Rendering Phase ${index + 1}',
                   style: TextStyle(
-                      fontWeight: FontWeight.w400, fontSize: 15),
+                      fontWeight: FontWeight.w600, fontSize: 15),
                 ),
               ),
             TextFormField(

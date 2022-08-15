@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class RoundButton extends StatelessWidget {
   const RoundButton({
-    Key? key, this.text='', this.width = 70, this.height = 40, this.color1 = const Color.fromARGB(255, 0, 13, 194),
+    Key? key, this.text='', this.textSize=0, this.icon, this.width = 70, this.height = 40, this.color1 = const Color.fromARGB(255, 0, 13, 194),
     this.color2 = const Color.fromARGB(255, 0, 13, 194), this.textColor = Colors.white, this.onTap , this.radius = 20.0,
   }) : super(key: key);
 
@@ -15,28 +15,48 @@ class RoundButton extends StatelessWidget {
   final Color color1;
   final Color color2;
   final Color textColor;
+  final double textSize;
   final double radius;
+  final IconData? icon;
   final Function? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
-      width: width,
+      padding: textSize==0 ? EdgeInsets.symmetric(vertical: 10, horizontal:16) :  EdgeInsets.symmetric(vertical: 5, horizontal:10),
+      // height: height,
+      // width: width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius),
           gradient: LinearGradient(colors: [
             color1, color2
           ])),
-      child: TextButton(
-          clipBehavior: Clip.hardEdge,
-          onPressed: () {
+      child: InkWell(
+          onTap: () {
             onTap!();
           },
-          child: Text(
-            text,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: textColor),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Visibility(
+                visible: icon != null,
+                child: Container(
+                  
+                  padding: const EdgeInsets.only(right: 5.0),
+                  child: Icon(icon, color: textColor, size: 15),
+                )),
+              textSize==0 ? Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: textColor),
+              ) : Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: textSize, color: textColor),
+              ) ,
+            ],
           )),
     );
   }

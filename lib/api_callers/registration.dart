@@ -1,7 +1,9 @@
 
 import 'dart:convert';
 
+import 'package:braketpay/api_callers/addr.dart';
 import 'package:braketpay/api_callers/userinfo.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 
@@ -15,33 +17,56 @@ Future<Map> createUserAccount (
   String pin,
   String username,
   String otp,
+  String otp2,
+  Map imageLink,
+  String fireToken,
   String level,
   ) async {
+  final deviceInfoPlugin = DeviceInfoPlugin();
+  final deviceInfo = await deviceInfoPlugin.deviceInfo;
+  final map = deviceInfo.toMap();
+  Map newMap = {"deviceID": map['id']??'', 'fingerprint':map['fingerprint']??'' };
+
     Map param;
   if (level=='without_bvn') {
     param = {
       "fullname": fullname,
-      "phone_number": '234${int.parse(phoneNumber)}',
+      "phone_number": '${int.parse(phoneNumber)}',
       "date_of_birth": dateOfBirth,
       "email_address": email,
       "password": password,
       'username': username,
-      "verification_code": otp, 
-      "verification_number": phoneConfirm,
-      "signup_level": level
+      "firebase_id": fireToken,
+      "email_otp": otp, 
+      "transaction_pin":pin,
+      "phone_otp": otp2, 
+      "bvn_nin_otp": phoneConfirm,
+      "signup_level": level,
+      "profile_picture_links":imageLink,
+      "profile_picture": utf8.encode(null.toString()),
+          "device_data": newMap,
+    //    = user_data["phone_otp"]
+		//  = user_data["email_otp"]
+		//  = user_data["bvn_nin_otp"]
     };
   } else {
       param = {
           "fullname": fullname,
-          "phone_number": '234${int.parse(phoneNumber)}',
+          "phone_number": '${int.parse(phoneNumber)}',
           "date_of_birth": dateOfBirth,
           "email_address": email,
           "password": password,
           'username': username,
-          "verification_code": otp, 
-          "verification_number": phoneConfirm,
-          "transaction_pin": pin,
-          "signup_level": level
+          "email_otp": otp, 
+          "transaction_pin":pin,
+          "phone_otp": otp2, 
+          "profile_picture_links":imageLink,
+          "bvn_nin_otp": phoneConfirm,
+          "firebase_id": fireToken,
+          "signup_level": level,
+          "profile_picture": utf8.encode(null.toString()),
+          "device_data": newMap
+
         };
 
   }
@@ -49,7 +74,7 @@ Future<Map> createUserAccount (
       print(param);
       try {
     final response = await post(
-      Uri.parse('https://api.braketpay.com/create_account/v1'),
+      Uri.parse('${BRAKETAPI}create_account/v1'),
        headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -65,7 +90,7 @@ Future<Map> createUserAccount (
       return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -77,19 +102,19 @@ Future<Map> sendOTP (
   String email,
   String bvn,
   String verifyType,
-  String password,
+  String phone,
   ) async {
  String param = Uri(queryParameters: {
       "email_or_phone_number": email,
        'request_type': verifyType,
-       'password': password,
+       'phone_number': phone,
        'bvn_nin': bvn
     }).query;
 
       print(param);
     try {
     final response = await get(
-      Uri.parse('https://api.braketpay.com/email_or_phone_confirmation/v1?$param'),
+      Uri.parse('${BRAKETAPI}email_or_phone_confirmation/v1?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -100,7 +125,7 @@ Future<Map> sendOTP (
       print(response.body);
       
     if (response.statusCode == 200) {
-      if (jsonDecode(response.body)['Response Code'] == 422 || jsonDecode(response.body)['Response Code'] == 406) {
+      if (jsonDecode(response.body)['Response Code'] == 422 || jsonDecode(response.body)['Response Code'] == 406 || (jsonDecode(response.body).containsKey('response') && jsonDecode(response.body)['response']['Status'] == 'successfull')) {
         print(response.body);
         return jsonDecode(response.body);
 
@@ -108,7 +133,7 @@ Future<Map> sendOTP (
         return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
 
     } catch (e) {
@@ -120,21 +145,25 @@ Future<Map> sendOTP (
 
 Future<Map> verifyBVN (
   String phone,
-  String otp,
+  String email,
+  String phoneOTP,
+  String emailOTP,
+  String bvnOTP,
   String type,
   ) async {
  String param = Uri(queryParameters: {
-      "verification_phone_number": phone,
-      "verification_email_address": phone,
-      "email_or_phone_number": phone,
-       'verification_otp': otp,
-       "request_type": type,
+      "phone_otp": phoneOTP,
+      "email_otp": emailOTP,
+      "bvn_nin_otp": bvnOTP,
+      "email_address": email,
+      "phone_number": phone,
+       "signup_level": type,
     }).query;
 
       print(param);
     try {
     final response = await get(
-      Uri.parse('https://api.braketpay.com/bvn_verification_fetch?$param'),
+      Uri.parse('${BRAKETAPI}bvn_verification_fetch?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -151,7 +180,7 @@ Future<Map> verifyBVN (
         // return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
 
     } catch (e) {
@@ -185,7 +214,7 @@ Future<Map> setBVN (
 
       print(param);
     final response = await put(
-      Uri.parse('https://api.braketpay.com/set_transaction_pin_and_bvn/v1'),
+      Uri.parse('${BRAKETAPI}set_transaction_pin_and_bvn/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -201,7 +230,7 @@ Future<Map> setBVN (
       return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -226,7 +255,7 @@ Future<Map> forgotPINOtp (
 
       print(param);
     final response = await get(
-      Uri.parse('https://api.braketpay.com/pin_password_change_otp?$param'),
+      Uri.parse('${BRAKETAPI}pin_password_change_otp?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -239,7 +268,7 @@ Future<Map> forgotPINOtp (
       return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -271,7 +300,7 @@ Future<Map> changePIN (
 
       print(param);
     final response = await put(
-      Uri.parse('https://api.braketpay.com/change_pin_or_password/v1'),
+      Uri.parse('${BRAKETAPI}change_pin_or_password/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -285,7 +314,7 @@ Future<Map> changePIN (
       return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);

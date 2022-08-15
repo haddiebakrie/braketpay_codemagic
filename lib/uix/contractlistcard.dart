@@ -38,13 +38,15 @@ class ContractListCard extends StatelessWidget {
     String state = product.contractType() == 2 ? product.payload!.states!.confirmationState??'' : product.payload?.states?.closingState == 'Closed' ? 'Closed' : product.payload?.states?.closingState == 'Terminated' ? 'Terminated' : product.payload!.states!.approvalState ?? ""; 
     return InkWell(
       onTap: () {
-      print(product.contractType());
+      // print(product.payload.terms.;
         product.contractType() == 0 ? Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => ProductDetail(contract: product, pin: pin, user: user)
       )) : product.contractType() == 1 ? Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => ServiceDetail(contract: product, pin: pin, user: user)
       )) : Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => LoanDetail(contract: product, pin: pin, user: user)));
+            builder: (BuildContext context) {
+              print(product.payload!.toJson());
+              return LoanDetail(contract: product, pin: pin, user: user);}));
           
       },
       child: Padding(
@@ -55,10 +57,11 @@ class ContractListCard extends StatelessWidget {
             horizontalTitleGap: 10,
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
               
               children: [
-                Text(product.dateCreated(), style: TextStyle(color: Colors.grey),),
-                Text(state, style: TextStyle(fontWeight: FontWeight.bold, color: this.colors[state]??Theme.of(context).textTheme.labelMedium?.color))
+                Text(toTitleCase(product.dateCreated()), style: TextStyle(color: Colors.grey, fontSize: 10),),
+                Text(state, style: TextStyle(fontWeight: FontWeight.bold, color: this.colors[state]??Theme.of(context).textTheme.labelMedium?.color, fontSize: 12))
               ],
             ),
             title: Text(
@@ -87,25 +90,25 @@ class ContractListCard extends StatelessWidget {
             leading: AbsorbPointer(
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: product.contractType() == 0 ? Color.fromARGB(255, 195, 230, 227) : product.contractType() == 1 ? Color.fromARGB(255, 250, 180, 174) : Color.fromARGB(255, 254, 203, 175),
                     borderRadius: BorderRadius.circular(20)),
                 child: product.contractType() == 0
                     ? IconButton(
                         icon: const Icon(IconlyBold.document),
-                        color: Colors.white,
-                        iconSize: 20,
+                        color: Colors.teal,
+                        iconSize: 25,
                         onPressed: () {})
                     : product.contractType() == 1 ? 
                     
                     IconButton(
                         icon: const Icon(IconlyBold.setting),
-                        color: Colors.white,
-                        iconSize: 20,
+                        color: Colors.redAccent,
+                        iconSize: 30,
                         onPressed: () {}) : 
                    IconButton(
-                        icon: const Icon(Icons.money),
-                        color: Colors.white,
-                        iconSize: 20,
+                        icon: const Icon(CupertinoIcons.archivebox_fill),
+                        color: Color.fromARGB(255, 255, 72, 0),
+                        iconSize: 25,
                         onPressed: () {})     
                         ,
               ),

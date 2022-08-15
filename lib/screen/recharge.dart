@@ -6,13 +6,16 @@ import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 import 'package:braketpay/utils.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../brakey.dart';
 import '../uix/askpin.dart';
 import '../uix/themedcontainer.dart';
+import 'manager.dart';
 
 class Recharge extends StatefulWidget {
   const Recharge({Key? key, required this.user, required this.pin}) : super(key: key);
@@ -146,6 +149,8 @@ class _RechargeState extends State<Recharge> {
                             child: TextFormField(
                               cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
@@ -176,6 +181,8 @@ class _RechargeState extends State<Recharge> {
                             child: TextFormField(
                               cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                               decoration: InputDecoration(
                                 fillColor: const Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
@@ -228,6 +235,9 @@ class _RechargeState extends State<Recharge> {
                           barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 actions: [
                                   TextButton(
                                     child: const Text('Okay'),
@@ -244,7 +254,38 @@ class _RechargeState extends State<Recharge> {
                           }
                           StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
                           final _pinEditController = TextEditingController();
-                           Map? pin = await askPin(_pinEditController, _pinErrorController);
+                           Map? pin = await askPin(_pinEditController, _pinErrorController,
+                           
+                           topWidget: GlassContainer(
+                            // color: Colors.red,
+                            child: Container(
+                            padding: EdgeInsets.all(10),
+                            height: 70,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image.asset('assets/${_networkList[_networkIndex]}.png',
+                                  fit: BoxFit.contain)),
+                                  SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Phone: $phoneNumber', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
+                                      Text('Amount: ${nairaSign()}${fee}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
+                                      Text('Charges: ${nairaSign()}0.00', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12))
+                                    ]
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                           );
                           
                           if (pin == null || !pin.containsKey('pin')) {
                             _loginButtonController.reset();
@@ -260,16 +301,19 @@ class _RechargeState extends State<Recharge> {
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         // 2204112769
                                         child: const Text('Okay'),
                                         onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          // Navigator.of(context).pop();
+                                          Get.offUntil(MaterialPageRoute(
+                                            builder: (_) => 
+                                            Manager(user: widget.user, pin: widget.pin)), (route) => false);
+                                            brakey.changeManagerIndex(2);
                                           brakey.refreshUserDetail();
-                                          brakey.changeManagerIndex(2);
                                           // brakey.managerIndex = Rxn(3);
                                         },
                                       )
@@ -286,6 +330,9 @@ class _RechargeState extends State<Recharge> {
                               builder: (context) {
                                 print(a['Message'].runtimeType);
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),

@@ -1,34 +1,41 @@
 {
   "project_info": {
-    "project_number": "878106186057",
-    "project_id": "braketpay-2cb32",
-    "storage_bucket": "braketpay-2cb32.appspot.com"
+    "project_number": "993433552292",
+    "project_id": "braketpay-mobile-app",
+    "storage_bucket": "braketpay-mobile-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:878106186057:android:4f0aabc527195b4dbeca98",
+        "mobilesdk_app_id": "1:993433552292:android:90f525092f88fcd41ced31",
         "android_client_info": {
           "package_name": "com.braket.braketpay"
         }
       },
       "oauth_client": [
         {
-          "client_id": "878106186057-7ohjfee0pjocp929v72sggkfib6ejo2v.apps.googleusercontent.com",
+          "client_id": "993433552292-33qirr4v7ebdlqtn8ggefj0ot5s0rhg1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZv8pL1F-rAsZ9uZ7lhn6JmV1YHGar7Pw"
+          "current_key": "AIzaSyDqlhvk2KzXB3W5p8rEr8XY-N25RuyOxRs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "878106186057-7ohjfee0pjocp929v72sggkfib6ejo2v.apps.googleusercontent.com",
+              "client_id": "993433552292-33qirr4v7ebdlqtn8ggefj0ot5s0rhg1.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "993433552292-eqevnuevcm2l04uosu0fdqm8u04gcsvg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.braket.braketpay"
+              }
             }
           ]
         }

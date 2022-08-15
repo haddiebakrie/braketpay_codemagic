@@ -8,6 +8,7 @@ import 'package:braketpay/screen/savingsform.dart';
 import 'package:braketpay/screen/transfer.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -138,7 +139,7 @@ class _SavingsState extends State<Savings> {
             });
           },
           child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(20),
               decoration: ContainerBackgroundDecoration(),
               child: FutureBuilder<Map>(
                   future: savings,
@@ -235,6 +236,8 @@ class _SavingsState extends State<Savings> {
                                           textAlign: TextAlign.center),
                                       const SizedBox(height: 20),
                                       RoundButton(
+                                                              icon: Icons.refresh,
+
                                           text: 'Retry',
                                           color1: Colors.black,
                                           color2: Colors.black,
@@ -318,7 +321,7 @@ class _SavingsState extends State<Savings> {
                                               child: const Text(
                                                 'Name your savings',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                     fontSize: 15),
                                               ),
                                             ),
@@ -333,7 +336,7 @@ class _SavingsState extends State<Savings> {
                                                     borderRadius:
                                                         BorderRadius.all(
                                                             Radius.circular(10))),
-                                                hintText: 'Ex School Project',
+                                                hintText: 'Eg, School Project',
                                                 border: OutlineInputBorder(
                                                     borderSide: BorderSide.none,
                                                     borderRadius:
@@ -367,11 +370,13 @@ class _SavingsState extends State<Savings> {
                                                 child: const Text(
                                                   'How much do you want to save (Your target)',
                                                   style: TextStyle(
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight: FontWeight.w600,
                                                       fontSize: 15),
                                                 ),
                                               ),
                                               TextFormField(
+                                                keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                                 cursorColor: Colors.grey,
                                                 decoration: const InputDecoration(
                                                   fillColor: Color.fromARGB(
@@ -421,12 +426,14 @@ class _SavingsState extends State<Savings> {
                                               child: const Text(
                                                 'How much do you want to start with (Your first commit)',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                     fontSize: 15),
                                               ),
                                             ),
                                             TextFormField(
                                               cursorColor: Colors.grey,
+                                              keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                               decoration: const InputDecoration(
                                                 fillColor: Color.fromARGB(
                                                     24, 158, 158, 158),
@@ -467,7 +474,7 @@ class _SavingsState extends State<Savings> {
                                           child: const Text(
                                             'How often do you want to save',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w400,
+                                                fontWeight: FontWeight.w600,
                                                 fontSize: 15),
                                           ),
                                         ),
@@ -494,11 +501,13 @@ class _SavingsState extends State<Savings> {
                                               child: Text(
                                                 'How much do you want to save $PfreqValue',
                                                 style: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                     fontSize: 15),
                                               ),
                                             ),
                                             TextFormField(
+                                              keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                               cursorColor: Colors.grey,
                                               decoration: const InputDecoration(
                                                 fillColor: Color.fromARGB(
@@ -574,6 +583,9 @@ class _SavingsState extends State<Savings> {
                                                                 false,
                                                             builder: (context) {
                                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                                   actions: [
                                                                     TextButton(
                                                                       child: const Text(
@@ -600,6 +612,9 @@ class _SavingsState extends State<Savings> {
                                                                 false,
                                                             builder: (context) {
                                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                                   actions: [
                                                                     TextButton(
                                                                       child: const Text(
@@ -646,6 +661,8 @@ class _SavingsState extends State<Savings> {
                                         "No internet access\nCouldn't Load Contract History!",
                                         textAlign: TextAlign.center),
                                     RoundButton(
+                                                              icon: Icons.refresh,
+
                                         text: 'Retry',
                                         color1: Colors.black,
                                         color2: Colors.black,

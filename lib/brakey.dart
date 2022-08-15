@@ -6,6 +6,7 @@ import 'package:braketpay/api_callers/userinfo.dart';
 import 'package:braketpay/classes/transaction.dart';
 import 'package:braketpay/utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import './classes/user.dart';
@@ -19,6 +20,7 @@ class Brakey extends GetxController{
   RxInt notiCount = 0.obs;
   var pin = ''.obs;
   var savedBalance = '0'.obs;
+  var userToken = ''.obs;
   late Box prefs;
   Rx<bool> showSavingsBalance = true.obs;
   Rx<bool> useBiometric = false.obs;
@@ -30,40 +32,53 @@ class Brakey extends GetxController{
   Rxn<List<Transaction>> transactions = Rxn<List<Transaction>>();
   final refreshAll = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshContracts = Rxn(GlobalKey<RefreshIndicatorState>());
+  final refreshProductMarket = Rxn(GlobalKey<RefreshIndicatorState>());
+  final refreshServiceMarket = Rxn(GlobalKey<RefreshIndicatorState>());
+  final refreshLoanMarket = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshHistory = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshTransactions = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshNotifications = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshMerchant = Rxn(GlobalKey<RefreshIndicatorState>());
+  final refreshChat = Rxn(GlobalKey<RefreshIndicatorState>());
+  final refreshSingleChat = Rxn(GlobalKey<RefreshIndicatorState>());
+  final refreshMarket = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshSavings = Rxn(GlobalKey<RefreshIndicatorState>());
   final refreshSavingsDetail = Rxn(GlobalKey<RefreshIndicatorState>());
+
+  Brakey(){
+    initStorage();
+  }
   
-  initStorage() async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    print(fcmToken);
+  Future<void> initStorage() async {
+    // final fcmToken = await FirebaseMessaging.instance.getToken();
+    // print(fcmToken);
     prefs = await Hive.openBox('preferences');
     showWalletBalance.value = prefs.get('showWalletBalance');
     showRefBalance.value = prefs.get('showRefBalance');
     darkMode.value = prefs.get('darkMode');
     showSavingsBalance.value = prefs.get('showSavingsBalance');
     useBiometric.value = await getBiometric();
+    return;
   }
 
   Future<bool> getBiometric() async {
   var box = await Hive.openBox('isBioEnabled');
-  if (box.containsKey(user.value!.payload!.username)) {
-    return box.get(user.value!.payload!.username);
+  if (box.containsKey(user.value?.payload?.username??'')) {
+    return box.get(user.value?.payload?.username??'');
   } else {
-    box.put(user.value!.payload!.username, false);
+    box.put(user.value?.payload?.username??'', false);
     return false;
   }
     
   }
 
   toggleDarkMode() async {
+    // print('${prefs.get('darkMode')}'+' Before');
     prefs = await Hive.openBox('preferences');
     prefs.put('darkMode', !darkMode.value);
     darkMode.value = !darkMode.value;
-    print("$darkMode ggggggggggggggggggggggggggggg");
+    // print('${prefs.get('darkMode')}'+' After');
+
   }
 
   toggleBiometric(bool? value) async {
@@ -143,7 +158,7 @@ class Brakey extends GetxController{
   }
 
   reloadUser(_pin) async {
-    User _user = await fetchUserAccount(user.value!.payload!.accountNumber??'', user.value!.payload!.password??'', _pin);
+    User _user = await fetchUserAccount(user.value!.payload!.accountNumber??'', user.value!.payload!.password??'', _pin, '');
     setUser(Rxn(_user), _pin);
 
   }
@@ -161,8 +176,10 @@ class Brakey extends GetxController{
     refreshMerchant.value?.currentState?.show();
     refreshNotifications.value?.currentState?.show();
     refreshTransactions.value?.currentState?.show();
+    refreshChat.value?.currentState?.show();
     refreshContracts.value?.currentState?.show();
-    refreshSavedBalance();
+    refreshSingleChat.value?.currentState?.show();
+    // refreshSavedBalance();
     
   }
 
@@ -177,10 +194,25 @@ class Brakey extends GetxController{
     // listenToAccountChanges();
   }
 
+  saveUserToken(accountNumber, token) async {
+    userToken.value = token;
+    var box = await Hive.openBox('tokens');
+    box.put(accountNumber, token);
+
+
+  }
+
+  Future<String?> getUserToken(accountNumber) async {
+  var box = await Hive.openBox('tokens');
+  var token = box.get(accountNumber);
+  // print(('aaaaaaaaaaaaaaaaaaaaaaaaa $token'));
+  return token;
+  }
+
   saveUser() async {
   // final Brakey brakey = Get.put(Brakey());
   var box = await Hive.openBox('savedUsers');
-  Map notifications = jsonDecode(user.value!.payload!.checkNotifications??null.toString());
+  Map? notifications = jsonDecode(user.value!.payload!.checkNotifications??null.toString());
   Map userdata = {user.value?.payload?.email:[user.value?.toJson(), pin.value, '']};
     // Map? userdata;
   // if (box.containsKey('users')) {
@@ -229,6 +261,10 @@ class Brakey extends GetxController{
 
   listenToAccountChanges() async {
   var box = await Hive.openBox('savedUsers');
+  String? token = await getUserToken(user.value?.payload?.accountNumber??"");
+  // if (token == null) {
+  //   logoutUser();
+  // }
 
   
 
@@ -243,9 +279,17 @@ class Brakey extends GetxController{
 
     DateTime timestamp =  HttpDate.parse(user.value!.payload!.datetimeLastChangesMade?? '');
 
-    User newUser = await fetchUserAccount(user.value!.payload!.accountNumber??'', user.value!.payload!.password??'', pin.value);
+    User newUser = await fetchUserAccount(user.value!.payload!.accountNumber??'', user.value!.payload!.password??'', pin.value, userToken.value);
     DateTime newTimestamp = HttpDate.parse(newUser.payload!.datetimeLastChangesMade??"");
 
+    // print(newUser.payload?.deviceInfo);
+    // print(user.value?.payload?.deviceInfo);
+    if ((newUser.payload?.email != null) && !mapEquals(newUser.payload?.deviceInfo, user.value?.payload?.deviceInfo)) {
+      print(!mapEquals(newUser.payload?.deviceInfo, user.value?.payload?.deviceInfo));
+      logoutUser();
+      print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      return;
+    } 
     if (timestamp.isAtSameMomentAs(newTimestamp)) {
       return;
     } else {
@@ -272,9 +316,10 @@ class Brakey extends GetxController{
 
     }
     } catch (e) {
-    User a = await loginUser(user.value!.payload!.username??'', user.value!.payload!.password??'', '');
+      print(e.toString() + "askdfljl");
+    User a = await fetchUserAccount(user.value!.payload!.accountNumber??'', user.value!.payload!.password??'', pin.value, userToken.value);
     setUser(Rxn(a), '');
-    refreshUserDetail();
+    // refreshUserDetail();
     }
 
     saveUser();
@@ -318,3 +363,42 @@ AwesomeNotifications().createNotification(
 );
   }
 }
+
+sendNotification(title, message, {picture}) {
+      // refreshAll();
+    AwesomeNotifications().initialize(
+  // set the icon to null if you want to use the default app icon
+  null,
+  [
+    NotificationChannel(
+        channelGroupKey: 'braket_channel_group',
+        channelKey: 'braket_channel',
+        channelName: 'Braket notifications',
+        channelDescription: 'Notification channel for Brakets',
+        defaultColor: const Color(0xFF9D50DD),
+        ledColor: Colors.white)
+  ],
+  // Channel groups are only visual and are not required
+  channelGroups: [
+    NotificationChannelGroup(
+        channelGroupkey: 'braket_channel_group',
+        channelGroupName: 'Braket group')
+  ],
+  debug: true
+);
+
+AwesomeNotifications().createNotification(
+  content: NotificationContent(
+      id: 0,
+      channelKey: 'braket_channel',
+      title: title,
+      displayOnBackground: true,
+      displayOnForeground: true,
+      bigPicture: picture,
+      notificationLayout: NotificationLayout.BigText,
+      body: message,
+      criticalAlert: true,
+      category: NotificationCategory.Social,
+  )
+);
+  }

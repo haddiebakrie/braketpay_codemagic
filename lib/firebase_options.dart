@@ -47,30 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBfFAn46NsSysS1WNDGei-cbrw645_uBGY',
-    appId: '1:878106186057:web:74848c79b20af72bbeca98',
-    messagingSenderId: '878106186057',
-    projectId: 'braketpay-2cb32',
-    authDomain: 'braketpay-2cb32.firebaseapp.com',
-    storageBucket: 'braketpay-2cb32.appspot.com',
-    measurementId: 'G-JC609DF1BL',
+    apiKey: 'AIzaSyAdjTcGiKFf-B5pyn2DcPQTrZGqimkfn2g',
+    appId: '1:993433552292:web:4d304b6032ce9be11ced31',
+    messagingSenderId: '993433552292',
+    projectId: 'braketpay-mobile-app',
+    authDomain: 'braketpay-mobile-app.firebaseapp.com',
+    storageBucket: 'braketpay-mobile-app.appspot.com',
+    measurementId: 'G-48F1VYKHEQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCZv8pL1F-rAsZ9uZ7lhn6JmV1YHGar7Pw',
-    appId: '1:878106186057:android:4f0aabc527195b4dbeca98',
-    messagingSenderId: '878106186057',
-    projectId: 'braketpay-2cb32',
-    storageBucket: 'braketpay-2cb32.appspot.com',
+    apiKey: 'AIzaSyDqlhvk2KzXB3W5p8rEr8XY-N25RuyOxRs',
+    appId: '1:993433552292:android:90f525092f88fcd41ced31',
+    messagingSenderId: '993433552292',
+    projectId: 'braketpay-mobile-app',
+    storageBucket: 'braketpay-mobile-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC7eu3UOR8XAgtt9K9JzFVJhnNeyI5e7OI',
-    appId: '1:878106186057:ios:f8f2189a15b07c63beca98',
-    messagingSenderId: '878106186057',
-    projectId: 'braketpay-2cb32',
-    storageBucket: 'braketpay-2cb32.appspot.com',
-    iosClientId: '878106186057-dr3m1nv2knbigpt9evf1ul1glvmo73hs.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCuY1TEf_BHCs1Q2k4eRUgbwHynxmj2VhY',
+    appId: '1:993433552292:ios:ae7ca495844755e81ced31',
+    messagingSenderId: '993433552292',
+    projectId: 'braketpay-mobile-app',
+    storageBucket: 'braketpay-mobile-app.appspot.com',
+    iosClientId: '993433552292-k5lqirrs07lduhtu2tmmfad8u1qs7cfq.apps.googleusercontent.com',
     iosBundleId: 'com.example.braketpay',
   );
 }

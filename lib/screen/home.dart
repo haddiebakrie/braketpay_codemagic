@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:braketpay/api_callers/transactions.dart';
@@ -6,6 +7,7 @@ import 'package:braketpay/screen/buydata.dart';
 import 'package:braketpay/screen/bvn.dart';
 import 'package:braketpay/screen/bvnprompt.dart';
 import 'package:braketpay/screen/cabletv.dart';
+import 'package:braketpay/screen/contracts.dart';
 import 'package:braketpay/screen/createproduct.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/createservice.dart';
@@ -16,7 +18,11 @@ import 'package:braketpay/screen/recharge.dart';
 import 'package:braketpay/screen/referral.dart';
 import 'package:braketpay/screen/savings.dart';
 import 'package:braketpay/screen/transfer.dart';
+import 'package:braketpay/screen/upload_dp.dart';
+import 'package:braketpay/screen/wallet.dart';
+import 'package:braketpay/uix/askpin.dart';
 import 'package:braketpay/uix/themedcontainer.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:braketpay/brakey.dart';
@@ -28,18 +34,20 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
-import 'package:icon_badge/icon_badge.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../api_callers/contracts.dart';
 import '../classes/product_contract.dart';
+import '../modified_packages/icon_badge.dart';
+import '../uix/actionbutton.dart';
 import '../uix/contractlistcard.dart';
 import '../uix/contractmodeselect.dart';
 import '../uix/roundbutton.dart';
 import '../uix/shimmerwidgets.dart';
 import '../uix/utilitybutton.dart';
 import '../utils.dart';
+import 'chats.dart';
 import 'electricity.dart';
 
 class Home extends StatefulWidget {
@@ -72,7 +80,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(color: Theme.of(context).primaryColor),
+        Container(
+          decoration: const BoxDecoration(gradient: 
+              LinearGradient(
+                
+                begin: Alignment.centerLeft,
+                colors: [Color.fromARGB(255, 61, 3, 143), Color.fromARGB(255, 19, 1, 213)])
+              ),
+          // color: Theme.of(context).primaryColor
+          ),
                 Image.asset('assets/braket-bg_grad-01.png', height: 300, fit: BoxFit.cover, width: double.infinity,),
 
         Scaffold(
@@ -81,18 +97,18 @@ backgroundColor: Colors.transparent,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
-            titleSpacing: 5,
+            titleSpacing: 2,
             toolbarHeight: 65,
             leading: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.lightBlue.shade100,
                     border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(40)),
+                    borderRadius: BorderRadius.circular(15)),
                 child: IconButton(
                   padding: EdgeInsets.zero,
-                    icon: const Icon(CupertinoIcons.person_fill),
+                    icon: Text(brakey.user.value?.payload?.fullname?[0]??'', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600, fontSize:18),),
                     color: Theme.of(context).primaryColor,
                     iconSize: 30,
                     onPressed: () {
@@ -116,7 +132,19 @@ backgroundColor: Colors.transparent,
                   hideZero: true,
                   top: 10.0
 
-                  // hideZero: true,
+                  )),
+              Obx(() => IconBadge(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: ((context) =>
+                            ChatHistory())));
+                  },
+                  maxCount: 9,
+                  icon: const Icon(CupertinoIcons.bubble_left_fill),
+                  itemCount: brakey.notiCount.toInt(),
+                  right: 10.0,
+                  hideZero: true,
+                  top: 10.0
 
                   ))
             ],
@@ -125,10 +153,10 @@ backgroundColor: Colors.transparent,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(() => Text(
-                    'Hi ${brakey.user.value!.payload!.fullname!.split(" ")[1]}',
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-                Obx(() => Text('@${brakey.user.value!.payload!.username}',
-                    style: const TextStyle(fontSize: 14)))
+                    'Hi ${brakey.user.value?.payload?.fullname?.split(" ")[1]}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                Obx(() => Text('@${brakey.user.value?.payload?.username}',
+                    style: const TextStyle(fontSize: 12)))
               ],
             ),
           ),
@@ -139,14 +167,18 @@ backgroundColor: Colors.transparent,
                 children: [
                 // SizedBox(height: 100,),
                 SizedBox(
-                    height: 150,
+                    height: 160,
                     width: double.infinity,
                     child: CarouselSlider(
                       carouselController: walletsController,
                       items: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 5),
+                          padding: const EdgeInsets.only(),
                           child: WalletCard(
+                            showLeftButton: false,
+                              rightButtonIcon: Icons.open_in_new_rounded,
+                              leftButtonLabel: 'claim',
+                              leftButtonIcon: Icons.card_giftcard_outlined,
                               onTapFund: () {
                                 Get.to(() => ReferralBonus());
                               },
@@ -159,11 +191,15 @@ backgroundColor: Colors.transparent,
                               },
                               rightButtonLabel: 'View',
                               balance: '0',
-                              title: 'Refferal Bonus'),
+                              title: 'Refferal Bonus',
+                              ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(left: 5),
+                            padding: const EdgeInsets.only(left: 8),
                             child: Obx(() => WalletCard(
+                              // showAccountNumber: true,
+                              rightButtonIcon: IconlyBold.wallet,
+                              leftButtonIcon: IconlyBold.send,
                                 onTapSend: () {
                                   Navigator.push(
                                       context,
@@ -172,16 +208,18 @@ backgroundColor: Colors.transparent,
                                               user: widget.user, pin: widget.pin)));
                                 },
                                 onTapFund: () {
-                                  widget.gotoWallet != null
-                                      ? widget.gotoWallet!()
-                                      : print('null function');
+                                  Get.to(() => Wallet(user: widget.user, pin: widget.pin));
                                 },
                                 balance: brakey.user.value!.payload!.accountBalance
                                     .toString(),
                                 title: 'Braket Wallet'))),
                         Padding(
-                          padding: const EdgeInsets.only(left: 5),
+                          padding: const EdgeInsets.only(left: 8),
                           child: Obx(() => WalletCard(
+                            leftButtonLabel: 'save',
+                            rightButtonLabel: 'break',
+                            leftButtonIcon: CupertinoIcons.lock_fill,
+                              rightButtonIcon: CupertinoIcons.lock_open_fill,
                                 onTapFund: () {
                                   widget.gotoWallet != null
                                       ? widget.gotoWallet!()
@@ -204,13 +242,14 @@ backgroundColor: Colors.transparent,
                           initialPage: 1,
                           enableInfiniteScroll: false,
                           viewportFraction: 0.9,
-                          enlargeStrategy: CenterPageEnlargeStrategy.height),
+                          enlargeStrategy: CenterPageEnlargeStrategy.height
+                          ),
                     )),
                 
                 SizedBox(height: 20,),
                 Expanded(
                   child: Container(
-                      // padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.all(5),
                       // margin: const EdgeInsets.only(top: 20),
                       // width: double.infinity,
                       decoration: ContainerBackgroundDecoration(),
@@ -233,12 +272,12 @@ backgroundColor: Colors.transparent,
                         },
                         child: ListView.builder(
                             physics: const BouncingScrollPhysics(),
-                            itemCount: 7,
+                            itemCount: 8,
                             itemBuilder: (context, index) {
                               if (index == 0) {
                                 return Center(
                                   child: Container(
-                                     margin: EdgeInsets.only(top: 10),
+                                     margin: EdgeInsets.only(top: 5),
                                     width: 60,
                                     height: 5,
                                     decoration: BoxDecoration(
@@ -248,184 +287,72 @@ backgroundColor: Colors.transparent,
                                 );
                               } else if (index == 1) {
                                 return Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 20,),
+                                    padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                                     decoration: ContainerDecoration(),
-                                    // height: 180,
-                                    // child: Row(
-                                    //     mainAxisAlignment: MainAxisAlignment.center,
-                                    //     children: [
-                                    //       UtilityButton(
-                                    //           url: 'assets/contract (2).png', text: 'Contract',
-                                    //           onTap: () {
-                                    //             contractMode();
-                                    //             // Navigator.of(context).push(MaterialPageRoute(
-                                    //             //     builder: (BuildContext context) => Savings(user: widget.user, pin: widget.pin)));
-                                    //           },
-                                    //           ),
-                                    //       UtilityButton(
-                                    //           url: 'assets/qr-code (3).png', text: 'QR Scan',
-                                    //           onTap: () async {
-                                    //           PermissionStatus status = await getCameraPermission();
-                                    //           if (status.isGranted) {
-                                    //           Navigator.of(context).push(MaterialPageRoute(
-                                    //                 builder: (BuildContext context) => QRScanner(user: widget.user, pin: widget.pin)));
-                                    //           }
 
-                                    //           }
-                                    //           ),
-                                    //       UtilityButton(
-                                    //           url: 'assets/pay (1).png', text: 'Utilities',
-                                    //           onTap: () {
-                                    //             Navigator.of(context).push(MaterialPageRoute(
-                                    //                 builder: (BuildContext context) => Utilities(user: widget.user, pin: widget.pin)));
-                                    //           }
-                                    //           ),
-                                    // ]),
                                     child: Column(
-
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
 
                                       children: [
+                                        // Text('Create Contract', style: TextStyle(fontWeight: FontWeight.w600)),
+                                        SizedBox(height: 20),
                                         Row(
-                                          mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            ActionButton(title: 'Contracts', icon: Icon(IconlyBold.paper_plus, size: 30, color: Color.alphaBlend(Color.fromARGB(255, 0, 8, 255), Colors.blueAccent)), onTap: () {
-                                              contractMode();
+                                            ActionButton(title: 'Buy & Sell', icon: Icon(IconlyBold.buy, size: 30, color: Color.alphaBlend(Color.fromARGB(255, 0, 8, 255), Colors.blueAccent)), onTap: () {
+                                              productPrompt();
                                             },),
-                                            ActionButton(title: 'Transfer', icon: const Icon(CupertinoIcons.paperplane_fill, size: 30, color: Colors.green), onTap: () {
-                                                                              Navigator.push(context, MaterialPageRoute(builder: (context) => SendMoney(user: widget.user, pin: widget.pin)));
+                                            ActionButton(title: 'Service', icon: const Icon(CupertinoIcons.paintbrush_fill, size: 30, color: Colors.teal), onTap: () {
+                                              servicePrompt();
                                             },),
-                                            ActionButton(title: 'Savings', icon: const Icon(Icons.savings_rounded, size: 30, color: Color.fromARGB(255, 255, 13, 37)), onTap: () {
-                                                                              Navigator.push(context, MaterialPageRoute(builder: (context) => Savings(user: widget.user, pin: widget.pin)));
+                                            ActionButton(title: 'Loan', icon:  
+                                            Image.asset('assets/naira.png', height: 32), onTap: () {
+                                            loanPrompt();
                                         },),
-                                            ActionButton(title: 'Scan', icon: const Icon(Icons.qr_code, size: 30, color: Colors.red), onTap: () {
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) => QRScanner(user: widget.user, pin: widget.pin)));
+                                            ActionButton(title: 'Pay bills', icon: const Icon(Icons.lightbulb, size: 30, color: Colors.red), onTap: () {
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) => Utilities(user: widget.user, pin: widget.pin)));
                                               
                                             },),
                                           ],
                                         ),
                                         
                                         SizedBox(height: 20),
-                                        Row(
-                                          children: [
-                                        ActionButton(title: 'Airtime', icon: const Icon(Icons.phone_iphone_rounded, size: 30, color: Colors.blue), onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => Recharge(user: widget.user, pin: widget.pin)));
+                                        // Row(
+                                        //   children: [
+                                        // ActionButton(title: 'Airtime', icon: const Icon(Icons.phone_iphone_rounded, size: 30, color: Colors.blue), onTap: () {
+                                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => Recharge(user: widget.user, pin: widget.pin)));
 
-                                        },),
-                                        ActionButton(title: 'Data', icon: Icon(CupertinoIcons.wifi, size: 30, color: Theme.of(context).primaryColor), onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => BuyData(user: widget.user, pin: widget.pin)));
+                                        // },),
+                                        // ActionButton(title: 'Data', icon: Icon(CupertinoIcons.wifi, size: 30, color: Theme.of(context).primaryColor), onTap: () {
+                                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => BuyData(user: widget.user, pin: widget.pin)));
 
-                                        },),
-                                        ActionButton(title: 'Electricity', icon: const Icon(Icons.lightbulb, size: 30, color: Color.fromARGB(255, 35, 57, 255)), onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => Electricity(user: widget.user, pin: widget.pin)));
+                                        // },),
+                                        // ActionButton(title: 'Electricity', icon: const Icon(Icons.lightbulb, size: 30, color: Color.fromARGB(255, 35, 57, 255)), onTap: () {
+                                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => Electricity(user: widget.user, pin: widget.pin)));
 
-                                        },),
-                                        ActionButton(title: 'Cable TV', icon: const Icon(CupertinoIcons.tv_fill, size: 30, color: Colors.lightBlue), onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => CableTV(user: widget.user, pin: widget.pin)));
+                                        // },),
+                                        // ActionButton(title: 'Cable TV', icon: const Icon(CupertinoIcons.tv_fill, size: 30, color: Colors.lightBlue), onTap: () {
+                                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => CableTV(user: widget.user, pin: widget.pin)));
 
 
-                                        },),
-                                          ],
-                                        ),
+                                        // },),
+                                        //   ],
+                                        // ),
                                         // ActionButton(title: 'Electricity', icon: Icon(CupertinoIcons.tv_fill, size: 30)),
                                         
                                       ]
                                     ));
                               } else if (index == 2) {
-                                return Visibility(
-                                  visible: brakey.user.value!.payload!.bvn == 'Not added',
-                                  child: InkWell(
-                                    onTap: () {
-                                      Get.to(() => 
-                                      BVNPrompt()
-                                      
-                                      );
-                                    },
-                                    child: Container(
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      margin: EdgeInsets.all(10),
-                                      // height: 200,
-                                      decoration: ContainerDecoration().copyWith(gradient: LinearGradient(colors: [
-                                        Color.fromARGB(255, 69, 30, 133),
-                                        Color.fromARGB(255, 2, 11, 99),
-                                      ])),
-                                      child: Stack(
-                                        children: [
-                                        Opacity(
-                                          opacity: .2,
-                                          child: Image.asset(
-                                            
-                                            'assets/star-bg.png', 
-                                            
-                                            fit: BoxFit.cover, height: 150, width: double.infinity,)),
-                                          FittedBox(
-                                            child: Row(children: [
-                                              Padding(
-                                                padding: EdgeInsets.all(15),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                  Text('Account Status', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                                                  SizedBox(height: 10,),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.all(2),
-                                                        child: Icon(Icons.radio_button_on, size: 14, color: Colors.white)),
-                                                      FittedBox(child: Text('Verify email', style: TextStyle(color: Colors.white))),
-                                                    Container(
-                                                        margin: EdgeInsets.all(2),
-                                                        child: Icon(CupertinoIcons.checkmark_alt, size: 16, color: Colors.green)),
-                                                    
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.all(2),
-                                                        child: Icon(Icons.radio_button_on, size: 14, color: Colors.white)),
-                                                      FittedBox(child: Text('Create account', style: TextStyle(color: Colors.white))),
-                                                    Container(
-                                                        margin: EdgeInsets.all(2),
-                                                        child: Icon(CupertinoIcons.checkmark_alt, size: 16, color: Colors.green)),
-                                                    
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.all(2),
-                                                        child: Icon(Icons.radio_button_off, size: 14, color: Colors.white)),
-                                                      FittedBox(child: Text('Set Transaction Pin', style: TextStyle(color: Colors.white))),
-                                                    Container(
-                                                        margin: EdgeInsets.all(2),
-                                                        child: Icon(Icons.close, size: 16, color: Colors.red)),
-                                                    
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left:18.0),
-                                                    child: Text('Setup your Transaction Pin to get your \nBraket Account Number', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                                  )
-                                                
-                                                  ]
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(15.0),
-                                                child: Image.asset('assets/dart.png', width:120),
-                                              )
-                                            ],),
-                                          ),
-                                        ],
-                                      )
-                                    ),
-                                  ),
+                                return Container(
                                 );
+                              
                               } else if (index == 6) {
                                 return InkWell(
-                                  onTap: (() {
-                                    Get.to(() => ReferralBonus());
+                                  onTap: (() async {
+                                    // Get.to(() => ReferralBonus());
+                                    final cameras = await availableCameras();
+                                    Get.to(UploadProfilePicture(cameras: cameras));
+                                    
                                   }),
                                   child: Container(
                                       margin: const EdgeInsets.all(10),
@@ -436,9 +363,9 @@ backgroundColor: Colors.transparent,
                                               BorderRadius.all(Radius.circular(20))),
                                       child: Padding(
                                         padding:
-                                            const EdgeInsets.symmetric(horizontal: 40.0),
+                                            const EdgeInsets.all(30.0).copyWith(bottom: 0),
                                         child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               const Flexible(
                                                   child: Text(
@@ -454,7 +381,7 @@ backgroundColor: Colors.transparent,
                                                 tag: 'referral_box',
                                                 child: Image.asset(
                                                   'assets/open_gift.png',
-                                                  height: 200,
+                                                  height: 180,
                                                 ),
                                               ),
                                             ]),
@@ -465,10 +392,22 @@ backgroundColor: Colors.transparent,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                        margin: const EdgeInsets.all(10),
-                                        child: const Text('Recent contracts',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700))),
+                                        margin: const EdgeInsets.symmetric(horizontal:10),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            const Text('My Active contracts',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w700)),
+                                            TextButton(onPressed: () {
+
+                                                Get.to(() => Contracts(user: widget.user, pin: widget.pin));
+                                            }, child: 
+                                            Text('view all', style: TextStyle(color: Colors.redAccent))
+                                            )
+                                          ],
+                                        )),
                                     SizedBox(
                                       height: 250,
                                       child: FutureBuilder<List>(
@@ -482,7 +421,7 @@ backgroundColor: Colors.transparent,
                                                 return ListView.builder(
                                                   physics: NeverScrollableScrollPhysics(),
                                                   shrinkWrap: true,
-                                                  itemCount: 3,
+                                                  itemCount: 4,
                                                   itemBuilder: (builder, index) {
                                                             return const ContractCardShimmer();
                                                           });
@@ -498,10 +437,11 @@ backgroundColor: Colors.transparent,
                                                               const NeverScrollableScrollPhysics(),
                                                           itemCount: snapshot
                                                                   .data!.isNotEmpty
-                                                              ? snapshot.data!.length
+                                                              ? snapshot.data!.length.clamp(0, 3)
                                                               : 0,
                                                           itemBuilder:
                                                               (context, index) {
+                                                                
                                                             ProductContract product =
                                                                 snapshot.data![index];
                                                             return ContractListCard(
@@ -571,10 +511,13 @@ backgroundColor: Colors.transparent,
                                                                   TextAlign.center),
                                                           const SizedBox(height: 20),
                                                           RoundButton(
+                                                              icon: Icons.refresh,
                                                               text: 'Retry',
                                                               color1: Colors.black,
                                                               color2: Colors.black,
                                                               onTap: () {
+                                                                print(brakey.user.value?.payload?.deviceInfo);
+                                                                // askPin(_pinEditController, _pinErrorController)
                                                                 brakey
                                                                     .refreshUserDetail();
                                                               })
@@ -602,10 +545,21 @@ backgroundColor: Colors.transparent,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                        margin: const EdgeInsets.all(10),
-                                        child: const Text('Recent Transactions',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700))),
+                                        margin: const EdgeInsets.symmetric(horizontal:10),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            const Text('Recent Transactions',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w700)),
+                                            TextButton(onPressed: () {
+                                              brakey.changeManagerIndex(2);
+                                            }, child: 
+                                            Text('view all', style: TextStyle(color: Colors.redAccent))
+                                            )
+                                          ],
+                                        )),
                                     SizedBox(
                                       height: 250,
                                       child: FutureBuilder<List>(
@@ -699,6 +653,7 @@ backgroundColor: Colors.transparent,
                                                                   TextAlign.center),
                                                           const SizedBox(height: 20),
                                                           RoundButton(
+                                                              icon: Icons.refresh,
                                                               text: 'Retry',
                                                               color1: Colors.black,
                                                               color2: Colors.black,
@@ -784,41 +739,5 @@ backgroundColor: Colors.transparent,
     //     builder: (context) {
     //       return ContractModeSelect(user: widget.user, pin: widget.pin);
     //     });
-  }
-}
-
-class ActionButton extends StatelessWidget {
-  const ActionButton({
-    Key? key,
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  }) : super(key: key);
-
-  final String title;
-  final Icon icon;
-  final Function onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          onTap();
-        },
-        child: Container(
-          // color: Colors.red,        
-          // margin: EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-            icon,
-            const SizedBox(height: 5),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w700))
-          ],),
-        ),
-      ),
-    );
   }
 }

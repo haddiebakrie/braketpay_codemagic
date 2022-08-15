@@ -7,7 +7,9 @@ import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 import 'package:braketpay/utils.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -65,6 +67,7 @@ class _CableTVState extends State<CableTV> {
                     Map a = await getCableTVOwner(
                         widget.user.payload!.accountNumber ?? '',
                         widget.pin,
+                        widget.user.payload?.password??'',
                         _networkList[_networkIndex],
                         userName);
                     setState(() {
@@ -100,6 +103,7 @@ class _CableTVState extends State<CableTV> {
                     Map a = await getCableTVOwner(
                         widget.user.payload!.accountNumber ?? '',
                         widget.pin,
+                        widget.user.payload?.password??'',
                         _networkList[_networkIndex],
                         userName);
                     setState(() {
@@ -135,7 +139,9 @@ class _CableTVState extends State<CableTV> {
                         widget.user.payload!.accountNumber ?? '',
                         widget.pin,
                         _networkList[_networkIndex],
-                        userName);
+                        userName,
+                        widget.user.payload?.password??'',
+                        );
                     setState(() {
                       ownerName = a.containsKey('Payload')
                           ? "Decoder Type: ${_networkList[_networkIndex].toUpperCase()}\n${a['Payload']['decoder_due_date']}\nDecoder Due date: ${a['Payload']['decoder_due_date']}\nStatus: ${a['Payload']['decoder_status']}"
@@ -168,6 +174,8 @@ class _CableTVState extends State<CableTV> {
                 margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 child: TextFormField(
                   cursorColor: Colors.grey,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     fillColor: Color.fromARGB(24, 158, 158, 158),
@@ -190,6 +198,7 @@ class _CableTVState extends State<CableTV> {
                     Map a = await getCableTVOwner(
                         widget.user.payload!.accountNumber ?? '',
                         widget.pin,
+                        widget.user.payload?.password??'',
                         _networkList[_networkIndex],
                         text.trim());
                     setState(() {
@@ -224,6 +233,7 @@ class _CableTVState extends State<CableTV> {
                     Map a = await getCableTVOwner(
                         widget.user.payload!.accountNumber ?? '',
                         widget.pin,
+                        widget.user.payload?.password??'',
                         _networkList[_networkIndex],
                         userName);
                     setState(() {
@@ -359,7 +369,38 @@ class _CableTVState extends State<CableTV> {
                     }
                     StreamController<ErrorAnimationType> _pinErrorController = StreamController<ErrorAnimationType>();
                           final _pinEditController = TextEditingController();
-                            Map? pin = await askPin(_pinEditController, _pinErrorController);
+                            Map? pin = await askPin(_pinEditController, _pinErrorController,
+                            topWidget: GlassContainer(
+                            // color: Colors.red,
+                            child: Container(
+                            padding: EdgeInsets.all(10),
+                            height: 70,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image.asset('assets/${_networkList[_networkIndex]}.png',
+                                  fit: BoxFit.contain)),
+                                  SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Phone: $phoneNumber', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
+                                      Text('Amount: ${nairaSign()}${fee['total_price']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
+                                      Text('Charges: ${nairaSign()}0.00', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12))
+                                    ]
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                            
+                            );
                             
                             if (pin == null || !pin.containsKey('pin')) {
                               _loginButtonController.reset();

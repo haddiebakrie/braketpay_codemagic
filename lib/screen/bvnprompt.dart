@@ -49,7 +49,7 @@ class _BVNPromptState extends State<BVNPrompt> {
                   child: Column(children: [
                     const SizedBox(height:20),
                     const Text('Your NIN or BVN is required to set your Transaction PIN', textAlign: TextAlign.center, style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 18),),
+                                  fontWeight: FontWeight.w600, fontSize: 18),),
                     const SizedBox(height:20),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 1),
@@ -61,7 +61,7 @@ class _BVNPromptState extends State<BVNPrompt> {
                             child: const Text(
                               'Enter your NIN or BVN',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 15),
+                                  fontWeight: FontWeight.w600, fontSize: 15),
                             ),
                           ),
                           Row(
@@ -143,6 +143,9 @@ class _BVNPromptState extends State<BVNPrompt> {
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text(
@@ -179,7 +182,7 @@ class _BVNPromptState extends State<BVNPrompt> {
                             child: Text(
                               'Verify Phone number - ${demoPhone != '' ? demoPhone.substring(0, 5): ''}XXXXXX',
                               style: const TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 15),
+                                  fontWeight: FontWeight.w600, fontSize: 15),
                             ),
                           ),
                                 Container(
@@ -291,6 +294,9 @@ class _BVNPromptState extends State<BVNPrompt> {
                                                 return WillPopScope(
                                                   onWillPop: (() async => false),
                                                   child: AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text('Okay'),
@@ -318,6 +324,9 @@ class _BVNPromptState extends State<BVNPrompt> {
                                                 return WillPopScope(
                                                   onWillPop: (() async => false),
                                                   child: AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text('Okay'),
@@ -357,6 +366,9 @@ class _BVNPromptState extends State<BVNPrompt> {
                                                 return WillPopScope(
                                                   onWillPop: (() async => false),
                                                   child: AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text('Okay'),
@@ -390,6 +402,9 @@ class _BVNPromptState extends State<BVNPrompt> {
                                               barrierDismissible: false,
                                               builder: (context) {
                                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                     actions: [
                                                       TextButton(
                                                         child: const Text('Okay'),
@@ -411,6 +426,9 @@ class _BVNPromptState extends State<BVNPrompt> {
                                               barrierDismissible: false,
                                               builder: (context) {
                                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                     actions: [
                                                       TextButton(
                                                         child: const Text('Okay'),

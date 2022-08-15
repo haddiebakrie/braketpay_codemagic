@@ -6,6 +6,7 @@ import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
 import 'package:flutter/material.dart';
 import 'package:braketpay/utils.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -72,6 +73,7 @@ class _ElectricityState extends State<Electricity> {
                                 Map a = await getMeterOwner(
                                     widget.user.payload!.accountNumber ?? '',
                                     widget.pin,
+                        widget.user.payload?.password??'',
                                     _networkList[_networkIndex],
                                     phoneNumber);
                                 setState(() {
@@ -93,6 +95,8 @@ class _ElectricityState extends State<Electricity> {
                             child: TextFormField(
                               cursorColor: Colors.grey,
                                 keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                               decoration: const InputDecoration(
                                 fillColor: Color.fromARGB(24, 158, 158, 158),
                                 filled: true,
@@ -115,6 +119,7 @@ class _ElectricityState extends State<Electricity> {
                                   Map a = await getMeterOwner(
                                       widget.user.payload!.accountNumber ?? '',
                                       widget.pin,
+                        widget.user.payload?.password??'',
                                       _networkList[_networkIndex],
                                       text.trim());
                                   setState(() {
@@ -152,6 +157,7 @@ class _ElectricityState extends State<Electricity> {
                                   Map a = await getMeterOwner(
                                       widget.user.payload!.accountNumber ?? '',
                                       widget.pin,
+                        widget.user.payload?.password??'',
                                       "ikeja-electric",
                                       phoneNumber.trim());
                                   setState(() {

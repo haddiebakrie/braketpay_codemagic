@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:878106186057:ios:f8f2189a15b07c63beca98",
-  "FIREBASE_PROJECT_ID": "braketpay-2cb32",
-  "GCM_SENDER_ID": "878106186057"
+  "GOOGLE_APP_ID": "1:993433552292:ios:ae7ca495844755e81ced31",
+  "FIREBASE_PROJECT_ID": "braketpay-mobile-app",
+  "GCM_SENDER_ID": "993433552292"
 }

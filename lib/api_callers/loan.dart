@@ -1,4 +1,5 @@
 
+import 'package:braketpay/api_callers/addr.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -13,11 +14,12 @@ Future<Map> createLoanContract (
   String description,
   String interest,
   String period,
-  String picture,
+  Map picture,
   bool visibility,
   String type,
   String transactionPin,  
-  String loanCategory
+  String loanCategory,
+  int repay
   ) async {
   Map param = {
       "merchant_id": merchantID,
@@ -30,34 +32,33 @@ Future<Map> createLoanContract (
       "loan_title": contractTitle,
       "loan_period": period,
       "loan_description": description,
-      "loan_picture": picture,
+      "loan_picture_links": picture,
       "loan_visibility": visibility,
-      "loan_type": type
+      "loan_type": type,
+      "borrower_repayment_start_time": repay
     };
 
     try {
-      print('99090909090');
-    final response = await Dio().post(
-      'https://api.braketpay.com/register_loan_contract/v1',
-      data: param,
-      options: Options(
-        headers: {
+      print(param);
+    final response = await post(
+      Uri.parse('${BRAKETAPI}register_loan_contract/v1'),
+      body: jsonEncode(param),
+      headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
         },
-      )
       );
       print(param);
 
-      print(response.data);
+      print(response.body);
 
     if (response.statusCode == 200) {
-      print(response.data);
+      print(response.body);
 
-      return response.data;
+      return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No Internet access, Please try again'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -113,7 +114,7 @@ Future<Map> activateLoanContract (
       print(param);
       // "ca417768436ff0183085b3d7c382773f"
     final response = await post(
-      Uri.parse('https://api.braketpay.com/activate_registered_loan/v1'),
+      Uri.parse('${BRAKETAPI}activate_registered_loan/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -129,7 +130,7 @@ Future<Map> activateLoanContract (
       return jsonDecode(response.body);
 
     } else {
-      return {'Message': 'No Internet access, Please try again'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -156,7 +157,7 @@ Future<Map> confirmLoanContract (
     try {
       print('99090909090');
     final response = await Dio().post(
-      'https://api.braketpay.com/confirm_loan_contract/v1',
+      '${BRAKETAPI}confirm_loan_contract/v1',
       data: param,
       options: Options(
         headers: {
@@ -175,7 +176,50 @@ Future<Map> confirmLoanContract (
       return response.data;
 
     } else {
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
+    }
+    } catch (e) {
+      print(e);
       return {'Message': 'No Internet access, Please try again'};
+    } 
+}
+
+
+Future<Map> loanRepayment (
+  String loanID,
+  String publicKey,
+  String pin,
+  String repaymentAmount
+  ) async {
+  Map param = {
+    "contract_id": loanID,
+    "borrower_public_key": publicKey,
+    "loan_contract_id": loanID,
+    "transaction_pin": pin,
+    "repayment_amount": repaymentAmount
+    };
+
+    try {
+      print('99090909090');
+    final response = await put(
+      Uri.parse('${BRAKETAPI}borrower_loan_repayment/v1'),
+      body: jsonEncode(param),
+        headers: {
+        'Content-Type':'application/json',
+        'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
+        },
+      );
+      // print('99090909090');
+
+      print(response.body);
+
+    if (response.statusCode == 200) {
+      print(response.body);
+
+      return jsonDecode(response.body);
+
+    } else {
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -202,7 +246,7 @@ Future<Map> loanAction (
       print(param);
       try {
     final response = await Dio().put(
-      'https://api.braketpay.com/confirm_loan_contract/v1',
+      '${BRAKETAPI}confirm_loan_contract/v1',
       data: param,
       options: Options(
         headers: {
@@ -219,7 +263,7 @@ Future<Map> loanAction (
       return response.data;
 
     } else {
-      return {'Message':'No internet access'};
+      return {'Message':'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);

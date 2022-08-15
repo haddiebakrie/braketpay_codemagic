@@ -35,25 +35,25 @@ class _UserQRState extends State<UserQR> {
                 fontSize: 25, fontWeight: FontWeight.bold
               )
               ),
-              // Image.memory(Uint8List.fromList(hex.decode(brakey.user.value?.payload?.qrCode??'')),
+              Image.memory(Uint8List.fromList(hex.decode(brakey.user.value?.payload?.qrCode??'')),
               
-              // width: 200,
-              // height: 200,
-              // ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: QrImage(
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.all(5),
-                  eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: Theme.of(context).primaryColor ),
-                  data: "{'data_type':'account_data', 'username':'haddy'}",
-                  embeddedImage: AssetImage('assets/braket_qr_embed-03.png'),
-                  size: 200,
-                  version: 3,
-                  embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
-
-                ),
+              width: 200,
+              height: 200,
               ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: QrImage(
+              //     backgroundColor: Colors.white,
+              //     padding: EdgeInsets.all(5),
+              //     eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: Theme.of(context).primaryColor ),
+              //     data: "{'data_type':'account_data', 'username':'haddy'}",
+              //     embeddedImage: AssetImage('assets/braket_qr_embed-03.png'),
+              //     size: 200,
+              //     version: 3,
+              //     embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
+
+              //   ),
+              // ),
               Text('Ask your friend to scan your qrcode to perform transactions with you.', textAlign: TextAlign.center),
               SizedBox(height: 20),
               RoundButton(text: 'Share',color1: Theme.of(context).primaryColor, color2: Theme.of(context).primaryColor)

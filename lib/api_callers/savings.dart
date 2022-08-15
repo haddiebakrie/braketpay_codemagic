@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 
+import 'addr.dart';
+
 Future<Map<String, dynamic>> getSavings(
   String accountNumber,
   String pin,
@@ -17,16 +19,16 @@ Future<Map<String, dynamic>> getSavings(
     "password": password,
     "volume": volume
   }).query;
-  print(param);
+  // print(param);
   try {
     final response = await get(
-      Uri.parse('https://api.braketpay.com/fetch_savings/p?$param'),
+      Uri.parse('${BRAKETAPI}fetch_savings/v1?$param'),
     headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
         },
     );
-    print(response.body);
+    // print(response.body);
     if (response.statusCode == 200) {
       if (volume == 'all_savings_amount') {
         return jsonDecode(response.body);
@@ -43,13 +45,13 @@ Future<Map<String, dynamic>> getSavings(
       }
       payloads.forEach((e) => newPayload['Savings']!.add(e['Payload']));
       // print(newPayload);
-      print(response.statusCode);
-      print(payloads);
+      // print(response.statusCode);
+      // print(payloads);
       return newPayload;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      return {'Message': "Check your Internet connection."};
+      return {'Message': "This Service is currently undergoing maintenance in other to serve you better, please check back later"};
     }
   } catch (e) {
       print('asdf');
@@ -85,7 +87,7 @@ Future<Map> createSavings(
 
     print(param);
     final response = await Dio()
-        .post('https://api.braketpay.com/create_savings/v1', data: param,
+        .post('${BRAKETAPI}create_savings/v1', data: param,
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -101,7 +103,7 @@ Future<Map> createSavings(
       print(response.data);
       return response.data;
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
   } catch (e) {
     print(e);
@@ -126,7 +128,7 @@ Future<Map> savingsCommit(
 
     print(param);
     final response = await Dio()
-        .put('https://api.braketpay.com/new_commit_savings/v1', data: param, 
+        .put('${BRAKETAPI}new_commit_savings/v1', data: param, 
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -142,7 +144,7 @@ Future<Map> savingsCommit(
       print(response.data);
       return response.data;
     } else {
-      return {'Message': 'No internet access'};
+      return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
   } catch (e) {
     print(e);

@@ -145,6 +145,9 @@ Future<dynamic> askSignup(
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -332,6 +335,9 @@ Future<dynamic> askSignup(
                                           barrierDismissible: false,
                                           builder: (context) {
                                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                 actions: [
                                                   TextButton(
                                                     child: const Text('Verify OTP'),
@@ -361,6 +367,9 @@ Future<dynamic> askSignup(
                                           barrierDismissible: false,
                                           builder: (context) {
                                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                 actions: [
                                                   TextButton(
                                                     child: const Text('Okay'),
@@ -388,6 +397,9 @@ Future<dynamic> askSignup(
                                         barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('Okay'),

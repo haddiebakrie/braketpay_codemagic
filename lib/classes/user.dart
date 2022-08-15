@@ -41,6 +41,7 @@ class Payload {
   String? qrCode;
   String? walletAddress;
   String? bvn;
+  Map? deviceInfo;
   String? pin;
 
   Payload(
@@ -57,6 +58,7 @@ class Payload {
       this.publicKey,
       this.qrCode,
       this.bvn,
+      this.deviceInfo,
       this.pin,
       this.walletAddress});
 
@@ -75,6 +77,7 @@ class Payload {
     qrCode = json['account_qr_code'];
     phoneNumber = json['phone_number'];
     publicKey = json['public_key'];
+    deviceInfo = json['device_data'];
     walletAddress = json['wallet_address'];
   }
 
@@ -94,6 +97,7 @@ class Payload {
     data['account_qr_code'] = this.qrCode;
     data['phone_number'] = this.phoneNumber;
     data['public_key'] = this.publicKey;
+    data['device_data'] = this.deviceInfo;
     data['wallet_address'] = this.walletAddress;
     return data;
   }

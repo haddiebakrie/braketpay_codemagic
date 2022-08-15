@@ -39,7 +39,7 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
-    // print(notifications);
+    print(notifications);
     // print(brakey.notiCount);
     // print(brakey.notiCount);
     return Scaffold(
@@ -62,6 +62,7 @@ class _NotificationsState extends State<Notifications> {
       ),
       body: Container(
           decoration: ContainerBackgroundDecoration(),
+          // padding: EdgeInsets.all(15),
           child: RefreshIndicator(
             key: brakey.refreshNotifications.value,
             onRefresh: () async {
@@ -74,6 +75,7 @@ class _NotificationsState extends State<Notifications> {
               });
             },
             child: notifications != null ? ListView.builder(
+              padding: EdgeInsets.all(15),
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: notifications?.length,
                       itemBuilder: (context, index) {

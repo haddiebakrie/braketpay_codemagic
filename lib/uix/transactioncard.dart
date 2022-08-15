@@ -67,7 +67,7 @@ class TransactionListCard extends StatelessWidget {
             leading: Container(
               clipBehavior: Clip.antiAliasWithSaveLayer,
               decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Color.fromARGB(255, 172, 199, 254),
                   borderRadius: BorderRadius.circular(20)),
                   child: transaction.payload!.transactionType!.contains('airtel') ? Image.asset('assets/airtel.png') 
                   : transaction.payload!.transactionType!.contains('9') ? Image.asset('assets/9mobile.png')
@@ -78,8 +78,8 @@ class TransactionListCard extends StatelessWidget {
                   : transaction.payload!.transactionType!.contains('gotv') ? Image.asset('assets/gotv.png')
                   : transaction.payload!.transactionType!.contains('mtn') ? Image.asset('assets/mtn.png') : IconButton(
                       icon: const Icon(IconlyBold.send),
-                      color: Colors.white,
-                      iconSize: 20,
+                      color: Color.fromARGB(255, 24, 101, 255),
+                      iconSize: 24,
                       onPressed: () {}),
             ),
           // ),

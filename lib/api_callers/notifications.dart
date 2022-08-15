@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:braketpay/api_callers/addr.dart';
 import 'package:braketpay/classes/product_contract.dart';
 import 'package:braketpay/classes/service_contract.dart';
 import 'package:dio/dio.dart';
@@ -18,7 +19,7 @@ Future<Map> fetchNotifications(
     }).query;
 
     final response = await http.get(
-      Uri.parse('https://api.braketpay.com/braket_reciever_notification/v1?$param'),
+      Uri.parse('${BRAKETAPI}braket_reciever_notification/v1?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"

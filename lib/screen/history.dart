@@ -123,6 +123,7 @@ class _HistoryState extends State<History> {
                                         textAlign: TextAlign.center),
                                     const SizedBox(height: 20),
                                     RoundButton(
+                                        icon: Icons.refresh,
                                         text: 'Retry',
                                         color1: Colors.black,
                                         color2: Colors.black,

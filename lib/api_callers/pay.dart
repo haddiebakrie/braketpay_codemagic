@@ -1,8 +1,14 @@
 
 import 'dart:convert';
 
+import 'package:braketpay/api_callers/addr.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart';
+
+import '../brakey.dart';
+
+Brakey brakey = Get.put(Brakey());
 
 Future<Map> buyAirtime(
   String phone,
@@ -18,16 +24,18 @@ Future<Map> buyAirtime(
       "api_token_id": "000019657",
       "account_number":accountNumber,
       "phone_number": phone,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       "airtime_amount": new_amount.toString(),
       "network_name": network,
-      "transaction_pin": pin
+      "transaction_pin": pin,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
     }).query;
 
       print('99090909090');
 
     try {
       final response = await Dio().get(
-        'https://api.braketpay.com/buy_airtime/v1?$param',
+        '${BRAKETAPI}buy_airtime/v1?$param',
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -42,7 +50,7 @@ Future<Map> buyAirtime(
       print(response.data);
       if (response.statusCode == 200) {
         if (response.data.containsKey('response')) {
-          if (response.data['response']['code'] == 'failure') {
+          if (response.data['response']['code'] == 'filure') {
               print('done');
               return {'Message':response.data['response']['message']};
 
@@ -57,7 +65,7 @@ Future<Map> buyAirtime(
 
       } else {
 
-        return {'Message': 'No internet access'};
+        return {'Message': 'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
       }
 
     } catch (e) {
@@ -89,6 +97,7 @@ Future<Map> buyData(
       "phone_number": phone,
       "airtime_amount": new_amount.toString(),
       "network_name": network,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       "transaction_pin": pin,
       "data_plan": plan
     }).query;
@@ -98,7 +107,7 @@ Future<Map> buyData(
     print(param);
     try {
       final response = await Dio().get(
-        'https://api.braketpay.com/buy_internet_data/v1?$param',
+        '${BRAKETAPI}buy_internet_data/v1?$param',
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -111,7 +120,7 @@ Future<Map> buyData(
 
       if (response.statusCode == 200) {
         if (response.data.containsKey('response')) {
-          if (response.data['response']['code'] == 'failure') {
+          if (response.data['response']['code'] == 'filure') {
               print('done');
               return response.data['response']['message'];
 
@@ -127,7 +136,7 @@ Future<Map> buyData(
 
       } else {
 
-        return {'Message': "No internet access"};
+        return {'Message': "This Service is currently undergoing maintenance in other to serve you better, please check back later"};
       }
 
     } catch (e) {
@@ -159,6 +168,7 @@ Future<bool> verifyMeterNumber(
       "transaction_pin": pin,
       "cable_tv_type": type,
       "tv_plan": plan,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       "smart_card_number": phone
     }).query;
 
@@ -167,7 +177,7 @@ Future<bool> verifyMeterNumber(
     print(param);
     try {
       final response = await Dio().get(
-        'https://api.braketpay.com/cable_tv_subscription/v1?$param',
+        '${BRAKETAPI}cable_tv_subscription/v1?$param',
         options: Options(
           headers: {
         'Content-Type':'application/json',
@@ -233,6 +243,7 @@ Future<Map> cashTransfer (
       "receiving_bank" : receivingBank,
       "receiver_name" : receivingName,
       "bank_code" : bankCode,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       "destination_route" : destinationRoute,
       "api_token" : "960efcf4-1ea7-4acc-b358-66a095bec90c",
       "api_token_id" : "000019657",
@@ -241,32 +252,29 @@ Future<Map> cashTransfer (
 
       print(param);
       try {
-    final response = await Dio().put(
-      'https://api.braketpay.com/make_direct_transfer/v1',
-      data: param,
-      options: Options(
+    final response = await put(
+      Uri.parse('${BRAKETAPI}make_direct_transfer/v1'),
+      body: jsonEncode(param),
         headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
         },
-      )
       );
       // print('99090909090');
 
-      print(response.data);
-
+      print(response.body);
+    Map payload = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      print(response.data);
-      if (!response.data.containsKey('Payload')) {
-          return response.data;
+      print(response.body);
+      if (!payload.containsKey('Payload')) {
+          return payload;
 
       }
 
-      return response.data;
+      return payload;
 
     } else {
-      print(response.data);
-      return {'Message':'No internet access'};
+      return {'Message':'This Service is currently undergoing maintenance in other to serve you better, please check back later'};
     }
     } catch (e) {
       print(e);
@@ -277,20 +285,23 @@ Future<Map> cashTransfer (
 Future<Map<String, dynamic>> getMeterOwner(
   String accountNumber,
   String pin, 
+  String password, 
   String region, 
   String cardNumber, 
   ) async {
   String param = Uri(queryParameters: {
     "account_number": accountNumber,
     "transaction_pin": pin,
+    "password": password,
     "service_region": region,
     "meter_number": cardNumber,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
     "paid_type": "prepaid"
       
     }).query;
     try {
     final response = await get(
-      Uri.parse('https://api.braketpay.com/verify_meter_owner/v1?$param'),
+      Uri.parse('${BRAKETAPI}verify_meter_owner/v1?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -319,19 +330,22 @@ Future<Map<String, dynamic>> getMeterOwner(
 Future<Map<String, dynamic>> getCableTVOwner(
   String accountNumber,
   String pin, 
+  String password, 
   String type, 
   String cardNumber, 
   ) async {
   String param = Uri(queryParameters: {
     "account_number": accountNumber,
     "transaction_pin": pin,
+    "password": password,
     "cable_tv_type": type,
-    "card_number": cardNumber
+    "card_number": cardNumber,
+      "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
       
     }).query;
     try {
     final response = await get(
-      Uri.parse('https://api.braketpay.com/verify_cabletv_owner/v1?$param'),
+      Uri.parse('${BRAKETAPI}verify_cabletv_owner/v1?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
@@ -370,11 +384,11 @@ Future<Map<String, dynamic>> getBanks(
     "fetch_type": bank,
     "bank_code": bankCode,
     "bank_acc_number": accountNumber,
-      
+    "login_token": await brakey.getUserToken(brakey.user.value?.payload?.accountNumber??''),
     }).query;
     try {
     final response = await get(
-      Uri.parse('https://api.braketpay.com/bank_list?$param'),
+      Uri.parse('${BRAKETAPI}bank_list?$param'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"

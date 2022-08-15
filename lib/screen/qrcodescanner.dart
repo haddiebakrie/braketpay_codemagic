@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:braketpay/screen/merchantcreateproduct.dart';
+import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../api_callers/merchant.dart';
+import '../brakey.dart';
 import '../classes/user.dart';
 import 'merchantcreateservice.dart';
 
@@ -21,6 +23,7 @@ class QRScanner extends StatefulWidget {
 }
 
 class _QRScannerState extends State<QRScanner> {
+  Brakey brakey = Get.put(Brakey());
   @override
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
@@ -96,6 +99,9 @@ class _QRScannerState extends State<QRScanner> {
               barrierDismissible: false,
               builder: (_) {
                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                     title: const Text(
                       'Fetching contract from template',
                       textAlign: TextAlign.center,
@@ -118,7 +124,10 @@ class _QRScannerState extends State<QRScanner> {
               mi,
               widget.user.payload!.walletAddress ?? '',
               widget.pin,
-              'single');
+              'single',
+              brakey.user.value?.payload?.password??'',
+              
+              );
           print(a);
 
           if (a.containsKey('Payload')) {
@@ -134,6 +143,9 @@ class _QRScannerState extends State<QRScanner> {
                 barrierDismissible: false,
                 builder: (prompt) {
                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                       actions: [
                         TextButton(
                           child: const Text('Okay'),
@@ -157,6 +169,9 @@ class _QRScannerState extends State<QRScanner> {
               barrierDismissible: false,
               builder: (_) {
                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                     title: const Text(
                       'Fetching contract from template',
                       textAlign: TextAlign.center,
@@ -179,7 +194,10 @@ class _QRScannerState extends State<QRScanner> {
               mi,
               widget.user.payload!.walletAddress ?? '',
               widget.pin,
-              'single');
+              'single',
+              brakey.user.value?.payload?.password??'',
+              
+              );
           print(a);
 
           if (a.containsKey('Payload')) {
@@ -195,6 +213,9 @@ class _QRScannerState extends State<QRScanner> {
                 barrierDismissible: false,
                 builder: (prompt) {
                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                       actions: [
                         TextButton(
                           child: const Text('Okay'),
@@ -218,6 +239,9 @@ class _QRScannerState extends State<QRScanner> {
           barrierDismissible: false,
           builder: (prompt) {
             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                 actions: [
                   TextButton(
                     child: const Text('Okay'),
@@ -239,6 +263,9 @@ class _QRScannerState extends State<QRScanner> {
           barrierDismissible: false,
           builder: (prompt) {
             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                 actions: [
                   TextButton(
                     child: const Text('Okay'),

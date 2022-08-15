@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/faqs.dart';
 import 'package:braketpay/screen/createloanmerchant.dart';
 import 'package:braketpay/screen/createproduct.dart';
 import 'package:braketpay/screen/createservice.dart';
 import 'package:braketpay/screen/loanprompt.dart';
+import 'package:braketpay/uix/askpin.dart';
 import 'package:braketpay/uix/roundbutton.dart';
 import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:braketpay/uix/utilitybutton.dart';
@@ -11,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../api_callers/contracts.dart';
@@ -45,22 +49,22 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
   bool showInvestment = false;
   bool showInsurance = false;
   bool showRealEstate = false;
+  bool showPension = false;
+  bool showGovernment = false;
+  bool showProduct = false;
   bool showServiceInputField = true;
   bool showProductInputField = true;
   String pi = '';
   String si = '';
-  bool showPension = false;
-  bool showGovernment = false;
-  bool showProduct = false;
   final List<FAQs> _faqs = generateFAQs(fAQItems.length);
   final List<PFAQs> _pfaqs = generatePFAQs(productFAQ.length);
   final List<SFAQs> _sfaqs = generateSFAQs(serviceFAQ.length);
   final List<LFAQs> _lfaqs = generateLFAQs(loanFAQ.length);
-    final RoundedLoadingButtonController _piButtonController =
+  final RoundedLoadingButtonController _piButtonController =
       RoundedLoadingButtonController();
-        final RoundedLoadingButtonController _siButtonController =
+  final RoundedLoadingButtonController _siButtonController =
       RoundedLoadingButtonController();
-     final RoundedLoadingButtonController _liButtonController =
+  final RoundedLoadingButtonController _liButtonController =
       RoundedLoadingButtonController();
   @override
   Widget build(BuildContext context) {
@@ -121,7 +125,7 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                         GridView(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2, childAspectRatio: 1.5),
+                                  crossAxisCount: 3, childAspectRatio: 1),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           children: [
@@ -156,7 +160,7 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                       color: Colors.red),
                                   const SizedBox(height: 10),
                                   const Text(
-                                    'Buying & Selling',
+                                    'Buy & Sell',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 16,
@@ -243,44 +247,44 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                 ],
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (showEmployment) {
-                                    showEmployment = false;
-                                    return;
-                                  }
-                                  showProduct = false;
-                                  showLoan = false;
-                                  showEmployment = true;
-                                  showInsurance = false;
-                                  showRealEstate = false;
-                                  showInvestment = false;
+                            // InkWell(
+                            //   onTap: () {
+                            //     setState(() {
+                            //       if (showEmployment) {
+                            //         showEmployment = false;
+                            //         return;
+                            //       }
+                            //       showProduct = false;
+                            //       showLoan = false;
+                            //       showEmployment = true;
+                            //       showInsurance = false;
+                            //       showRealEstate = false;
+                            //       showInvestment = false;
 
-                                  showService = false;
-                                  showPension = false;
-                                  showGovernment = false;
-                                });
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                      showEmployment
-                                          ? Icons.people_alt
-                                          : Icons.people_alt_outlined,
-                                      size: 35,
-                                      color: Colors.indigo),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'Employment',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  )
-                                ],
-                              ),
-                            ),
+                            //       showService = false;
+                            //       showPension = false;
+                            //       showGovernment = false;
+                            //     });
+                            //   },
+                            //   child: Column(
+                            //     mainAxisAlignment: MainAxisAlignment.center,
+                            //     children: [
+                            //       Icon(
+                            //           showEmployment
+                            //               ? Icons.people_alt
+                            //               : Icons.people_alt_outlined,
+                            //           size: 35,
+                            //           color: Colors.indigo),
+                            //       const SizedBox(height: 10),
+                            //       const Text(
+                            //         'Payroll',
+                            //         style: TextStyle(
+                            //             fontSize: 16,
+                            //             fontWeight: FontWeight.w500),
+                            //       )
+                            //     ],
+                            //   ),
+                            // ),
 
                             //   InkWell(
                             //   onTap: () {
@@ -398,7 +402,7 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
 
                             //       Icon(showRealEstate ? Icons.apartment : Icons.apartment_outlined, size: 35, color: Colors.blue),
                             //       const SizedBox(height:10),
-                            //       const Text('Real Estate',
+                            //       const Text('Property',
                             //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
 
                             //       )
@@ -441,8 +445,8 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    // margin: const EdgeInsets.symmetric(vertical: 10),
+                    // padding: const EdgeInsets.symmetric(vertical: 20),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
                     decoration: ContainerDecoration(),
                     child: Column(
                       children: [
@@ -530,7 +534,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -563,7 +571,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -607,7 +619,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -640,7 +656,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -684,7 +704,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -717,7 +741,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -811,7 +839,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -844,7 +876,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -888,7 +924,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -921,7 +961,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -965,7 +1009,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -998,7 +1046,11 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Not Available yet.'),
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                            title: const Text(
+                                                'Not Available yet.'),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>
@@ -1122,11 +1174,15 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                                   return ListTile(
                                     minVerticalPadding: 0,
                                     title: Text(item.headerValue,
-                                        style: const TextStyle(fontSize: 15)),
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600)),
                                   );
                                 },
-                                body: Text(
-                                  item.expandedValue,
+                                body: ListTile(
+                                  minVerticalPadding: 0,
+                                  // contentPadding: 0,
+                                  subtitle: Text(item.expandedValue),
                                 ),
                                 isExpanded: item.isExpanded,
                               );
@@ -1134,725 +1190,1046 @@ class _ContractModeSelectState extends State<ContractModeSelect> {
                           ),
                         ],
                       ))
-                
                 ])),
           ),
         ),
       ],
     );
   }
+}
 
-  Future<dynamic> servicePrompt() {
-    return Get.bottomSheet(
-                                
-                                Container(
-                                  margin: EdgeInsets.only(top:180),
-                                  child: BottomSheet(
-                                    // isDismissible: true,
-                                  enableDrag: true,
-                                    
-                                    backgroundColor: Colors.transparent,
-                                    onClosing: () {
-                                      showServiceInputField = false;
-                                    },
-                                    builder: (context) {
-                                      return Stack(
-                                        children: [
-                                          
-                                          SingleChildScrollView(
-                                            child: Container(
-                                                padding: const EdgeInsets.all(10),
-                                                decoration: ContainerBackgroundDecoration(),
-                                                child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Container(
-                                                        width: 60,
-                                                        height: 5,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.grey,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10)),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      const Text('Create a Service contract', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                                                      const SizedBox(height: 20),
-                                                      Column(children: [
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Container(
-                                                                decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              padding: const EdgeInsets.all(15),
-                                                              child: InkWell(
-                                                              onTap: () {
-                                            // Get.close(1);
-                                            
-                                    Get.to(() => ServicePrompt(
-                                              user: widget.user,
-                                              creatorType: 'Provider',
-                                            ));
-                                  },
-                                                                child: Column(children: const [
-                                                                  Icon(Icons.person_pin, color: Colors.red),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('As a Provider', style: TextStyle(fontWeight: FontWeight.bold),),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('Render your service and get paid for it.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                                                                ]),
-                                                              ),
-                                                              ),
-                                                            ),
-                                                            
-                                                            const SizedBox(width:10),
-                                                            Expanded(
-                                                              child: Container(
-                                                                decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              padding: const EdgeInsets.all(15),
-                                                              child: InkWell(
-                                                              onTap: () {
-                                            // Get.close(1);
-                                    Get.to(() => ServicePrompt(
-                                              user: widget.user,
-                                              creatorType: 'Client',
-                                            ));
-                                  },
-                                                                child: Column(children: const [
-                                                                  Icon(Icons.person_pin_rounded, color: Colors.teal),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('As a Client', style: TextStyle(fontWeight: FontWeight.bold),),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('Pay only for each completed stage.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                                                                ]),
-                                                              ),
-                                                              ),
-                                                            ),
-                                                          ],
-
-                                                        ),
-                                                      // const SizedBox(height: 20),
-                                                        Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(child: Container(height:1, color: Colors.grey),),
-                                                              Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Text('or', style: TextStyle(fontWeight: FontWeight.bold)),
-                                                              ),
-                                                              Expanded(child: Container(height:1, color: Colors.grey),),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      // const SizedBox(height: 20),
-                                                        StatefulBuilder(
-                                                          builder: (context, changeState) {
-                                                            return Container(
-                                                              decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              child: Column(children: [
-                                                                ListTile(title: Text("Use a Provider's Service ID?"),
-                                                                subtitle: FittedBox(child: Text('You can get a Service ID from a Service provider')),
-                                                                trailing: Icon(!showServiceInputField ? Icons.chevron_right : Icons.keyboard_arrow_up_sharp),
-                                                                contentPadding: EdgeInsets.all(10),
-                                                                onTap: () {changeState(() {
-                                                                  
-                                                                  showServiceInputField = !showServiceInputField;
-                                                                });
-                                                                },
-                                                                ),
-                                                                Visibility(
-                                                                  visible: showServiceInputField,
-                                                                  child: Padding(
-                                                                    padding: EdgeInsets.all(8.0),
-                                                                    child: Column(
-                                                                      children: [
-                                                                        TextField(
-                                                                          cursorColor: Colors.grey,
-                                                                          decoration: InputDecoration(
-                                                                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                                                                            filled: true,
-                                                                            focusedBorder: OutlineInputBorder(
-                                                                                borderSide: BorderSide.none,
-                                                                                borderRadius:
-                                                                                    BorderRadius.all(Radius.circular(10))),
-                                                                            hintText: 'SERXXXXXXXXXX',
-                                                                            border: OutlineInputBorder(
-                                                                                borderSide: BorderSide.none,
-                                                                                borderRadius:
-                                                                                    BorderRadius.all(Radius.circular(10))),
-                                                                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                                                                          ),
-                                                                          onChanged: (text) 
-                                                                          {
-                                                                            setState(() {
-                                                                              si = text;
-                                                                            });
-                                                                          }
-                                                                        ),
-                                                                        SizedBox(height: 10,),
-                                                                        RoundedLoadingButton(
-                                                                          controller: _siButtonController,
-                                                                          child: Text('Create'),
-                                                                          borderRadius: 10,
-                                                                          color: Theme.of(context).primaryColor,
-                                                                          elevation: 0,
-                                                                          onPressed: () {
-                                                                            nPressed: () async {
-                                                                            Map a = await fetchMerchantContract(
-                                                                              si,
-                                                                              'service',
-                                                                              '',
-                                                                              widget.user.payload!.walletAddress ?? '',
-                                                                              widget.pin,
-                                                                              'single');
-                                                                          print(a);
-
-                                                                          if (a.containsKey('Payload')) {
-                                                                            a['Payload'].addEntries({'merchant_id':'', 'service_id':si}.entries);
-                                                                            Navigator.of(context).pop();
-                                                                            Navigator.of(context).push(MaterialPageRoute(
-                                                                                builder: ((context) => MerchantCreateServiceFromScan(
-                                                                                    product: a['Payload'], user: widget.user, pin: widget.pin))));
-                                                                          } else {
-                                                                              _siButtonController.reset();
-                                                                            showDialog(
-                                                                                context: context,
-                                                                                barrierDismissible: false,
-                                                                                builder: (prompt) {
-                                                                                  return AlertDialog(
-                                                                                      actions: [
-                                                                                        TextButton(
-                                                                                          child: const Text('Okay'),
-                                                                                          onPressed: () {
-                                                                                            Navigator.of(prompt).pop();
-                                                                                            // Navigator.of(context).pop();
-                                                                                            // Navigator.of(context).pop();
-                                                                                          },
-                                                                                        )
-                                                                                      ],
-                                                                                      title: const Text("Can't fetch Service Contract!"),
-                                                                                      content: Text(a['Message']));
-                                                                                });
-                                                                        }                                                                      };
-                                                          })
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                            
-                                                              ]),
-                                                            );
-                                                          }
-                                                        ),
-                                                        SizedBox(height:20),
-                                                              Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: ContainerDecoration(),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            SizedBox(width: 5),
-                            Text(
-                              'Frequently asked Questions',
-                              style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+Future<dynamic> servicePrompt() {
+  final List<FAQs> _faqs = generateFAQs(fAQItems.length);
+  final List<PFAQs> _pfaqs = generatePFAQs(productFAQ.length);
+  final List<SFAQs> _sfaqs = generateSFAQs(serviceFAQ.length);
+  final List<LFAQs> _lfaqs = generateLFAQs(loanFAQ.length);
+  Brakey brakey = Get.put(Brakey());
+  bool showServiceInputField = true;
+  String pi = '';
+  String si = '';
+  bool showProductInputField = true;
+  final RoundedLoadingButtonController _piButtonController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _siButtonController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _liButtonController =
+      RoundedLoadingButtonController();
+  return Get.bottomSheet(
+      Container(
+        margin: const EdgeInsets.only(top: 180),
+        child: StatefulBuilder(builder: (context, setState) {
+          return BottomSheet(
+              // isDismissible: true,
+              enableDrag: true,
+              backgroundColor: Colors.transparent,
+              onClosing: () {
+                showServiceInputField = false;
+              },
+              builder: (context) {
+                return Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: ContainerBackgroundDecoration(),
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                            Container(
+                              width: 60,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
-                          ],
-                        ),
-                        StatefulBuilder(
-                          builder: (context, toggleExpand) {
-                            return ExpansionPanelList(
-                              elevation: 0,
-                              expandedHeaderPadding: EdgeInsets.zero,
-                              expansionCallback: (int index, bool isExpanded) {
-                                toggleExpand(() {
-                                  for (var e in _sfaqs) {
-                                          e.isExpanded = false;
-                                  }
-                                  _sfaqs[index].isExpanded = !isExpanded;
-                                });
-                              },
-                              children: _sfaqs.map<ExpansionPanel>((SFAQs item) {
-                                return ExpansionPanel(
-                                  backgroundColor: Colors.transparent,
-                                  canTapOnHeader: true,
-                                  headerBuilder:
-                                            (BuildContext context, bool isExpanded) {
-                                          return ListTile(
-                                            minVerticalPadding: 0,
-                                            title: Text(item.headerValue,
-                                                style: const TextStyle(fontSize: 15)),
-                                          );
-                                  },
-                                  body: Text(
-                                  item.expandedValue,
-                                ),
-                                  isExpanded: item.isExpanded,
-                                );
-                              }).toList(),
-                            );
-                          }
-                        ),
-                      ],
-                    ))
-              
-                                                      ],)
-                                                    ])),
-                                          ),
-                                        IconButton(onPressed: () {
-                                            Get.close(1);
-                                          }, icon: Icon(Icons.close)),
-                                        ],
-                                      );
-                                    }),
-                                ),
-                                  isScrollControlled: true,
-                                  ignoreSafeArea: false,
-                                  isDismissible: true,
-                                  enableDrag: true
-                                  );
-  }
-
-  Future<dynamic> productPrompt() {
-    return Get.bottomSheet(
-                                
-                                Container(
-                                  margin: EdgeInsets.only(top:180),
-                                  child: BottomSheet(
-                                    // isDismissible: true,
-                                  enableDrag: true,
-                                    
-                                    backgroundColor: Colors.transparent,
-                                    onClosing: () {
-                                      showServiceInputField = false;
-                                    },
-                                    builder: (context) {
-                                      return Stack(
-                                        children: [
-                                          SingleChildScrollView(
-                                            child: Container(
-                                                padding: const EdgeInsets.all(10),
-                                                decoration: ContainerBackgroundDecoration(),
-                                                child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Container(
-                                                        width: 60,
-                                                        height: 5,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.grey,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10)),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      const Text('Create a Product contract', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                                                      const SizedBox(height: 20),
-                                                      Column(children: [
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Container(
-                                                                decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              padding: const EdgeInsets.all(15),
-                                                              child: InkWell(
-                                                              onTap: () {
+                            const SizedBox(height: 10),
+                            const Text('Create a Service contract',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15)),
+                            const SizedBox(height: 20),
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        decoration: ContainerDecoration()
+                                            .copyWith(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                        padding: const EdgeInsets.all(15),
+                                        child: InkWell(
+                                          onTap: () {
                                             // Get.close(1);
-                                    Get.to(() => ProductPrompt(
-                                              user: widget.user,
-                                              creatorType: 'Seller',
-                                            ));
-                                  },
-                                                                child: Column(children: const [
-                                                                  Icon(Icons.person_pin, color: Colors.red),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('As a Seller', style: TextStyle(fontWeight: FontWeight.bold),),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('Avoid unneccesary order cancellation.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                                                                ]),
-                                                              ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(height: 20),
-                                                        
-                                                            const SizedBox(width:10),
-                                                            Expanded(
-                                                              child: Container(
-                                                                decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              padding: const EdgeInsets.all(15),
-                                                              child: InkWell(
-                                                              onTap: () {
+
+                                            Get.to(() => ServicePrompt(
+                                                  user: brakey.user.value!,
+                                                  creatorType: 'Provider',
+                                                ));
+                                          },
+                                          child: Column(children: const [
+                                            Icon(Icons.person_pin,
+                                                color: Colors.red),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'As a Provider',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(height: 10),
+                                            FittedBox(
+                                              child: Text(
+                                                  'Render your\nservice and get paid for it.',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.grey, fontWeight: FontWeight.w600)),
+                                            ),
+                                          ]),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: ContainerDecoration()
+                                            .copyWith(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                        padding: const EdgeInsets.all(15),
+                                        child: InkWell(
+                                          onTap: () {
                                             // Get.close(1);
-                                    Get.to(() => ProductPrompt(
-                                              user: widget.user,
-                                              creatorType: 'Buyer',
-                                            ));
-                                  },
-                                                                child: Column(children: const [
-                                                                  Icon(Icons.person_pin_rounded, color: Colors.teal),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('As a Buyer', style: TextStyle(fontWeight: FontWeight.bold),),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('Prevent "What I ordered VS What I Got".', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                                                                ]),
-                                                              ),
-                                                              ),
-                                                            ),
-                                                          ],
-
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(child: Container(height:1, color: Colors.grey),),
-                                                              Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Text('or', style: TextStyle(fontWeight: FontWeight.bold)),
-                                                              ),
-                                                              Expanded(child: Container(height:1, color: Colors.grey),),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        StatefulBuilder(
-                                                          builder: (context, changeState) {
-                                                            return Container(
-                                                              decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              child: Column(children: [
-                                                                ListTile(title: Text("Use a Seller's Product ID"),
-                                                                subtitle: FittedBox(child: Text('You can get a Product ID from the Seller')),
-                                                                trailing: Icon(!showProductInputField ? Icons.chevron_right : Icons.keyboard_arrow_up_sharp),
-                                                                contentPadding: EdgeInsets.all(10),
-                                                                onTap: () {changeState(() {
-                                                                  
-                                                                  showProductInputField = !showProductInputField;
-                                                                });
-                                                                },
-                                                                ),
-                                                                Visibility(
-                                                                  visible: showProductInputField,
-                                                                  child: Padding(
-                                                                    padding: EdgeInsets.all(8.0),
-                                                                    child: Column(
-                                                                      children: [
-                                                                        TextField(
-                                                                          cursorColor: Colors.grey,
-                                                                          decoration: InputDecoration(
-                                                                            fillColor: Color.fromARGB(24, 158, 158, 158),
-                                                                            filled: true,
-                                                                            focusedBorder: OutlineInputBorder(
-                                                                                borderSide: BorderSide.none,
-                                                                                borderRadius:
-                                                                                    BorderRadius.all(Radius.circular(10))),
-                                                                            hintText: 'PRDXXXXXXXXXX',
-                                                                            border: OutlineInputBorder(
-                                                                                borderSide: BorderSide.none,
-                                                                                borderRadius:
-                                                                                    BorderRadius.all(Radius.circular(10))),
-                                                                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                                                                          ),
-                                                                          onChanged: (text) {
-                                                                            setState(() {
-                                                                            pi = text;
-                                                                              
-                                                                            });
-                                                                          },
-                                                                        ),
-                                                                        SizedBox(height: 10,),
-                                                                        RoundedLoadingButton(
-                                                                          controller: _piButtonController,
-                                                                          child: Text('Create'),
-                                                                          borderRadius: 10,
-                                                                          color: Theme.of(context).primaryColor,
-                                                                          elevation: 0,
-                                                                          onPressed: () async {
-                                                                            Map a = await fetchMerchantContract(
-                                                                              pi,
-                                                                              'product',
-                                                                              '',
-                                                                              widget.user.payload!.walletAddress ?? '',
-                                                                              widget.pin,
-                                                                              'single');
-                                                                          print(a);
-
-                                                                          if (a.containsKey('Payload')) {
-                                                                            a['Payload'].addEntries({'merchant_id':'', 'product_id':pi}.entries);
-                                                                            Navigator.of(context).pop();
-                                                                            Navigator.of(context).push(MaterialPageRoute(
-                                                                                builder: ((context) => MerchantCreateProductFromScan(
-                                                                                    product: a['Payload'], user: widget.user, pin: widget.pin))));
-                                                                          } else {
-                                                                            _piButtonController.reset();
-                                                                            showDialog(
-                                                                                context: context,
-                                                                                barrierDismissible: false,
-                                                                                builder: (prompt) {
-                                                                                  return AlertDialog(
-                                                                                      actions: [
-                                                                                        TextButton(
-                                                                                          child: const Text('Okay'),
-                                                                                          onPressed: () {
-                                                                                            Navigator.of(prompt).pop();
-                                                                                            // Navigator.of(context).pop();
-                                                                                            // Navigator.of(context).pop();
-                                                                                          },
-                                                                                        )
-                                                                                      ],
-                                                                                      title: const Text("Can't fetch Product Contract!"),
-                                                                                      content: Text(a['Message']));
-                                                                                });
-                                                                        }
-                                                                          },
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                            
-                                                              ]),
-                                                            );
-                                                          }
-                                                        ),
-                                                      const SizedBox(height: 20),
-
-                                                              Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: ContainerDecoration(),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            SizedBox(width: 5),
-                            Text(
-                              'Frequently asked Questions',
-                              style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        StatefulBuilder(
-                          builder: (context, toggleExpand) {
-                            return ExpansionPanelList(
-                              elevation: 0,
-                              expandedHeaderPadding: EdgeInsets.zero,
-                              expansionCallback: (int index, bool isExpanded) {
-                                toggleExpand(() {
-                                  for (var e in _pfaqs) {
-                                          e.isExpanded = false;
-                                  }
-                                  _pfaqs[index].isExpanded = !isExpanded;
-                                });
-                              },
-                              children: _pfaqs.map<ExpansionPanel>((PFAQs item) {
-                                return ExpansionPanel(
-                                  backgroundColor: Colors.transparent,
-                                  canTapOnHeader: true,
-                                  headerBuilder:
-                                            (BuildContext context, bool isExpanded) {
-                                          return ListTile(
-                                            minVerticalPadding: 0,
-                                            title: Text(item.headerValue,
-                                                style: const TextStyle(fontSize: 15)),
-                                          );
-                                  },
-                                  body: Text(
-                                          item.expandedValue
+                                            Get.to(() => ServicePrompt(
+                                                  user: brakey.user.value!,
+                                                  creatorType: 'Client',
+                                                ));
+                                          },
+                                          child: Column(children: const [
+                                            Icon(Icons.person_pin_rounded,
+                                                color: Colors.teal),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'As a Client',
+                                              style: TextStyle(
+                                                color: Colors.teal,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(height: 10),
+                                            FittedBox(
+                                              child: Text(
+                                                  'Only pay\n for each completed stage.',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.grey, fontWeight: FontWeight.w600)),
+                                            ),
+                                          ]),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                // const SizedBox(height: 20),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                            height: 1, color: Colors.grey),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text('or',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                            height: 1, color: Colors.grey),
+                                      ),
+                                    ],
                                   ),
-                                  isExpanded: item.isExpanded,
-                                );
-                              }).toList(),
-                            );
-                          }
-                        ),
-                      ],
-                    ))
-              
-                                                      ],)
-                                                    ])),
-                                          ),
-                                        IconButton(onPressed: () {
-                                            Get.close(1);
-                                          }, icon: Icon(Icons.close)),
-                                        ],
-                                      );
-                                    }),
                                 ),
-                                  isScrollControlled: true,
-                                  ignoreSafeArea: false,
-                                  isDismissible: true,
-                                  enableDrag: true
+                                // const SizedBox(height: 20),
+                                StatefulBuilder(
+                                    builder: (context, changeState) {
+                                  return Container(
+                                    padding: EdgeInsets.all(10),
+
+                                    decoration: ContainerDecoration().copyWith(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Column(children: [
+                                      ListTile(
+                                        title: const Text(
+                                            "Use a Provider's Service ID?", style: TextStyle(fontWeight: FontWeight.w600)),
+                                        subtitle: const FittedBox(
+                                            child: Text(
+                                                'You can get a Service ID from a Service provider')),
+                                        trailing: Icon(!showServiceInputField
+                                            ? Icons.chevron_right
+                                            : Icons.keyboard_arrow_up_sharp),
+                                        contentPadding:
+                                            const EdgeInsets.all(10),
+                                        onTap: () {
+                                          changeState(() {
+                                            showServiceInputField =
+                                                !showServiceInputField;
+                                          });
+                                        },
+                                      ),
+                                      Visibility(
+                                        visible: showServiceInputField,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              TextField(
+                                                  cursorColor: Colors.grey,
+                                                   maxLines: null,
+                                                  minLines: null,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  fillColor: Color.fromARGB(
+                                                      24, 158, 158, 158),
+                                                  filled: true,
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                          borderSide: BorderSide
+                                                              .none,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10))),
+                                                  hintStyle: TextStyle(fontWeight: FontWeight.w600),
+                                                    hintText: 'SERXXXXXXXXXX\n',
+                                                    border: OutlineInputBorder(
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10))),
+                                                    contentPadding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10),
+                                                  ),
+                                                  onChanged: (text) {
+                                                    setState(() {
+                                                      si = text;
+                                                    });
+                                                  }),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              RoundedLoadingButton(
+                                                  controller:
+                                                      _siButtonController,
+                                                  child: const Text('View'),
+                                                  borderRadius: 10,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  elevation: 0,
+                                                  onPressed: () async {
+                                                    StreamController<
+                                                            ErrorAnimationType>
+                                                        _pinErrorController =
+                                                        StreamController<
+                                                            ErrorAnimationType>();
+                                                    final _pinEditController =
+                                                        TextEditingController();
+                                                    Map? pin = await askPin(
+                                                        _pinEditController,
+                                                        _pinErrorController);
+
+                                                    if (pin == null ||
+                                                        !pin.containsKey(
+                                                            'pin')) {
+                                                      _siButtonController
+                                                          .reset();
+                                                      return;
+                                                    }
+
+                                                    nPressed:
+                                                    () async {
+                                                      Map a = await fetchMerchantContract(
+                                                          si,
+                                                          'service',
+                                                          '',
+                                                          brakey
+                                                                  .user
+                                                                  .value!
+                                                                  .payload!
+                                                                  .walletAddress ??
+                                                              '',
+                                                          pin['pin'],
+                                                          'single',
+                      brakey.user.value?.payload?.password??'',
+                                                          
+                                                          );
+                                                      print(a);
+
+                                                      if (a.containsKey(
+                                                          'Payload')) {
+                                                        a['Payload'].addEntries(
+                                                            {
+                                                          'merchant_id': '',
+                                                          'service_id': si
+                                                        }.entries);
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        Navigator.of(context).push(MaterialPageRoute(
+                                                            builder: ((context) =>
+                                                                MerchantCreateServiceFromScan(
+                                                                    product: a[
+                                                                        'Payload'],
+                                                                    user: brakey
+                                                                        .user
+                                                                        .value!,
+                                                                    pin: pin[
+                                                                        'pin']))));
+                                                      } else {
+                                                        _siButtonController
+                                                            .reset();
+                                                        showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                false,
+                                                            builder: (prompt) {
+                                                              return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      child: const Text(
+                                                                          'Okay'),
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.of(prompt)
+                                                                            .pop();
+                                                                        // Navigator.of(context).pop();
+                                                                        // Navigator.of(context).pop();
+                                                                      },
+                                                                    )
+                                                                  ],
+                                                                  title: const Text(
+                                                                      "Can't fetch Service Contract!"),
+                                                                  content: Text(
+                                                                      a['Message']));
+                                                            });
+                                                      }
+                                                    };
+                                                  })
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
                                   );
-  }
-
-  Future<dynamic> loanPrompt() {
-    return Get.bottomSheet(
-                                
+                                }),
+                                const SizedBox(height: 20),
                                 Container(
-                                  margin: EdgeInsets.only(top:180),
-                                  child: BottomSheet(
-                                    // isDismissible: true,
-                                  enableDrag: true,
-                                    
-                                    backgroundColor: Colors.transparent,
-                                    onClosing: () {
-                                      showServiceInputField = false;
-                                    },
-                                    builder: (context) {
-                                      return Stack(
-                                        children: [
-                                          SingleChildScrollView(
-                                            child: Container(
-                                                padding: const EdgeInsets.all(10),
-                                                decoration: ContainerBackgroundDecoration(),
-                                                child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      
-                                                      Container(
-                                                        width: 60,
-                                                        height: 5,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.grey,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10)),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      const Text('Create a Loan contract', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                                                      const SizedBox(height: 20),
-                                                      Column(children: [
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Container(
-                                                                decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              padding: const EdgeInsets.all(15),
-                                                              child: InkWell(
-                                                              onTap: () {
-                                            // Get.close(1);
-                                    Get.to(() => LoanIDPrompt(
+                                    padding: const EdgeInsets.all(20),
 
-                                            ));
-                                  },
-                                                                child: Column(children: const [
-                                                                  Icon(Icons.person_pin, color: Colors.red),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('As a Borrower', style: TextStyle(fontWeight: FontWeight.bold),),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('Get a Loan without Stress', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                                                                ]),
-                                                              ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(height: 20),
-                                                        
-                                                            const SizedBox(width:10),
-                                                            Expanded(
-                                                              child: Container(
-                                                                decoration: ContainerDecoration().copyWith(borderRadius: BorderRadius.circular(10)),
-                                                              padding: const EdgeInsets.all(15),
-                                                              child: InkWell(
-                                                              onTap: () {
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: ContainerDecoration(),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            SizedBox(width: 5),
+                                            Text(
+                                              'Frequently asked Questions',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                const SizedBox(height: 20),
+                                        StatefulBuilder(
+                                            builder: (context, toggleExpand) {
+                                          return ExpansionPanelList(
+                                            elevation: 0,
+                                            expandedHeaderPadding:
+                                                EdgeInsets.symmetric(vertical:5),
+                                            expansionCallback:
+                                                (int index, bool isExpanded) {
+                                              toggleExpand(() {
+                                                for (var e in _sfaqs) {
+                                                  e.isExpanded = false;
+                                                }
+                                                _sfaqs[index].isExpanded =
+                                                    !isExpanded;
+                                              });
+                                            },
+                                            children: _sfaqs
+                                                .map<ExpansionPanel>(
+                                                    (SFAQs item) {
+                                              return ExpansionPanel(
+                                                
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                canTapOnHeader: true,
+                                                headerBuilder:
+                                                    (BuildContext context,
+                                                        bool isExpanded) {
+                                                  return ListTile(
+                                                    minVerticalPadding: 0,
+                                                    title: Text(
+                                                        item.headerValue,
+                                                        style: const TextStyle(
+                                                            fontSize: 15, fontWeight: FontWeight.w600)),
+                                                  );
+                                                },
+                                                body: Text(item.expandedValue),
+                                                isExpanded: item.isExpanded,
+                                              );
+                                            }).toList(),
+                                          );
+                                        }),
+                                      ],
+                                    ))
+                              ],
+                            )
+                          ])),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Get.close(1);
+                        },
+                        icon: const Icon(Icons.close)),
+                  ],
+                );
+              });
+        }),
+      ),
+      isScrollControlled: true,
+      ignoreSafeArea: false,
+      isDismissible: true,
+      enableDrag: true);
+}
+
+Future<dynamic> productPrompt() {
+  final List<FAQs> _faqs = generateFAQs(fAQItems.length);
+  final List<PFAQs> _pfaqs = generatePFAQs(productFAQ.length);
+  final List<SFAQs> _sfaqs = generateSFAQs(serviceFAQ.length);
+  final List<LFAQs> _lfaqs = generateLFAQs(loanFAQ.length);
+  Brakey brakey = Get.put(Brakey());
+  bool showServiceInputField = true;
+  String pi = '';
+  String si = '';
+  bool showProductInputField = true;
+  final RoundedLoadingButtonController _piButtonController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _siButtonController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _liButtonController =
+      RoundedLoadingButtonController();
+  return Get.bottomSheet(
+      Container(
+        margin: const EdgeInsets.only(top: 180),
+        child: StatefulBuilder(builder: (context, setState) {
+          return BottomSheet(
+              // isDismissible: true,
+              enableDrag: true,
+              backgroundColor: Colors.transparent,
+              onClosing: () {
+                showServiceInputField = false;
+              },
+              builder: (context) {
+                return Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: ContainerBackgroundDecoration(),
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                            Container(
+                              width: 60,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            const SizedBox(height: 20),
+                            const Text('Create a Buy & Sell contract',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15)),
+                            const SizedBox(height: 20),
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        decoration: ContainerDecoration()
+                                            .copyWith(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                        padding: const EdgeInsets.all(10),
+                                        child: InkWell(
+                                          onTap: () {
                                             // Get.close(1);
-                                    Get.to(() => MerchantCreateLoan(
+                                            Get.to(() => ProductPrompt(
+                                                  user: brakey.user.value!,
+                                                  creatorType: 'Seller',
+                                                ));
+                                          },
+                                          child: Column(children: const [
+                                            Icon(Icons.person_pin,
+                                                color: Colors.red),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'As a Seller',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(height: 10),
+                                            FittedBox(
+                                              child: Text(
+                                                  'Avoid\nunneccesary order cancellation.',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.grey, fontWeight: FontWeight.w600)),
+                                            ),
+                                          ]),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: ContainerDecoration()
+                                            .copyWith(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                        padding: const EdgeInsets.all(10),
+                                        child: InkWell(
+                                          onTap: () {
+                                            // Get.close(1);
+                                            Get.to(() => ProductPrompt(
+                                                  user: brakey.user.value!,
+                                                  creatorType: 'Buyer',
+                                                ));
+                                          },
+                                          child: Column(children: const [
+                                            Icon(Icons.person_pin_rounded,
+                                                color: Colors.teal),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'As a Buyer',
+                                              style: TextStyle(
+                                                color: Colors.teal,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(height: 10),
+                                            FittedBox(
+                                              child: Text(
+                                                  'Prevent\n "What I ordered VS What I Got".',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.grey, fontWeight: FontWeight.w600)),
+                                            ),
+                                          ]),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                            height: 1, color: Colors.grey),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text('or',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                            height: 1, color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                StatefulBuilder(
+                                    builder: (context, changeState) {
+                                  return Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: ContainerDecoration().copyWith(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Column(children: [
+                                      ListTile(
+                                        minVerticalPadding: 0,
+                                        title: const Text(
+                                            "Use a Seller's Product ID", style: TextStyle(fontWeight: FontWeight.w600)),
+                                        subtitle: const FittedBox(
+                                            child: Text(
+                                                'You can get a Product ID from the Seller')),
+                                        trailing: Icon(!showProductInputField
+                                            ? Icons.chevron_right
+                                            : Icons.keyboard_arrow_up_sharp),
+                                        contentPadding:
+                                            const EdgeInsets.all(10),
+                                        onTap: () {
+                                          changeState(() {
+                                            showProductInputField =
+                                                !showProductInputField;
+                                          });
+                                        },
+                                      ),
+                                      Visibility(
+                                        visible: showProductInputField,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              TextField(
+                                                cursorColor: Colors.grey,
+                                                  maxLines: null,
+                                                  minLines: null,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  fillColor: Color.fromARGB(
+                                                      24, 158, 158, 158),
+                                                  filled: true,
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                          borderSide: BorderSide
+                                                              .none,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10))),
+                                                  hintStyle: TextStyle(fontWeight: FontWeight.w600),
+                                                  hintText: 'PRDXXXXXXXXXX\n',
+                                                  border: OutlineInputBorder(
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10))),
+                                                  contentPadding:
+                                                      EdgeInsets.all(10),
+                                                ),
+                                                onChanged: (text) {
+                                                  setState(() {
+                                                    pi = text;
+                                                  });
+                                                },
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              RoundedLoadingButton(
+                                                controller: _piButtonController,
+                                                child: const Text('View'),
+                                                borderRadius: 10,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                elevation: 0,
+                                                onPressed: () async {
+                                                  StreamController<
+                                                          ErrorAnimationType>
+                                                      _pinErrorController =
+                                                      StreamController<
+                                                          ErrorAnimationType>();
+                                                  final _pinEditController =
+                                                      TextEditingController();
+                                                  Map? pin = await askPin(
+                                                      _pinEditController,
+                                                      _pinErrorController);
+
+                                                  if (pin == null ||
+                                                      !pin.containsKey('pin')) {
+                                                    _siButtonController.reset();
+                                                    return;
+                                                  }
+                                                  Map a =
+                                                      await fetchMerchantContract(
+                                                          pi,
+                                                          'product',
+                                                          '',
+                                                          brakey
+                                                                  .user
+                                                                  .value!
+                                                                  .payload!
+                                                                  .walletAddress ??
+                                                              '',
+                                                          pin['pin'],
+                                                          'single',
+                      brakey.user.value?.payload?.password??'',
+                                                          
+                                                          );
+                                                  print(a);
+
+                                                  if (a
+                                                      .containsKey('Payload')) {
+                                                    a['Payload'].addEntries({
+                                                      'merchant_id': '',
+                                                      'product_id': pi
+                                                    }.entries);
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: ((context) =>
+                                                                MerchantCreateProductFromScan(
+                                                                    product: a[
+                                                                        'Payload'],
+                                                                    user: brakey
+                                                                        .user
+                                                                        .value!,
+                                                                    pin: pin[
+                                                                        'pin']))));
+                                                  } else {
+                                                    _piButtonController.reset();
+                                                    showDialog(
+                                                        context: context,
+                                                        barrierDismissible:
+                                                            false,
+                                                        builder: (prompt) {
+                                                          return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                  child:
+                                                                      const Text(
+                                                                          'Okay'),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            prompt)
+                                                                        .pop();
+                                                                    // Navigator.of(context).pop();
+                                                                    // Navigator.of(context).pop();
+                                                                  },
+                                                                )
+                                                              ],
+                                                              title: const Text(
+                                                                  "Can't fetch Product Contract!"),
+                                                              content: Text(a[
+                                                                  'Message']));
+                                                        });
+                                                  }
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                                  );
+                                }),
+                                const SizedBox(height: 20),
+                                Container(
+                                    padding: const EdgeInsets.all(20),
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: ContainerDecoration(),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            SizedBox(width: 5),
+                                            Text(
+                                              'Frequently asked Questions',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height:20),
+                                        StatefulBuilder(
+                                            builder: (context, toggleExpand) {
+                                          return ExpansionPanelList(
+                                            elevation: 0,
+                                            expandedHeaderPadding:
+                                                EdgeInsets.symmetric(vertical:5),
+                                            expansionCallback:
+                                                (int index, bool isExpanded) {
+                                              toggleExpand(() {
+                                                for (var e in _pfaqs) {
+                                                  e.isExpanded = false;
+                                                }
+                                                _pfaqs[index].isExpanded =
+                                                    !isExpanded;
+                                              });
+                                            },
+                                            children: _pfaqs
+                                                .map<ExpansionPanel>(
+                                                    (PFAQs item) {
+                                              return ExpansionPanel(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                canTapOnHeader: true,
+                                                headerBuilder:
+                                                    (BuildContext context,
+                                                        bool isExpanded) {
+                                                  return ListTile(
+                                                    minVerticalPadding: 0,
+                                                    title: Text(
+                                                        item.headerValue,
+                                                        style: const TextStyle(
+                                                            fontSize: 15, fontWeight: FontWeight.w600)),
+                                                  );
+                                                },
+                                                body: Text(item.expandedValue),
+                                                isExpanded: item.isExpanded,
+                                              );
+                                            }).toList(),
+                                          );
+                                        }),
+                                      ],
+                                    ))
+                              ],
+                            )
+                          ])),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Get.close(1);
+                        },
+                        icon: const Icon(Icons.close)),
+                  ],
+                );
+              });
+        }),
+      ),
+      isScrollControlled: true,
+      ignoreSafeArea: false,
+      isDismissible: true,
+      enableDrag: true);
+}
+
+Future<dynamic> loanPrompt() {
+  final List<FAQs> _faqs = generateFAQs(fAQItems.length);
+  final List<PFAQs> _pfaqs = generatePFAQs(productFAQ.length);
+  final List<SFAQs> _sfaqs = generateSFAQs(serviceFAQ.length);
+  final List<LFAQs> _lfaqs = generateLFAQs(loanFAQ.length);
+  Brakey brakey = Get.put(Brakey());
+  bool showServiceInputField = true;
+  String pi = '';
+  String si = '';
+  bool showProductInputField = true;
+  final RoundedLoadingButtonController _piButtonController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _siButtonController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _liButtonController =
+      RoundedLoadingButtonController();
+  return Get.bottomSheet(
+      Container(
+        margin: const EdgeInsets.only(top: 180),
+        child: BottomSheet(
+            // isDismissible: true,
+            enableDrag: true,
+            backgroundColor: Colors.transparent,
+            onClosing: () {
+              showServiceInputField = false;
+            },
+            builder: (context) {
+              return Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: ContainerBackgroundDecoration(),
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          Container(
+                            width: 60,
+                            height: 5,
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text('Create a Loan contract',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                          const SizedBox(height: 20),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: ContainerDecoration()
+                                          .copyWith(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                      padding: const EdgeInsets.all(10),
+                                      child: InkWell(
+                                        onTap: () {
+                                          // Get.close(1);
+                                          Get.to(() => const LoanIDPrompt());
+                                        },
+                                        child: Column(children: const [
+                                          Icon(Icons.person_pin,
+                                              color: Colors.red),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'As a Borrower',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(height: 10),
+                                          FittedBox(
+                                            child: Text('Get a\n  Loan without Stress  ',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey, fontWeight: FontWeight.w600)),
+                                          ),
+                                        ]),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Container(
+                                      decoration: ContainerDecoration()
+                                          .copyWith(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                      padding: const EdgeInsets.all(10),
+                                      child: InkWell(
+                                        onTap: () {
+                                          // Get.close(1);
+                                          Get.to(() => MerchantCreateLoan(
                                               merchantID: '',
-                                            pin: '',
-                                            user: widget.user
-                                            ));
-                                  },
-                                                                child: Column(children: const [
-                                                                  Icon(Icons.person_pin_rounded, color: Colors.teal),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('As a Lender', style: TextStyle(fontWeight: FontWeight.bold),),
-                                                                  const SizedBox(height: 10),
-                                                                  Text('Avoid Unnecessary Loan Defaults', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                                                                ]),
-                                                              ),
-                                                              ),
-                                                            ),
-                                                          ],
-
-                                                        ),
-                                                        
-                                                      const SizedBox(height: 20),
-
-                                                              Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: ContainerDecoration(),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            SizedBox(width: 5),
-                            Text(
-                              'Frequently asked Questions',
-                              style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        StatefulBuilder(
-                          builder: (context, toggleExpand) {
-                            return ExpansionPanelList(
-                              elevation: 0,
-                              expandedHeaderPadding: EdgeInsets.zero,
-                              expansionCallback: (int index, bool isExpanded) {
-                                toggleExpand(() {
-                                  for (var e in _lfaqs) {
-                                          e.isExpanded = false;
-                                  }
-                                  _lfaqs[index].isExpanded = !isExpanded;
-                                });
-                              },
-                              children: _lfaqs.map<ExpansionPanel>((LFAQs item) {
-                                return ExpansionPanel(
-                                  backgroundColor: Colors.transparent,
-                                  canTapOnHeader: true,
-                                  headerBuilder:
-                                            (BuildContext context, bool isExpanded) {
-                                          return ListTile(
-                                            minVerticalPadding: 0,
-                                            title: Text(item.headerValue,
-                                                style: const TextStyle(fontSize: 15)),
-                                          );
-                                  },
-                                  body: Text(
-                                          item.expandedValue
-                                  ),
-                                  isExpanded: item.isExpanded,
-                                );
-                              }).toList(),
-                            );
-                          }
-                        ),
-                      ],
-                    ))
-              
-                                                      ],)
-                                                    ])),
+                                              pin: '',
+                                              user: brakey.user.value!));
+                                        },
+                                        child: Column(children: const [
+                                          Icon(Icons.person_pin_rounded,
+                                              color: Colors.teal),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'As a Lender',
+                                            style: TextStyle(
+                                              color: Colors.teal,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          IconButton(onPressed: () {
-                                            Get.close(1);
-                                          }, icon: Icon(Icons.close)),
+                                          SizedBox(height: 10),
+                                          FittedBox(
+                                            child: Text(
+                                                'Avoid\nUnnecessary Loan Defaults',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey, fontWeight: FontWeight.w600)),
+                                          ),
+                                        ]),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Container(
+                                  padding:
+                                      const EdgeInsets.all(20),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  decoration: ContainerDecoration(),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          SizedBox(width: 5),
+                                          Text(
+                                            'Frequently asked Questions',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ],
-                                      );
-                                    }),
-                                ),
-                                  isScrollControlled: true,
-                                  ignoreSafeArea: false,
-                                  isDismissible: true,
-                                  enableDrag: true
-                                  );
-  }
+                                      ),
+                                        SizedBox(height:20),
 
+                                      StatefulBuilder(
+                                          builder: (context, toggleExpand) {
+                                        return ExpansionPanelList(
+                                          elevation: 0,
+                                          expandedHeaderPadding:
+                                              EdgeInsets.zero,
+                                          expansionCallback:
+                                              (int index, bool isExpanded) {
+                                            toggleExpand(() {
+                                              for (var e in _lfaqs) {
+                                                e.isExpanded = false;
+                                              }
+                                              _lfaqs[index].isExpanded =
+                                                  !isExpanded;
+                                            });
+                                          },
+                                          children: _lfaqs.map<ExpansionPanel>(
+                                              (LFAQs item) {
+                                            return ExpansionPanel(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              canTapOnHeader: true,
+                                              headerBuilder:
+                                                  (BuildContext context,
+                                                      bool isExpanded) {
+                                                return  ListTile(
+                                                    minVerticalPadding: 0,
+                                                    title: Text(
+                                                        item.headerValue,
+                                                        style: const TextStyle(
+                                                            fontSize: 15, fontWeight: FontWeight.w600)),
+                                                );
+                                              },
+                                              body: Text(item.expandedValue),
+                                              isExpanded: item.isExpanded,
+                                            );
+                                          }).toList(),
+                                        );
+                                      }),
+                                    ],
+                                  ))
+                            ],
+                          )
+                        ])),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Get.close(1);
+                      },
+                      icon: const Icon(Icons.close)),
+                ],
+              );
+            }),
+      ),
+      isScrollControlled: true,
+      ignoreSafeArea: false,
+      isDismissible: true,
+      enableDrag: true);
 }
 
 class FAQs {
@@ -1911,7 +2288,6 @@ List<PFAQs> generatePFAQs(int length) {
   });
 }
 
-
 class SFAQs {
   SFAQs({
     required this.expandedValue,
@@ -1940,7 +2316,6 @@ List<SFAQs> generateSFAQs(int length) {
   });
 }
 
-
 class LFAQs {
   LFAQs({
     required this.expandedValue,
@@ -1968,7 +2343,6 @@ List<LFAQs> generateLFAQs(int length) {
     );
   });
 }
-
 
 createLoan() async {
   final _formKey = GlobalKey<FormState>();
@@ -2050,6 +2424,8 @@ createLoan() async {
                             brakey.user.value!.payload!.walletAddress ?? '',
                             brakey.user.value!.payload!.pin ?? '',
                             'single',
+                      brakey.user.value?.payload?.password??'',
+
                           );
                           print(a);
                           if (a.containsKey('Status')) {
@@ -2070,6 +2446,9 @@ createLoan() async {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -2091,6 +2470,9 @@ createLoan() async {
                                 barrierDismissible: false,
                                 builder: (context) {
                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                       actions: [
                                         TextButton(
                                           child: const Text('Okay'),

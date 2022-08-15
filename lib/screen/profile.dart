@@ -157,6 +157,9 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                         ListTile(
+                          onTap: () {
+
+                          },
                             subtitle: Text(widget.user.payload!.fullname ?? ''),
                             title: const Text('Fullname')),
                         ListTile(
@@ -306,18 +309,18 @@ class _ProfileState extends State<Profile> {
                       ),
                       ListTile(
                           title: const Text('Dark mode'),
-                          trailing: Switch(
-                              value: Get.isDarkMode,
-                              onChanged: (a) => {
-                                    // setState(() {
-                                      isDark = !isDark,
-                                    // }),
-                                    print(isDark),
-                                    print(Get.isDarkMode),
-                                    
-                                    Get.changeThemeMode(isDark ? ThemeMode.light : ThemeMode.dark),
-                                    brakey.toggleDarkMode()
-                                  })),
+                          trailing: Obx(() => Switch(
+                                value: brakey.darkMode.value,
+                                onChanged: (a) => {
+                                      // setState(() {
+                                        // isDark = !isDark,
+                                      // }),
+                                      // brakey.darkMode,
+                                      
+                                      Get.changeThemeMode(!brakey.darkMode.value ? ThemeMode.dark : ThemeMode.light),
+                                      brakey.toggleDarkMode()
+                                    }),
+                          )),
                       ListTile(
                           title: const Text('Hide balance'),
                           trailing: Switch(value: brakey.showWalletBalance.value, onChanged: (a) => {
@@ -345,14 +348,16 @@ class _ProfileState extends State<Profile> {
                       color1: NeutralButton,
                       color2: NeutralButton,
                       onTap: () {
+                        print(brakey.useBiometric.value,);
                         Get.offUntil(
+                          
                             MaterialPageRoute(
                                 builder: (context) =>
                                     WelcomeBack(),
                                 maintainState: false),
                             (route) => false);
                         brakey.logoutUser();
-                        brakey.toggleBiometric(false);
+                        // brakey.toggleBiometric(false);
                       },
                       text: 'Logout')
                 ],
@@ -416,6 +421,9 @@ class _ProfileState extends State<Profile> {
                             return WillPopScope(
                               onWillPop: (() async => false),
                               child: AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                   actions: [
                                     TextButton(
                                       child: const Text('Verify OTP'),
@@ -444,6 +452,9 @@ class _ProfileState extends State<Profile> {
                           barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 actions: [
                                   TextButton(
                                     child: const Text('Okay'),
@@ -465,6 +476,9 @@ class _ProfileState extends State<Profile> {
                           barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 actions: [
                                   TextButton(
                                     child: const Text('Okay'),

@@ -40,66 +40,18 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
         body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-          Container(
-            // height: 200,
-            child: Stack(
-              alignment: Alignment.centerRight,
-              children: [
-              Row(
-                children: [
-                  Expanded(child: SizedBox()),
-                  Image.asset('assets/coins.png', width: 200,),
-                ],
-              ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Get', style: TextStyle(fontSize: 20, color: Colors.white)),
-                    Text('Stress Free', style: TextStyle(fontSize: 30, color: Colors.white)),
-                    Text('LOAN', style: TextStyle(fontSize: 60, color: Colors.white)),
-                    FittedBox(
-                      child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                decoration: ContainerDecoration(),
-                                padding: EdgeInsets.all(5),
-                                child: Text('\u2713 low interest', style: TextStyle(fontSize: 9,))),
-                              SizedBox(width: 5,),
-                               Container(
-                                decoration: ContainerDecoration(),
-                                padding: EdgeInsets.all(5),child: Text('\u2713 receive training', style: TextStyle(fontSize: 9,))),
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                              Row(
-                                children: [
-                                   Container(
-                                decoration: ContainerDecoration(),
-                                padding: EdgeInsets.all(5),child: Text('\u2713 business support', style: TextStyle(fontSize: 9,))),
-                                ],
-                              ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-
-              ]
-            )
-
-          ),
+          Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      child: Container(
+                          decoration: ContainerDecoration(),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Image.asset('assets/loan_banner.png')),
+                    ),
           
             Expanded(
               child: Container(
                   decoration: ContainerBackgroundDecoration(),
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(20.0),
                 child: Column(children: [
                           
                           Container(
@@ -110,15 +62,16 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
               borderRadius: BorderRadius.circular(10)),
         ),
         const SizedBox(height:20),
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
           children: [
+            SizedBox(width: double.infinity,),
             const Text('Enter Lender Loan ID', style: TextStyle(fontWeight: FontWeight.w600),),
-            InkWell(
-              onTap: (() => showInfo('Loan ID', 'Get the loan ID from a Loaner')),
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Icon(Icons.help_outline, size: 15,),
-              ))
+            Text('Get a Loan ID from the Lender', style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600)),
           ],
         ),
         const SizedBox(height:10),
@@ -126,14 +79,26 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
                   key: _formKey,
                   child: TextFormField(
                     controller: loanIDEdit,
+                    minLines: null,
+                                    maxLines: null,
                                 cursorColor: Colors.grey,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(onPressed: () async {
-                                     Clipboard.getData(Clipboard.kTextPlain).then((value) => 
-                                     loanIDEdit.text = value?.text??''
+                                     Clipboard.getData(Clipboard.kTextPlain).then((value) {
+                                        setState(() {
+                                        loanIDEdit.text = value?.text??'';
+
+                                        });
+
+                                     }
                                      );
                                     },
-                                     icon: Icon(Icons.content_paste_rounded, color: Theme.of(context).primaryColor,)
+                                     icon: Column(
+                                       children: [
+                                         Icon(Icons.content_paste_rounded, color: Colors.redAccent),
+                                        Text('paste', style: TextStyle(color: Colors.redAccent, fontSize: 7, fontWeight: FontWeight.w600))
+                                       ],
+                                     )
                                     ),
                                   fillColor: const Color.fromARGB(24, 158, 158, 158),
                                   filled: true,
@@ -141,12 +106,14 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
                                       borderSide: BorderSide.none,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(10))),
-                                  hintText: 'LONXXXXXXXXXX',
+                                  hintText: 'LONXXXXXXXXXX\n',
+                                  hintStyle: TextStyle(
+                                          fontWeight: FontWeight.w500),
                                   border: const OutlineInputBorder(
                                       borderSide: BorderSide.none,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(10))),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                  contentPadding: const EdgeInsets.all(10),
                                 ),
                                 onChanged: (text) {
                                   loanID = text.trim();
@@ -160,10 +127,19 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
                               ),
                 ),
                 // SizedBox.expand(),
-                Container(
-                  // height: double.infinity,
-                            margin: const EdgeInsets.symmetric(vertical: 30),
-
+                 
+                ]),
+              ),
+            ),
+          ],
+        ),
+        extendBody: true,
+        bottomNavigationBar:  Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+                color: Get.isDarkMode ? Color.fromARGB(255, 42, 42, 59) : Colors.white
+                ),
                   child: RoundedLoadingButton(
                     borderRadius: 10,
                     color: Theme.of(context).primaryColor,
@@ -181,6 +157,7 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
                       brakey.user.value!.payload!.walletAddress??'',
                       brakey.user.value!.payload!.pin??'',
                        'single',
+                      brakey.user.value?.payload?.password??'',
                       );
                       print(a);
                       if (a.containsKey('Status')) {
@@ -196,6 +173,9 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
                                     barrierDismissible: false,
                                     builder: (context) {
                                       return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                           actions: [
                                             TextButton(
                                               child: const Text('Okay'),
@@ -217,6 +197,9 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
                                     barrierDismissible: false,
                                     builder: (context) {
                                       return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                           actions: [
                                             TextButton(
                                               child: const Text('Okay'),
@@ -242,12 +225,7 @@ class _LoanIDPromptState extends State<LoanIDPrompt> {
             
                   }, child: Text('View')),
                 ),
-                  
-                ]),
-              ),
-            ),
-          ],
-        ),
+                 
     );
   }
 }

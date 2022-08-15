@@ -31,5 +31,5 @@ class ContainerDecoration extends BoxDecoration {
 }
 
 Color NeutralButton = Get.isDarkMode ? Get.theme.primaryColor : Colors.black;
-Color adaptiveColor = Get.isDarkMode ? Colors.white : Colors.black;
+Color adaptiveColor = Get.textTheme.bodyLarge?.color??Colors.grey;
 Color ThemedBackgroundColor = Get.isDarkMode ? Colors.black : Colors.white;

@@ -101,63 +101,94 @@ class _TransactionDetailState extends State<TransactionDetail> {
                       // margin: const EdgeInsets.all(5),
                       width: double.infinity,
                       child: Text("Receipt ID: ${widget.transaction.payload!.receiptId}", textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold),)),
-                    SizedBox(height:30),
-                    Column(
-                      children: [
-                      ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, 
-                      title: const Text('Transaction Date'), 
-                      trailing: Column(
-                        mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                    SizedBox(height:20),
+                    
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
                         children: [
-                          Text(widget.transaction.payload!.dateMade()),
-                          Text(widget.transaction.payload!.timeMade(),  style: TextStyle(color: Colors.grey)),
-                        ],
-                      )),
-                      Container(color: Colors.grey, height: 1, width: double.infinity)
-                      ] 
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Transaction Date", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(widget.transaction.payload!.dateMade(), style: const TextStyle(fontFamily: '',), textAlign: TextAlign.end,),
+                            Text(widget.transaction.payload!.timeMade(), style: TextStyle(color: Colors.grey), textAlign: TextAlign.end,)
+                                ],
+                              )),
+                      
+                            ]),
+                        ),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                    //   child: Column(
+                    //     children: [
+                    //     ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text('Amount'), trailing: Column(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       crossAxisAlignment: CrossAxisAlignment.end,
+                    //       children: [
+                    //         Text(widget.transaction.payload!.formatAmount(), style: const TextStyle(fontFamily: '')),
+                    //         Text('charges: ${formatAmount(widget.transaction.payload!.transactionFee.toString())}', style: TextStyle(color: Colors.grey))
+                    //       ],
+                    //     )),
+                    //     Container(color: Colors.grey, height: 1, width: double.infinity)
+                    //     ] 
+                    //   ) 
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Amount", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(widget.transaction.payload!.formatAmount(), style: const TextStyle(fontFamily: '',), textAlign: TextAlign.end,),
+                            Text('charges: ${formatAmount(widget.transaction.payload!.transactionFee.toString())}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.end,)
+                                ],
+                              )),
+                      
+                            ]),
+                        ),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
                       child: Column(
                         children: [
-                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text('Amount'), trailing: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(widget.transaction.payload!.formatAmount(), style: const TextStyle(fontFamily: '')),
-                            Text('charges: ${formatAmount(widget.transaction.payload!.transactionFee.toString())}', style: TextStyle(color: Colors.grey))
-                          ],
-                        )),
-                        Container(color: Colors.grey, height: 1, width: double.infinity)
-                        ] 
-                      ) 
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical:0, horizontal: 2),
-                      child: Column(
-                        children: [
-                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text("Sender's Name"), trailing: Text("${widget.transaction.payload!.senderName}")),
-                        Container(color: Colors.grey, height: 1, width: double.infinity)
-                        ] 
-                      ) 
-                    ),
-                      Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-                      child: Column(
-                        children: [
-                        ListTile(
-                          minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, 
-                          title: const Text("Sender's Account"), trailing: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                           Text(widget.transaction.payload!.senderAccountNumber == '00-00-00-00-00' ? widget.transaction.payload!.transactionType!.split('>').last.toUpperCase() : widget.transaction.payload!.senderAccountNumber??''),
-                          widget.transaction.payload!.senderAccountNumber != widget.user.payload!.accountNumber ?
-                          Text(widget.transaction.payload!.receivingBank??"${widget.transaction.payload!.transactionType}".split('>')[0], style: TextStyle(color: Colors.grey),)
-                          : Text('BraketPay', style: TextStyle(color: Colors.grey),)
-                          ],
-                        )),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Sender's Account", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(widget.transaction.payload!.senderAccountNumber == '00-00-00-00-00' ? widget.transaction.payload!.transactionType!.split('>').last.toUpperCase() : widget.transaction.payload!.senderAccountNumber??'', style: const TextStyle(fontFamily: '',), textAlign: TextAlign.end,),
+                            widget.transaction.payload!.senderAccountNumber != widget.user.payload!.accountNumber ?
+                            Text(widget.transaction.payload!.receivingBank??"${widget.transaction.payload!.transactionType}".split('>')[0], style: TextStyle(color: Colors.grey),)
+                            : Text('BraketPay', style: TextStyle(color: Colors.grey),)
+                                ],
+                              )),
+                      
+                            ]),
+                        ),
                         Container(color: Colors.grey, height: 1, width: double.infinity)
                         ] 
                       ) 
@@ -166,7 +197,35 @@ class _TransactionDetailState extends State<TransactionDetail> {
                       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
                       child: Column(
                         children: [
-                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text("Receiver's Name"), trailing: Text("${widget.transaction.payload!.receiverName}")),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Sender's Name", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Text("${widget.transaction.payload!.senderName}", textAlign: TextAlign.end,)),
+                      
+                            ]),
+                        ),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Receiver's Name", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Text("${widget.transaction.payload!.receiverName}", textAlign: TextAlign.end,)),
+                      
+                            ]),
+                        ),
                         Container(color: Colors.grey, height: 1, width: double.infinity)
                         ] 
                       ) 
@@ -174,23 +233,30 @@ class _TransactionDetailState extends State<TransactionDetail> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        ListTile(minVerticalPadding: 0, minLeadingWidth: 0, contentPadding: EdgeInsets.zero, title: const Text("Receiver's Account"), trailing: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(widget.transaction.payload!.receiverAccountNumber == '00-00-00-00-00' ? widget.transaction.payload!.transactionType!.split('>').last.toUpperCase() : widget.transaction.payload!.receiverAccountNumber??''),
-                          widget.transaction.payload!.receiverAccountNumber != widget.user.payload!.accountNumber ?
-                          Text(widget.transaction.payload!.receivingBank??"${widget.transaction.payload!.transactionType}".split('>')[0].toUpperCase(), style: TextStyle(color: Colors.grey),)
-                          : Text('BraketPay', style: TextStyle(color: Colors.grey),)
-                          
-                          ],
-                        )),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Receiver's Account", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(widget.transaction.payload!.receiverAccountNumber == '00-00-00-00-00' ? widget.transaction.payload!.transactionType!.split('>').last.toUpperCase() : widget.transaction.payload!.receiverAccountNumber??'', style: const TextStyle(fontFamily: '',), textAlign: TextAlign.end,),
+                            widget.transaction.payload!.receiverAccountNumber != widget.user.payload!.accountNumber ?
+                            Text(widget.transaction.payload!.receivingBank??"${widget.transaction.payload!.transactionType}".split('>')[0], style: TextStyle(color: Colors.grey),)
+                            : Text('BraketPay', style: TextStyle(color: Colors.grey),)
+                                ],
+                              )),
+                      
+                            ]),
+                        ),
                         Container(color: Colors.grey, height: 1, width: double.infinity)
                         ] 
                       ) 
                     ),
+                    
                     
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
@@ -205,11 +271,39 @@ class _TransactionDetailState extends State<TransactionDetail> {
                       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
                       child: Column(
                         children: [
-                        ListTile(title: const Text("Payment Method"), trailing: Text("${widget.transaction.payload!.transactionType}".split('>')[0].toUpperCase())),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Narration", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Text("${widget.transaction.payload!.narration}".split('>')[0].toUpperCase(), textAlign: TextAlign.end,)),
+                      
+                            ]),
+                        ),
                         Container(color: Colors.grey, height: 1, width: double.infinity)
                         ] 
                       ) 
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+                      child: Column(
+                        children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Payment Method", style: TextStyle(fontWeight: FontWeight.w600,)), 
+                              Flexible(child: Text("${widget.transaction.payload!.transactionType}".split('>')[0].toUpperCase(), textAlign: TextAlign.end,)),
+                      
+                            ]),
+                        ),
+                        Container(color: Colors.grey, height: 1, width: double.infinity)
+                        ] 
+                      ) 
+                    ),
+                    
                     const SizedBox(height: 10),
                     Text('Paid with Braket', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 80)

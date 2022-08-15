@@ -56,7 +56,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
             'single',
             widget.savings['savings_id']);
         setState(() {
-          print(_commitments['Payload']['savings_commit']);
+          // print(_commitments['Payload']['savings_commit']);
           commitments = jsonDecode(_commitments['Payload']['savings_commit']);
         });
       },
@@ -103,7 +103,7 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 15),
                                 child: TextFormField(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(signed: false),
                                   cursorColor: Colors.grey,
                                   decoration: const InputDecoration(
                                     fillColor:
@@ -157,6 +157,9 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                                   barrierDismissible: false,
                                                   builder: (context) {
                                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                         actions: [
                                                           TextButton(
                                                             child: const Text(
@@ -194,6 +197,9 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                                   barrierDismissible: false,
                                                   builder: (context) {
                                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                         actions: [
                                                           TextButton(
                                                             child: const Text(
@@ -224,6 +230,9 @@ class _SavingsDetailState extends State<SavingsDetail> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text(

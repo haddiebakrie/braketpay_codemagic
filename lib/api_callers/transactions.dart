@@ -2,28 +2,38 @@ import 'dart:convert';
 
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/transaction.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
 import "package:http/http.dart" as http;
+
+import 'addr.dart';
 
 Future<List> fetchTransactions(
   String accountNumber,
   String password,
   String transactionPin,  
   ) async {
-  String param = Uri(queryParameters: {
+  Brakey brakey = Get.put(Brakey());
+    final deviceInfoPlugin = DeviceInfoPlugin();
+  final deviceInfo = await deviceInfoPlugin.deviceInfo;
+  final map = deviceInfo.toMap();
+  Map newMap = {"deviceID": map['id']??'', 'fingerprint':map['fingerprint']??'' };
+  Map param = {
       "account_number" : accountNumber,
       "password" : password,
       "transaction_pin": transactionPin,
       "observation": "fetch transfer history",
-      "datetime": ""
-    }).query;
-    Brakey brakey = Get.put(Brakey());
-    final response = await http.get(
-      Uri.parse('https://api.braketpay.com/braket_electronic_notification/v1?$param'),
+      "date_time": "Wed, 13 Apr 2001 01:21:07 GMT",
+      "login_token": await brakey.getUserToken(accountNumber),
+      "device_data": newMap
+    };
+    final response = await http.post(
+      Uri.parse('${BRAKETAPI}braket_electronic_notification/v1'),
       headers: {
         'Content-Type':'application/json',
         'AUTHORIZATION': "ca417768436ff0183085b3d7c382773f"
         },
+        body: jsonEncode(param)
       );
       // print(response.request.url);
     if (response.statusCode == 200) {

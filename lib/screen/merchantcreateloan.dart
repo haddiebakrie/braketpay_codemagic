@@ -4,19 +4,26 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:braketpay/api_callers/merchant.dart';
+import 'package:braketpay/screen/viewmerchant.dart';
+import 'package:card_swiper/card_swiper.dart';
 import 'package:convert/convert.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../api_callers/loan.dart';
+import '../brakey.dart';
 import '../classes/user.dart';
 import 'package:flutter/services.dart';
 
+import '../constants.dart';
 import '../ngstates.dart';
 import '../uix/askpin.dart';
 import '../uix/listitemseparated.dart';
@@ -38,12 +45,16 @@ class MerchantCreateLoanFromScan extends StatefulWidget {
 }
 
 class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan> {
+  Brakey brakey = Get.put(Brakey());
   double loanAmount = 0;
   late String nokName;
   late String nokNIN;
+  final imageController = PageController();
   late String useOfFunds;
   late String nokPhone;
   late String pOne;
+  bool hasLoadError = false;
+  String loadErrorMsg = '';
   late String bvn;
   late String phone;
   late String pTwo;
@@ -71,12 +82,30 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
   @override
   Widget build(BuildContext context) {
     _loginButtonController.reset();
-    List<dynamic> ld =
-        jsonDecode(utf8.decode(hex.decode(widget.loan['Payload']['loan_picture'])));
-    List<int> image = ld.map((s) => s as int).toList();
-    print(
-        // decode(hex.decode(widget.loan['Payload']['Payload']['loan_picture']))
-        (image.length));
+    // List<dynamic> ld =
+    //     jsonDecode(utf8.decode(hex.decode(widget.loan['Payload']['loan_picture'])));
+    // List<int> image = ld.map((s) => s as int).toList();
+    // print(
+    //     // decode(hex.decode(widget.loan['Payload']['Payload']['loan_picture']))
+    //     (image.length));
+        List<Widget> images = [];
+    if (widget.loan['Payload']['loan_picture_links'] == null) {
+      widget.loan['Payload']['loan_picture_links'] = {'link_1': brokenImageUrl};
+    }
+    if (widget.loan['Payload']['categories'] == null) {
+      widget.loan['Payload']['categories'] = {'category_1': 'others'};
+    }
+    for (int i=0; i < widget.loan['Payload']['loan_picture_links'].length; i++) {
+      setState(() {
+        images.add(Image.network(
+          widget.loan['Payload']['loan_picture_links']['link_${i+1}']??'', width: double.infinity, height: double.infinity, fit: BoxFit.contain, 
+          errorBuilder: (_, __, ___) {
+              return Image.network(brokenImageUrl, fit: BoxFit.cover, width: double.infinity, height: double.infinity,);
+            },
+          ));
+        
+      });
+      };
     return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(elevation: 0),
@@ -89,54 +118,403 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      decoration: ContainerBackgroundDecoration(),child: Image.memory(Uint8List.fromList(image), height: 200,)),
-                    Container(
-                        decoration: ContainerDecoration(),
+                    InkWell(
+                        onTap: () {
+                          Get.to(() => 
+                          
+                          PhotoView(
+                          imageProvider: NetworkImage(widget.loan['Payload']['loan_picture_links']['link_${(imageController.page! + 1).toInt()}']??brokenImageUrl,
+                          
+                          ))
+                          );
+                        },
+                        child: Container(
+                          height: 300,
+                          decoration: ContainerDecoration().copyWith(
+                          // color: Colors.red,
+            
+                          ),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: PageView(
+                            controller: imageController,
+                            onPageChanged: (current) {
+                              setState(() {
+                                
+                              });
+                            },
+                            children: images
+                              // Image.network(widget.loan['loan_picture_links']['link_2']??'', width: double.infinity, height: double.infinity, fit: BoxFit.contain, ),
+                              // Image.network(widget.loan['loan_picture_links']['link_3']??'', width: double.infinity, height: double.infinity, fit: BoxFit.contain, ),
+                            
+                            // options: CarouselOptions(
+                            //     enlargeCenterPage: true,
+                            //     initialPage: 1,
+                            //     enableInfiniteScroll: false,
+                            //     height: double.infinity,
+                            //     viewportFraction: 1.5,
+                            //     // padEnds: false,
+                                
+                            //     enlargeStrategy: CenterPageEnlargeStrategy.scale),
+                          )
+                          ),
+                      ),
+                      Visibility(
+                        visible: images.length > 1,
                         child: Column(
                           children: [
-                            const SizedBox(height: 10),
-                            Text(
-                              widget.loan['Payload']['loan_title'],
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: PageIndicator(
+                                color: Colors.grey,
+                                activeColor: Colors.teal,
+                                activeSize: 15,
+                                size: 15,
+                                count: images.length, controller: imageController),
                             ),
-                            ListItemSeparated(
-                                text: widget.loan['Payload']['merchant_name'],
-                                title: 'Lender'),
-                            ListItemSeparated(
-                                text: 'LOAN CONTRACT',
-                                title: 'Contract Type'),
-                            ListTile(
-                              contentPadding: EdgeInsets.symmetric(horizontal:20),
-                          subtitle: Text(widget.loan['Payload']['loan_description']),
-                          title: Text('Loan Description'),
-                          
-                        ),
+                      SizedBox(height: 10,),
                         Container(
-              color:Colors.grey.withOpacity(.5),
-              height: 1,
-              width: double.infinity),
-                            ListItemSeparated(
-                                text: toTitleCase(widget.loan['Payload']['interest_rate'].toInt().toString()+'%'),
-                                title: 'Interest Rate'),
-                            ListItemSeparated(
-                                text: toTitleCase(widget.loan['Payload']['loan_type']),
-                                title: 'Loan Type'),
-                            ListItemSeparated(
-                                text: toTitleCase(widget.loan['Payload']['loan_period']),
-                                title: 'Loan Peroid'),
-                            ListItemSeparated(
-                                text: formatAmount(widget.loan['Payload']['loan_amount_range']['min'].toString()),
-                                title: 'Minimum Lending Amount'),
-                            ListItemSeparated(
-                                text: formatAmount(widget.loan['Payload']['loan_amount_range']['max'].toString()),
-                                title: 'Maximum Lending Amount'),
+                          height: 80,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: widget.loan['Payload']['loan_picture_links'].length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    print(imageController.page);
+                                  return InkWell(
+                                    onTap: () {
+                                          imageController.animateToPage(
+                                            index,
+                                            duration: Duration(milliseconds: 1),
+                                            curve: Curves.linear
+                                          );
+            
+                                      
+                                        
+                                        // PhotoView(
+                                        // imageProvider: NetworkImage(widget.loan['loan_picture_links'][widget.loan['loan_picture_links'].keys.toList()[index]]??'',))
+                                        // );
+                                      },
+                                    child: Container(
+                                      height: 80,
+                                      width: 80,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      decoration: ContainerDecoration().copyWith(
+                                        // border: Border.all(width: 3, color: imageController.page!.toInt()+1 == index ? Colors.blue : Colors.transparent)
+                                      ),
+                                      margin: EdgeInsets.all(5),
+                                      // padding: EdgeInsets.all(5),
+                                      child: Image.network(widget.loan['Payload']['loan_picture_links'][widget.loan['loan_picture_links'].keys.toList()[index]], height: double.infinity, width: double.infinity, fit: BoxFit.cover),
+                                    ),
+                                  );
+                                } 
+                                
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                          ],
+                        ),
+                      ),
+                        SizedBox(height:20),
+                         Container(
+                          decoration: ContainerDecoration(),
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 10),
+                              // Text(
+                              //   'Contract Details',
+                              //   style: TextStyle(
+                              //       fontSize: 20, fontWeight: FontWeight.bold),
+                              // ),
+                              InkWell(
+                                onTap: () async {
+                                              // widget.loan.forEach((k, v) => print('$k => $v'));
+
+                                              Get.bottomSheet(
+                                                  
+                                                BottomSheet(
+                                                  onClosing: () {
+                                                    setState(() {
+                                                      hasLoadError = false;
+                                                      loadErrorMsg = '';
+                                                    });
+                                                  },
+                                                  builder: (_) {
+                                                    return Container(
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            hasLoadError ? Icon(Icons.close, color: Colors.redAccent, size: 25,) : CircularProgressIndicator(),
+                                                            SizedBox(height:20),
+                                                            Flexible(child: Text(hasLoadError ? loadErrorMsg : "Fetching ${toTitleCase(widget.loan['Payload']['merchant_name']??'')}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey, fontSize: 23),))
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                ),
+                                                isDismissible: false
+                                              );
+                                              Map a =
+                                                            await fetchMerchantContract(
+                                                                '',
+                                                                'loan',
+                                                                'MID1587498137',
+                                                                brakey
+                                                                        .user
+                                                                        .value!
+                                                                        .payload!
+                                                                        .walletAddress ??
+                                                                    '',
+                                                                brakey.user.value?.payload?.pin??'',
+                                                                'all',
+                                                                brakey.user.value?.payload?.password??'',
+                                                                
+                                                                );
+                                              if (a
+                                                            .containsKey('Merchant')) {
+                                                              print(a['Merchant']);
+                                                  Get.close(1);
+                                                  Get.to(() => ViewMerchant(user: widget.user, merchant: a));
+                                                          // a.addEntries({
+                                                          //   'merchant_id': '',
+                                                          //   'loan_id': _templates[index]['loan_id']
+                                                          // }.entries);
+                                                          // Navigator.of(context).pop();
+                                                          // hasLoadError = false;
+                                                          // Navigator.of(context).push(
+                                                          //     MaterialPageRoute(
+                                                          //         builder: ((context) =>
+                                                          //             MerchantCreateLoanFromScan(
+                                                          //                 loan: a,
+                                                          //                 user: brakey
+                                                          //                     .user
+                                                          //                     .value!,
+                                                          //                 pin: brakey.user.value?.payload?.pin??''))));
+                                            } else {
+                                              Get.close(1);
+                                              Get.bottomSheet(
+                                                  
+                                                BottomSheet(
+                                                  onClosing: () {
+                                                    setState(() {
+                                                      hasLoadError = false;
+                                                      loadErrorMsg = '';
+                                                    });
+                                                  },
+                                                  builder: (_) {
+                                                    return Container(
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            hasLoadError ? Icon(Icons.close, color: Colors.redAccent, size: 25,) : CircularProgressIndicator(),
+                                                            SizedBox(height:20),
+                                                            Flexible(child: Text(hasLoadError ? loadErrorMsg : "Fetching ${toTitleCase(widget.loan['merchant_name']??'')}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey, fontSize: 23),))
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                ),
+                                                isDismissible: false
+                                              );
+                                              setState(() {
+                                                hasLoadError = true;
+                                                loadErrorMsg = a['Message'] ?? 'Failed, Please check your Internet and Try again.';
+                                              });
+                                            }
+                                            
+                                            },
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      
+                                      // width: 30,
+                                      // height: 30,
+                                      decoration: ContainerDecoration(),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      margin: EdgeInsets.only(right: 5),
+                                      padding: EdgeInsets.all(5),
+                                      
+                                      // child: Image.asset('assets/merchant_placeholder.png', fit: BoxFit.cover,)),
+                                      child: (Icon(Icons.storefront_rounded, color: Colors.indigo,size: 13,))),
+                                    Text("Lender: ${widget.loan['Payload']["merchant_name"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height:10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: Text(widget.loan['Payload']['loan_title'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                                    
+                                  ),
+                                  SizedBox(width: 5,),
+                                  FittedBox(child: Text('min: ${nairaSign()}${widget.loan['Payload']['loan_amount_range']['min']}\nmax: ${nairaSign()}${widget.loan['Payload']['loan_amount_range']['max']}', textAlign: TextAlign.left,style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey))),
                                 ],
-                              )),
-                              // 72388217643
-                    const SizedBox(height: 20),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                color: Colors.redAccent.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(10)
+                                ),
+                                padding: EdgeInsets.all(5),
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(widget.loan['Payload']["loan_category"].replaceAll('loan', ''), style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600),)
+                              ),
+                              SizedBox(height:25),
+                              // Container(height: 1.5, color: Colors.grey),
+                              // SizedBox(height:10),
+                              Text('Interest', textAlign: TextAlign.right,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              SizedBox(height:5),
+                              MarkdownBody(
+                                data: '${widget.loan['Payload']["interest_rate"]}%'),
+                              SizedBox(height:20),
+                              Text('Loan type', textAlign: TextAlign.right,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              SizedBox(height:5),
+                              MarkdownBody(
+                                data: '${widget.loan['Payload']["loan_type"]}'.capitalizeFirst!),
+                              SizedBox(height:20),
+                              Text('Loan Detail', textAlign: TextAlign.right,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              SizedBox(height:5),
+                              MarkdownBody(
+                                data: '${widget.loan['Payload']["loan_description"]}'),
+                              SizedBox(height:20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                              Text('Period', textAlign: TextAlign.right,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              SizedBox(height:5),
+                              MarkdownBody(
+                                data: toTitleCase(jsonDecode(widget.loan['Payload']['loan_period'])['loan period'].toString())),
+                              SizedBox(height:20),
+
+                                    ]
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                              Text('Repayment starts after', textAlign: TextAlign.right,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              SizedBox(height:5),
+                              MarkdownBody(
+                                data: toTitleCase(jsonDecode(widget.loan['Payload']['loan_period'])['borrower repayment start time'].toString())),
+                              SizedBox(height:10),
+
+                                    ]
+                                  ),
+                              //     Column(
+                              //       children: [
+                              // Text('Period', textAlign: TextAlign.right,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              // SizedBox(height:5),
+                              // MarkdownBody(
+                              //   data: '${widget.loan['Payload']["interest_rate"]}%'),
+                              // SizedBox(height:10),
+
+                                  //   ]
+                                  // ),
+            
+
+                                ]
+                              ),
+                            ],
+                          )),
+                      SizedBox(height:20),
+                    // Container(
+                    //     decoration: ContainerDecoration(),
+                    //     child: Column(
+                    //       children: [
+                    //         const SizedBox(height: 10),
+                    //         Text(
+                    //           widget.loan['Payload']['loan_title'],
+                    //           style: TextStyle(
+                    //               fontSize: 20, fontWeight: FontWeight.bold),
+                    //         ),
+                    //         ListSeparated(
+                    //             text: widget.loan['Payload']['merchant_name'],
+                    //             title: 'Lender'),
+                    //         ListSeparated(
+                    //             text: 'LOAN CONTRACT',
+                    //             title: 'Contract Type'),
+                    //         ListTile(
+                    //           contentPadding: EdgeInsets.symmetric(horizontal:20),
+                    //       subtitle: Text(widget.loan['Payload']['loan_description']),
+                    //       title: Text('Loan Description', style: TextStyle(fontWeight: FontWeight.bold)),
+                          
+                    //     ),
+                    //     // Container(
+                    //     //       color:Colors.grey.withOpacity(.5),
+                    //     //       height: 1,
+                    //     //       width: double.infinity),
+                         
+                    //         ListSeparated(
+                    //             text: toTitleCase(widget.loan['Payload']['interest_rate'].toInt().toString()+'%'),
+                    //             title: 'Interest Rate'),
+                    //         ListSeparated(
+                    //             text: toTitleCase(widget.loan['Payload']['loan_type']),
+                    //             title: 'Loan Type'),
+                    //         ListSeparated(
+                    //             text: toTitleCase(jsonDecode(widget.loan['Payload']['loan_period'])['loan period'].toString()),
+                    //             title: 'Loan Peroid'),
+                    //          ListSeparated(
+                    //             text: toTitleCase(jsonDecode(widget.loan['Payload']['loan_period'])['borrower repayment start time'].toString()+' months'),
+                    //             title: 'Repayment starts after'),
+                    //         ListSeparated(
+                    //             text: formatAmount(widget.loan['Payload']['loan_amount_range']['min'].toString()),
+                    //             title: 'Minimum Lending Amount'),
+                    //         ListSeparated(
+                    //             text: formatAmount(widget.loan['Payload']['loan_amount_range']['max'].toString()),
+                    //             title: 'Maximum Lending Amount'),
+                    //             ],
+                    //           )),
+                    //           // 72388217643
+                    // Container(
+                    //       decoration: ContainerDecoration(),
+                    //       padding: EdgeInsets.all(20),
+                    //       child: Column(children: [
+                    //         Text('Braket Smart contract ensures secure payment and product delivery on every sale in 3 steps.',
+                    //         style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w600)
+                    //         ),
+                    //         SizedBox(height:10),
+                    //         Row(children: [
+                    //           Padding(
+                    //             padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(right: 10),
+                    //             child: Icon(Icons.check_circle, color: Colors.teal, size: 18),
+                    //           ),
+                    //           Flexible(child: Text('${widget.loan['Payload']["merchant_name"]} accepts the terms of the contract', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)))
+                    //         ],),
+                    //         Row(children: [
+                    //           Padding(
+                    //             padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(right: 10),
+                    //             child: Icon(Icons.lock_sharp, color: Colors.teal, size: 18),
+                    //           ),
+                    //           Flexible(child: Text('Braket reviews your eligibility and ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)))
+                    //         ],),
+                    //         Row(children: [
+                    //           Padding(
+                    //             padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(right: 10),
+                    //             child: Icon(IconlyBold.buy, color: Colors.teal, size: 18),
+                    //           ),
+                    //           Flexible(child: Text('Money is only sent to ${widget.loan['Payload']["merchant_name"]} after you confirm the product is delivered to you', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)))
+                    //         ],),
+                    //         // Text('Prevent what I ordered VS what I got.',
+                    //         // style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w600)
+                    //         // ),
+                    //       ]),
+                    //       ),
+                    //   SizedBox(height:20),
+                    // const SizedBox(height: 20),
                     Form(
                       key: _formKey,
                       child: Container(
@@ -167,7 +545,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               child: const Text(
                                 'Phase One',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
 
@@ -215,7 +593,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               child: const Text(
                                 'Phase Two',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
 
@@ -262,7 +640,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               child: const Text(
                                 'Phase Three',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
 
@@ -309,7 +687,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               child: const Text(
                                 'How do you intend to payback',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
 
@@ -358,7 +736,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     widget.user.payload!.bvn!.toString().startsWith('2') ? 'NIN' : 'BVN',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),    TextFormField(
                               maxLength: 11,
@@ -405,7 +783,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     'Your Active Phone number',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),    TextFormField(
                               maxLength: 11,
@@ -453,7 +831,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     'Marital Status',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ), 
                           Container(
@@ -494,7 +872,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     'How many people depend on your Income',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ),    TextFormField(
                               cursorColor: Colors.grey,
@@ -542,7 +920,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     'Education Level',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ), 
                           Container(
@@ -589,7 +967,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     'Employment Status',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ), 
                           Container(
@@ -633,7 +1011,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                     'Bank Statement',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400, fontSize: 15),
+                                        fontWeight: FontWeight.w600, fontSize: 15),
                                   ),
                                 ), 
                           Container(
@@ -695,7 +1073,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                       'State',
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w400, fontSize: 15),
+                                          fontWeight: FontWeight.w600, fontSize: 15),
                                     ),
                                   ), 
                             Container(
@@ -739,7 +1117,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                       'LGA',
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w400, fontSize: 15),
+                                          fontWeight: FontWeight.w600, fontSize: 15),
                                     ),
                                   ), 
                             Container(
@@ -777,7 +1155,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               child: const Text(
                                 'Address',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 15),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ),
 
@@ -838,7 +1216,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                           child: const Text(
                             'Next of KIN Name',
                             style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15),
+                                fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
                           TextFormField(
@@ -880,7 +1258,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                           child: const Text(
                             'Next of KIN NIN',
                             style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15),
+                                fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
                           TextFormField(
@@ -929,7 +1307,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                           child: const Text(
                             'Next of KIN Phone',
                             style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15),
+                                fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
                           TextFormField(
@@ -987,7 +1365,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                           child: Text(
                             'You can borrow between\n ${formatAmount(widget.loan['Payload']['loan_amount_range']['min'].toString())} - ${formatAmount(widget.loan['Payload']['loan_amount_range']['max'].toString())}',
                             style: const TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15),
+                                fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
                           TextFormField(
@@ -1047,6 +1425,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                 controller: _loginButtonController,
                                 child: const Text('Apply'),
                                 onPressed: () async {
+                                  employment = employment.replaceAll('Unemployed', 'None');
                                       
                               FocusManager.instance.primaryFocus?.unfocus();
 
@@ -1061,6 +1440,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -1083,6 +1465,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -1105,6 +1490,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -1127,6 +1515,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                         actions: [
                                           TextButton(
                                             child: const Text('Okay'),
@@ -1153,6 +1544,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                             barrierDismissible: false,
                             builder: (_) {
                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                   title: const Text(
                                     'Creating loan contract',
                                     textAlign: TextAlign.center,
@@ -1197,6 +1591,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),
@@ -1217,6 +1614,9 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                               barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                     actions: [
                                       TextButton(
                                         child: const Text('Okay'),

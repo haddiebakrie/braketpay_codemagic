@@ -8,6 +8,7 @@ import 'package:braketpay/uix/roundbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:braketpay/brakey.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:iconly/iconly.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -53,7 +54,7 @@ class _LoginState extends State<Login> {
 
 
   askLogin() {
-    Get.to(UserLogin());
+    Get.to(() => UserLogin());
 
     // bool _passwordVisibility = true;
     // return showModalBottomSheet(
@@ -238,15 +239,381 @@ class _LoginState extends State<Login> {
       initialPage: widget.showOnboarding ? 4 : 0
     );
       // print(widget.showOnboarding);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      
-      extendBody: false,
+    return  Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      body: Theme(
+        data: ThemeData.dark(),
+        child: Stack(
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        colors: [
+                      Color.fromARGB(255, 68, 19, 137),
+                      Color.fromARGB(255, 19, 1, 213)
+                    ])),
+              ),
+              Opacity(
+                  opacity: 0.8,
+                  child: Image.asset('assets/braket-bg_grad-01.png',
+                      height: double.infinity, fit: BoxFit.cover)),
+            PageView(
+              controller: _controller,
+              onPageChanged: (index) {
+                setState(() {
+                  isLastPage = index == 4;
+                });
+              },
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  child: Stack(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(height: 30),
+                          // Image.asset('assets/sammy_contract.png'),
+                          Expanded(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                GlassContainer(
+                                  color: Color.fromARGB(255, 93, 23, 255).withOpacity(0.2),
+                                  blur: 10,
+                                  height: 200,
+                                  width: 300
+                                ),
+                                Transform.rotate(
+                                  angle: -0.1,
+                                  origin: Offset(150,100),
+                                  child: GlassContainer(
+                                  color: Color.fromARGB(255, 93, 23, 255).withOpacity(0.2),
+                                    blur: 10,
+                                    borderRadius: BorderRadius.circular(20),
+                                    height: 200,
+                                    width: 300,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                          child: Row(
+                                            children: [
+                                              Image.asset('bank_images/mastercard.png', height:40),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 100,
+                                          child: Center(
+                                            child: FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text('5 8 0 5  2 2 1 5  4 8 9 0  2 3 3 3', style: TextStyle(color: Color.fromARGB(187, 255, 255, 255), fontSize:17, fontWeight: FontWeight.w600)))
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 300,
+                                  child: Stack(
+                                      alignment: Alignment.bottomLeft,
+                                    children: [
+                                      // Image.network('https://ouch-cdn2.icons8.com/smN7nzmuBgPge_DJsBveCAxaOE04zZ9p4rn_Ully7c8/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvNzEv/ZTI3NjI0ZGYtYmYy/Mi00YWJjLWJkYjYt/NGQ1MWQxN2I3ZDFk/LnBuZw.png', height: 120,),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      text: 'TRUST IS NOT ENOUGH',
+                                      style: TextStyle(
+                                          height: 1.5,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                      // children: const [
+                                      //   TextSpan(
+                                      //     text:
+                                      //         // ' is not enough, BraketPay smart contract is all you need!',
+                                      //     style: TextStyle(
+                                      //         height: 1.5,
+                                      //         fontSize: 22,
+                                      //         fontWeight: FontWeight.bold,
+                                      //         color: Colors.white),
+                                      //   )
+                                      // ]
+                                      ),
+                                  textAlign: TextAlign.center),
+                              const SizedBox(height: 20),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal:30.0),
+                                child: const Text(
+                                    'Do not pay for anything online without BraketPay The most secured payment platform in the world.',
+                                    style: TextStyle(fontSize: 13, color: Color.fromARGB(196, 255, 255, 255), fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height:70),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Stack(
+                    children: [
+                      // PageIndicator
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(height: 10),
+                          Expanded(child: Image.asset('assets/sammy-delivers.png')),
+                          Column(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      text: 'SECURE',
+                                      style: TextStyle(
+                                          height: 1.5,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                      children: const [
+                                        TextSpan(
+                                          text:
+                                              ' your order.',
+                                          style: TextStyle(
+                                              height: 1.5,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                        )
+                                      ]),
+                                  textAlign: TextAlign.center),
+                              const SizedBox(height:30),
+                              const Text(
+                                  'Use BraketPay to pay for products you purchase online to avoid \n"What I ordered VS What I got" situation.',
+                                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                                  textAlign: TextAlign.center),
+                            ],
+                          ),
+                          SizedBox(height:70),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Stack(
+                    children: [
+                      // PageIndicator
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const SizedBox(height: 10),
+                          Expanded(child: Image.asset('assets/payment.png')),
+                          Column(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      text: 'Receive your payment without ',
+                                      style: const TextStyle(
+                                          height: 1.5,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              ' STORY.',
+                                          style: TextStyle(
+                                              height: 1.5,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        )
+                                      ]),
+                                  textAlign: TextAlign.center),
+                              
+                              const SizedBox(height: 20),
+                              const Text(
+                                  'Sell online with BraketPay to avoid \nCANCELLED ORDER, FAKE ALERT, TRANSFER REVERSAL\n and also prevent buyers from scamming YOU.',
+                                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                                  textAlign: TextAlign.center),
+                            ],
+                          ),
+                          SizedBox(height:70),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // SingleChildScrollView(
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                //     child: Stack(
+                //       children: [
+                //         // PageIndicator
+                //         Column(
+                //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //           children: [
+                //             const SizedBox(height: 10),
+                //             Image.asset('assets/sammy_savings.png'),
+                //             Column(
+                //               children: [
+                //                 RichText(
+                //                     text: TextSpan(
+                //                         text: 'EARN',
+                //                         style: TextStyle(
+                //                             height: 1.5,
+                //                             fontSize: 22,
+                //                             fontWeight: FontWeight.bold,
+                //                             color: Theme.of(context).primaryColor),
+                //                         children: const [
+                //                           TextSpan(
+                //                             text:
+                //                                 '  while you save.',
+                //                             style: TextStyle(
+                //                                 height: 1.5,
+                //                                 fontSize: 22,
+                //                                 fontWeight: FontWeight.bold,
+                //                                 color: Colors.black),
+                //                           )
+                //                         ]),
+                //                     textAlign: TextAlign.center),
+                                
+                //                 const SizedBox(height: 20),
+                //                 const Text(
+                //                     'Earn up to 20% of your savings with BraketSavings. All you have to do is JUST SAVE .',
+                //                     style: TextStyle(fontSize: 16, color: Colors.black),
+                //                     textAlign: TextAlign.center),
+                //               ],
+                //             ),
+                //             const SizedBox(height: 20),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Stack(
+                    children: [
+                      // PageIndicator
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const SizedBox(height: 10),
+                          Expanded(child: Image.asset('assets/sammy_transfer.png')),
+                          Column(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      text: 'SAVE',
+                                      style: TextStyle(
+                                          height: 1.5,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                      children: [
+                                        const TextSpan(
+                                          text:
+                                              ' and ',
+                                          style: TextStyle(
+                                              height: 1.5,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                        ),
+                                       TextSpan(
+                                          text:
+                                              'SPEND.',
+                                          style: TextStyle(
+                                              height: 1.5,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                        )
+                                      ]),
+                                  textAlign: TextAlign.center),
+                              
+                              const SizedBox(height: 20),
+                              const Text(
+                                  'Enjoy high return of investment when you use BraketSavings and Send money to your friends and family without delay.',
+                                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                                  textAlign: TextAlign.center),
+                            ],
+                          ),
+                          SizedBox(height:70),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Stack(
+                    children: [
+                      // PageIndicator
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const SizedBox(height: 10),
+                          Expanded(child: Image.asset('assets/sammy_pro.png')),
+                          Column(
+                            children: [
+                              Text('Get Started',
+                                  style: TextStyle(
+                                      height: 1.5,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                  textAlign: TextAlign.center),
+                              const SizedBox(height: 20),
+                              const Text('Sign up now to become a star in our UNIVERSE',
+                                  style: TextStyle(fontSize: 20, color: Colors.white70),
+                                  textAlign: TextAlign.center),
+                            ],
+                          ),
+                          SizedBox(height:70),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [!isLastPage && !widget.showOnboarding ? TextButton(child: const Text('Skip', style: TextStyle(color: Colors.white)), onPressed: () {
+          _controller.animateToPage(4, duration: const Duration(seconds:1), curve: Curves.ease);
+        },) : Container()],
+      ),
+      extendBody: true,
       // backgroundColor: _controller.page!.toInt() == 0 ? Color.fromARGB(255, 201, 233, 249) : _controller.page!.toInt() == 1 ? Color.fromARGB(255, 255, 187, 187) : Color.fromARGB(255, 255, 255, 255),
-      bottomSheet: !isLastPage && !widget.showOnboarding
+      bottomNavigationBar: !isLastPage && !widget.showOnboarding
           ? Container(
               padding: const EdgeInsets.all(20),
-              color: Colors.white,
+              color: Colors.transparent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -255,7 +622,7 @@ class _LoginState extends State<Login> {
                     controller: _controller,
                     count: 5,
                     effect: const ExpandingDotsEffect(
-                      activeDotColor: Colors.black,
+                      activeDotColor: Colors.white,
                       dotHeight: 10,
                       dotWidth: 10,
                     ),
@@ -273,7 +640,7 @@ class _LoginState extends State<Login> {
               ))
           : Container(
               height: 90,
-              color: Colors.white,
+              color: Colors.transparent,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Stack(
                 children: [
@@ -283,27 +650,43 @@ class _LoginState extends State<Login> {
                       Row(
                         children: [
                           Expanded(
-                            child: RoundButton(
-                                text: 'Login',
-                                color1: Colors.black,
-                                color2: Colors.black,
-                                textColor: Colors.white,
-                                radius: 10,
-                                onTap: () {
-                                  askLogin();
-                                }),
+                            child: InkWell(
+                              onTap: () {
+                                        askLogin();
+                                      },
+                              child: GlassContainer(
+                                child: Center(
+                                  child: RoundButton(
+                                      text: 'Login',
+                                      color1: Colors.transparent,
+                                      color2: Colors.transparent,
+                                      textColor: Colors.white,
+                                      radius: 10,
+                                      height: 90,
+                                      ),
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: RoundButton(
-                                text: 'Sign up',
-                                color1: Theme.of(context).primaryColor,
-                                color2: Theme.of(context).primaryColor,
-                                radius: 10.0,
-                                textColor: Colors.white,
-                                onTap: () {
-                                  Get.to(() => AskBVN());
-                                }),
+                            child: InkWell(
+                            onTap: () {
+                                        Get.to(() => AskBVN());
+                                      },
+                              child: GlassContainer(
+                                color: Theme.of(context).primaryColor,
+                                child: Center(
+                                  child: RoundButton(
+                                      text: 'Sign up',
+                                      color1: Theme.of(context).primaryColor,
+                                      color2: Theme.of(context).primaryColor,
+                                      radius: 10.0,
+                                      textColor: Colors.white,
+                                      ),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -313,301 +696,7 @@ class _LoginState extends State<Login> {
               ),
             ),
 
-      body: PageView(
-        controller: _controller,
-        onPageChanged: (index) {
-          setState(() {
-            isLastPage = index == 4;
-          });
-        },
-        children: [
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Stack(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset('assets/sammy_contract.png'),
-                      Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                                  text: 'TRUST',
-                                  style: TextStyle(
-                                      height: 1.5,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor),
-                                  children: const [
-                                    TextSpan(
-                                      text:
-                                          ' is not enough, BraketPay smart contract is all you need!',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    )
-                                  ]),
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 20),
-                          const Text(
-                              'Do not pay for anything online without BraketPay The most secured payment platform in the world.',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                      const SizedBox(height: 50)
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Stack(
-                children: [
-                  // PageIndicator
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset('assets/sammy-delivers.png'),
-                      Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                                  text: 'SECURE',
-                                  style: TextStyle(
-                                      height: 1.5,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor),
-                                  children: const [
-                                    TextSpan(
-                                      text:
-                                          ' your order.',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    )
-                                  ]),
-                              textAlign: TextAlign.center),
-                          const SizedBox(height:30),
-                          const Text(
-                              'Use BraketPay to pay for products you purchase online to avoid \n"What I ordered VS What I got" situation.',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                      const SizedBox(height: 50),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Stack(
-                children: [
-                  // PageIndicator
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset('assets/payment.png'),
-                      Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                                  text: 'Receive your payment without ',
-                                  style: const TextStyle(
-                                      height: 1.5,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          ' STORY.',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).primaryColor),
-                                    )
-                                  ]),
-                              textAlign: TextAlign.center),
-                          
-                          const SizedBox(height: 20),
-                          const Text(
-                              'Sell online with BraketPay to avoid \nCANCELLED ORDER, FAKE ALERT, TRANSFER REVERSAL\n and also prevent buyers from scamming YOU.',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // SingleChildScrollView(
-          //   child: Container(
-          //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          //     child: Stack(
-          //       children: [
-          //         // PageIndicator
-          //         Column(
-          //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //           children: [
-          //             const SizedBox(height: 10),
-          //             Image.asset('assets/sammy_savings.png'),
-          //             Column(
-          //               children: [
-          //                 RichText(
-          //                     text: TextSpan(
-          //                         text: 'EARN',
-          //                         style: TextStyle(
-          //                             height: 1.5,
-          //                             fontSize: 22,
-          //                             fontWeight: FontWeight.bold,
-          //                             color: Theme.of(context).primaryColor),
-          //                         children: const [
-          //                           TextSpan(
-          //                             text:
-          //                                 '  while you save.',
-          //                             style: TextStyle(
-          //                                 height: 1.5,
-          //                                 fontSize: 22,
-          //                                 fontWeight: FontWeight.bold,
-          //                                 color: Colors.black),
-          //                           )
-          //                         ]),
-          //                     textAlign: TextAlign.center),
-                          
-          //                 const SizedBox(height: 20),
-          //                 const Text(
-          //                     'Earn up to 20% of your savings with BraketSavings. All you have to do is JUST SAVE .',
-          //                     style: TextStyle(fontSize: 16, color: Colors.black),
-          //                     textAlign: TextAlign.center),
-          //               ],
-          //             ),
-          //             const SizedBox(height: 20),
-          //           ],
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Stack(
-                children: [
-                  // PageIndicator
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset('assets/sammy_transfer.png'),
-                      Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                                  text: 'SAVE',
-                                  style: TextStyle(
-                                      height: 1.5,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor),
-                                  children: [
-                                    const TextSpan(
-                                      text:
-                                          ' and ',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color:Colors.black),
-                                    ),
-                                   TextSpan(
-                                      text:
-                                          'SPEND.',
-                                      style: TextStyle(
-                                          height: 1.5,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).primaryColor),
-                                    )
-                                  ]),
-                              textAlign: TextAlign.center),
-                          
-                          const SizedBox(height: 20),
-                          const Text(
-                              'Enjoy high return of investment when you use BraketSavings and Send money to your friends and family without delay.',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Stack(
-                children: [
-                  // PageIndicator
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset('assets/sammy_pro.png'),
-                      Column(
-                        children: [
-                          Text('Get Started',
-                              style: TextStyle(
-                                  height: 1.5,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor),
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 20),
-                          const Text('Sign up now to become a star in our UNIVERSE',
-                              style: TextStyle(fontSize: 20, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [!isLastPage && !widget.showOnboarding ? TextButton(child: const Text('Skip'), onPressed: () {
-          _controller.animateToPage(4, duration: const Duration(seconds:1), curve: Curves.ease);
-        },) : Container()],
-      ),
+      
     );
   }
 }

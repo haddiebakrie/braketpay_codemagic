@@ -29,6 +29,16 @@
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
 		<key>UISupportedInterfaceOrientations</key>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Braketpay requires your permission to pick Images from your Mobile Device</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Braketpay requires your permission to use your Microphone</string>
+		<key>io.flutter.embedded_views_preview</key>
+		<true/>
+		<key>NSCameraUsageDescription</key>
+		<string>This app needs camera access to scan QR codes</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>To protect your account, Braket need to access your location.</string>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>
 			<string>UIInterfaceOrientationLandscapeLeft</string>

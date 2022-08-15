@@ -83,7 +83,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                         GridView(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2, childAspectRatio: 1.5),
+                                  crossAxisCount: 3, childAspectRatio: 1),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
@@ -91,14 +91,14 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                                   builder: (BuildContext context) => MerchantCreateProduct(
-                                      user: widget.user, pin: widget.pin, merchantID: widget.merchantID)));
+                                      user: widget.user, pin: widget.pin, merchantID: widget.merchantID, fromMerchant: true,)));
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children:[
                         Icon(showProduct ? Icons.shopping_cart_rounded : Icons.shopping_cart_outlined, size: 35, color: Colors.red),
                         const SizedBox(height:10),
-                        const Text('Buying & Selling', textAlign: TextAlign.center,
+                        const Text('Buy & Sell', textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         
                         )
@@ -163,28 +163,6 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                         
                         )
                       ],),),
-                      InkWell(
-                      onTap: () {
-                              showDialog(context: context, builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Not Available yet.'),
-                                  actions: [
-                                    TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Okay'))
-                                  ],
-                                  content: const Text('This Feature would be available in Public release V2.0'),
-                                );
-                              });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children:[
-                        Icon(showEmployment ? Icons.people_alt : Icons.people_alt_outlined, size: 35, color: Colors.indigo),
-                        const SizedBox(height:10),
-                        const Text('Employment',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                        
-                        )
-                      ],),),
                     //   InkWell(
                     //   onTap: () {
                     //           showDialog(context: context, builder: (context) {
@@ -197,16 +175,17 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                     //             );
                     //           });
                     //   },
-                    // child: Column(
+                    //   child: Column(
                     //     mainAxisAlignment: MainAxisAlignment.center,
                     //     children:[
-                    //     Icon(showInsurance ? Icons.health_and_safety : Icons.health_and_safety_outlined, size: 35, color: Colors.blue),
+                    //     Icon(showEmployment ? Icons.people_alt : Icons.people_alt_outlined, size: 35, color: Colors.indigo),
                     //     const SizedBox(height:10),
-                    //     const Text('Insurance',
+                    //     const Text('Payroll',
                     //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         
                     //     )
                     //   ],),),
+                      
                     //   InkWell(
                     //   onTap: () {
                     //         showDialog(context: context, builder: (context) {
@@ -224,7 +203,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                           
                     //       Icon(showRealEstate ? Icons.apartment : Icons.apartment_outlined, size: 35, color: Colors.blue),
                     //       const SizedBox(height:10),
-                    //       const Text('Real Estate',
+                    //       const Text('Property',
                     //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                           
                     //       )
@@ -253,6 +232,51 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
                     //       )
                     //     ],),
                     //   ),
+                    //                         InkWell(
+                    //   onTap: () {
+                    //         showDialog(context: context, builder: (context) {
+                    //             return AlertDialog(
+                    //               title: const Text('Not Available yet.'),
+                    //               actions: [
+                    //                 TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Okay'))
+                    //               ],
+                    //               content: const Text('This Feature would be available in Public release V2.0'),
+                    //             );
+                    //           });
+                    //   },
+                    //     child: Column(
+                    //     mainAxisAlignment: MainAxisAlignment.center,children:[
+                          
+                    //       Icon(showPension ? Icons.landscape : Icons.landscape, size: 35, color: Colors.teal),
+                    //       const SizedBox(height:10),
+                    //       const Text('Investment',
+                    //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          
+                    //       )
+                    //     ],),
+                    //   ),
+                    //   InkWell(
+                    //   onTap: () {
+                    //           showDialog(context: context, builder: (context) {
+                    //             return AlertDialog(
+                    //               title: const Text('Not Available yet.'),
+                    //               actions: [
+                    //                 TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Okay'))
+                    //               ],
+                    //               content: const Text('This Feature would be available in Public release V2.0'),
+                    //             );
+                    //           });
+                    //   },
+                    // child: Column(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children:[
+                    //     Icon(showInsurance ? Icons.health_and_safety : Icons.health_and_safety_outlined, size: 35, color: Colors.blue),
+                    //     const SizedBox(height:10),
+                    //     const Text('Insurance',
+                    //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        
+                    //     )
+                    //   ],),),
                     //   InkWell(
                     //   onTap: () {
                     //      showDialog(context: context, builder: (context) {
@@ -287,7 +311,7 @@ class _MerchantContractModeSelectState extends State<MerchantContractModeSelect>
               ),
       
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                // padding: const EdgeInsets.symmetric(vertical: 20),
                 // margin: const EdgeInsets.symmetric(vertical: 10),
                 decoration: ContainerDecoration(),
                 child: Column(
@@ -882,7 +906,7 @@ class _MerchantMerchantContractModeSelectState extends State<MerchantMerchantCon
           const Padding(
             padding: EdgeInsets.all(10.0),
             child: Text(
-              'What type of template are you creating',
+              'What type of Contract are you Registering',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),

@@ -106,14 +106,14 @@ class Payload {
   String dateMade() {
     final DateTime formatted = HttpDate.parse(transactionDatetime ?? "");
     String date = DateFormat('MMM, dd yyyy').format(formatted);
-    print(formatted);
+    // print(formatted);
     return date;
     }
 
   String timeMade() {
     final DateTime formatted = HttpDate.parse(transactionDatetime ?? "");
     String date = DateFormat('hh:mm:ss a').format(formatted);
-    print(formatted);
+    // print(formatted);
     return date;
     }
 

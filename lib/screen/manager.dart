@@ -6,12 +6,16 @@ import 'package:braketpay/brakey.dart';
 import 'package:braketpay/classes/product_contract.dart';
 import 'package:braketpay/classes/user.dart';
 import 'package:braketpay/screen/history.dart';
+import 'package:braketpay/screen/marketplace.dart';
 import 'package:braketpay/screen/merchant.dart';
 import 'package:braketpay/screen/home.dart';
+import 'package:braketpay/screen/userlogin.dart';
 import 'package:braketpay/screen/wallet.dart';
 import 'package:braketpay/uix/walletcard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:iconly/iconly.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -32,26 +36,7 @@ class Manager extends StatefulWidget {
 }
 
 class _ManagerState extends State<Manager> {
-  AppUpdateInfo? _updateInfo;
-
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
-  bool _flexibleUpdateAvailable = false;
-
-  Future<void> checkForUpdate() async {
-    print('Checking for Update');
-    InAppUpdate.checkForUpdate().then((value) => {
-    setState(() {
-      _updateInfo = value;
-    }),
-    _updateInfo?.updateAvailability == UpdateAvailability.updateAvailable ? InAppUpdate.startFlexibleUpdate().catchError((e){}) 
-    : null
-    }
-    
-    ).catchError((e) {
-      print(e);
-    });
-  }
+  
 
   Brakey brakey = Get.put(Brakey());
   late final List<Widget> screenList;
@@ -60,13 +45,13 @@ class _ManagerState extends State<Manager> {
   @override
   void initState() { 
     super.initState();
-    checkForUpdate();
+    // checkForUpdate();
     screenList = [
-      Home(user: widget.user, pin: brakey.user.value!.payload!.pin??'', gotoWallet: gotoWallet),
-      Contracts(user: widget.user, pin:brakey.user.value!.payload!.pin??''),
-      History(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
-      Wallet(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
-      Merchant(user: widget.user, pin: brakey.user.value!.payload!.pin??''),
+      Home(user: widget.user, pin: brakey.user.value?.payload?.pin??'', gotoWallet: gotoWallet),
+      MarketPlace(),
+      // Contracts(user: widget.user, pin:brakey.user.value?.payload?.pin??''),
+      History(user: widget.user, pin: brakey.user.value?.payload?.pin??''),
+      Merchant(user: widget.user, pin: brakey.user.value?.payload?.pin??''),
     ];
     // promptSaveBiometric();
   }
@@ -79,8 +64,15 @@ class _ManagerState extends State<Manager> {
   @override
   Widget build(BuildContext context) {
 
-    Timer.periodic(Duration(seconds: 10), (timer) {
+    Timer.periodic(Duration(seconds: 5), (timer) async {
       brakey.listenToAccountChanges();
+      var box = await Hive.openBox('savedUsers');
+      bool isLoggedIn = box.get('loggedStatus');
+      // print('7777777777777777777777777777777 $isLoggedIn');
+      if (!isLoggedIn) {
+        timer.cancel();
+        Get.offUntil(MaterialPageRoute(builder: (context) => UserLogin()), (route) => false);
+      }
      });
 
     return WillPopScope(
@@ -109,13 +101,13 @@ class _ManagerState extends State<Manager> {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(IconlyBold.home), label: 'Home'),
               BottomNavigationBarItem(
-                  icon: Icon(IconlyBold.paper), label: 'Contracts'),
+                  icon: Icon(Icons.extension), label: 'Contracts'),
+              // BottomNavigationBarItem(
+              //     icon: Icon(IconlyBold.paper), label: 'Contracts'),
               BottomNavigationBarItem(
-                  icon: Icon(IconlyBold.time_circle), label: 'History'),
+                  icon: Icon(IconlyBold.time_square), label: 'History'),
               BottomNavigationBarItem(
-                  icon: Icon(IconlyBold.wallet), label: 'Wallet'),
-              BottomNavigationBarItem(
-                  icon: Icon(IconlyBold.work), label: 'Business')
+                  icon: Icon(Icons.work), label: 'My Business')
             ],
             selectedItemColor: Theme.of(context).primaryColor,
             unselectedItemColor: Colors.grey,

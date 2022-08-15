@@ -50,7 +50,7 @@ class _ContractsState extends State<Contracts> {
         centerTitle: true,
         titleSpacing: 5,
         toolbarHeight: 65,
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
         // actions: [
         //   IconButton(icon:const Icon(CupertinoIcons.sort_down), onPressed:(){
         //     Get.bottomSheet(
@@ -330,6 +330,7 @@ class _ContractsState extends State<Contracts> {
                             textAlign: TextAlign.center),
                         const SizedBox(height: 20),
                         RoundButton(
+                            icon: Icons.refresh,
                             text: 'Retry',
                             color1: Colors.black,
                             color2: Colors.black,
@@ -349,6 +350,7 @@ class _ContractsState extends State<Contracts> {
               },
             ),
           )),
+      
       floatingActionButton: RoundButton(
           onTap: () {
             contractMode();

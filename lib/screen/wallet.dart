@@ -58,54 +58,9 @@ class _WalletState extends State<Wallet> {
       appBar: AppBar(
         elevation: 0,
         titleSpacing: 5,
-        toolbarHeight: 65,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(20)),
-            child: IconButton(
-                icon: const Icon(IconlyBold.profile),
-                color: Theme.of(context).primaryColor,
-                iconSize: 20,
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          Profile(user: widget.user, pin: widget.pin)));
-                }),
-          ),
-        ),
-        actions: [
-          Obx(() => IconBadge(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: ((context) =>
-                        Notifications(user: widget.user, pin: widget.pin))));
-              },
-              maxCount: 9,
-              icon: const Icon(Icons.notifications),
-              itemCount: brakey.notiCount.toInt(),
-              right: 10.0,
-              hideZero: true,
-              top: 10.0
 
-              // hideZero: true,
-
-              ))
-        ],
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(() => Text(
-                'Hi ${brakey.user.value!.payload!.fullname!.split(" ")[1]}',
-                style: const TextStyle(fontWeight: FontWeight.bold))),
-            Obx(() => Text('@${brakey.user.value!.payload!.username}',
-                style: const TextStyle(fontSize: 14)))
-          ],
-        ),
+        centerTitle: true,       
+        title: Text('Wallet')
       ),
       body: Column(children: [
         // SizedBox(
@@ -171,7 +126,7 @@ class _WalletState extends State<Wallet> {
         Expanded(
           child: Container(
             padding: const EdgeInsets.only(top: 10),
-            margin: const EdgeInsets.only(top: 20),
+            // margin: const EdgeInsets.only(top: 20),
             width: double.infinity,
             decoration: ContainerBackgroundDecoration(),
             child: RefreshIndicator(
@@ -327,7 +282,6 @@ class _WalletState extends State<Wallet> {
                             onTap: () {
                               if (brakey.user.value!.payload!.bvn !=
                                   'Not added') {
-                                print('hi');
                                 Clipboard.setData(ClipboardData(
                                     text: brakey.user.value!.payload!
                                             .accountNumber ??
@@ -397,18 +351,6 @@ class _WalletState extends State<Wallet> {
       //     )),
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
   void addBankCard() {
   
@@ -544,6 +486,9 @@ class _AddBankCardState extends State<AddBankCard> {
                               showDialog(context: context, builder: 
                               (_) {
                                 return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                   title: Text('Try again later'),
                                   content: Text('Not available, Please use bank transfer'), 
                                   actions: [

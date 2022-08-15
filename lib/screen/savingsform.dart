@@ -1,5 +1,6 @@
 import 'package:braketpay/uix/themedcontainer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -165,7 +166,7 @@ String value = 'Lite';
                                               child: Text(
                                                 'Name your savings',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                     fontSize: 15),
                                               ),
                                             ),
@@ -179,7 +180,7 @@ String value = 'Lite';
                                                     borderSide: BorderSide.none,
                                                     borderRadius: BorderRadius.all(
                                                         Radius.circular(10))),
-                                                hintText: 'Ex School Project',
+                                                hintText: 'Eg, School Project',
                                                 border: OutlineInputBorder(
                                                     borderSide: BorderSide.none,
                                                     borderRadius: BorderRadius.all(
@@ -210,12 +211,14 @@ String value = 'Lite';
                                                 child: Text(
                                                   'How much do you want to save (Your target)',
                                                   style: TextStyle(
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight: FontWeight.w600,
                                                       fontSize: 15),
                                                 ),
                                               ),
                                               TextFormField(
                                               keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                                                 cursorColor: Colors.grey,
                                                 decoration: const InputDecoration(
                                                   fillColor:
@@ -255,12 +258,14 @@ String value = 'Lite';
                                               child: Text(
                                                 'How much do you want to start with (Your first commit)',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                     fontSize: 15),
                                               ),
                                             ),
                                             TextFormField(
                                               keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                                               cursorColor: Colors.grey,
                                               decoration: const InputDecoration(
                                                 fillColor:
@@ -296,7 +301,7 @@ String value = 'Lite';
                                           child: Text(
                                             'How often do you want to save',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w400,
+                                                fontWeight: FontWeight.w600,
                                                 fontSize: 15),
                                           ),
                                         ),
@@ -322,12 +327,14 @@ String value = 'Lite';
                                               child: Text(
                                                 'How much do you want to save $freqValue',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                     fontSize: 15),
                                               ),
                                             ),
                                             TextFormField(
                                               keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                                               cursorColor: Colors.grey,
                                               decoration: const InputDecoration(
                                                 fillColor:
@@ -392,6 +399,9 @@ String value = 'Lite';
                                                             barrierDismissible: false,
                                                             builder: (context) {
                                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                                   actions: [
                                                                     TextButton(
                                                                       child: const Text(
@@ -422,6 +432,9 @@ String value = 'Lite';
                                                             barrierDismissible: false,
                                                             builder: (context) {
                                                               return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                                   actions: [
                                                                     TextButton(
                                                                       child: const Text(

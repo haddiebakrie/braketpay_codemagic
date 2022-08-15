@@ -188,6 +188,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                                                   return WillPopScope(
                                                     onWillPop: (() async => false),
                                                     child: AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                         actions: [
                                                           TextButton(
                                                             child: const Text('Okay'),
@@ -228,6 +231,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text('Okay'),
@@ -249,6 +255,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                                                 barrierDismissible: false,
                                                 builder: (context) {
                                                   return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                                       actions: [
                                                         TextButton(
                                                           child: const Text('Okay'),
@@ -346,6 +355,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                             return WillPopScope(
                               onWillPop: (() async => false),
                               child: AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                   actions: [
                                     TextButton(
                                       child: const Text('Verify OTP'),
@@ -374,6 +386,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                           barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 actions: [
                                   TextButton(
                                     child: const Text('Okay'),
@@ -395,6 +410,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                           barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
+shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                                 actions: [
                                   TextButton(
                                     child: const Text('Okay'),
