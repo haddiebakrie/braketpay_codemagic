@@ -53,7 +53,6 @@ class _ManagerState extends State<Manager> {
       History(user: widget.user, pin: brakey.user.value?.payload?.pin??''),
       Merchant(user: widget.user, pin: brakey.user.value?.payload?.pin??''),
     ];
-    // promptSaveBiometric();
   }
 
   int currentIndex = 0;
