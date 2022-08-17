@@ -99,15 +99,15 @@ class _ManagerState extends State<Manager> {
         bottomNavigationBar: Obx(() => (BottomNavigationBar(
           
             items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(icon: Icon(IconlyBold.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Home'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.extension), label: 'Contracts'),
+                  icon: Icon(Icons.extension_outlined), label: 'Contracts'),
               // BottomNavigationBarItem(
               //     icon: Icon(IconlyBold.paper), label: 'Contracts'),
               BottomNavigationBarItem(
-                  icon: Icon(IconlyBold.time_square), label: 'History'),
+                  icon: Icon(Icons.history), label: 'History'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.work), label: 'My Business')
+                  icon: Icon(Icons.work_outline), label: 'My Business')
             ],
             selectedItemColor: Theme.of(context).primaryColor,
             unselectedItemColor: Colors.grey,

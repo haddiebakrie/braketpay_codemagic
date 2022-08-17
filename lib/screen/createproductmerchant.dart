@@ -238,81 +238,79 @@ backgroundColor: Colors.transparent,
                     visible: image.isNotEmpty,
                     child: Container(
                       height: 80,
-                      child: Expanded(
-                        child: ListView.builder(
-                          // shrinkWrap: true,
-                          itemCount: image.length.clamp(1, 5)+1,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                          print(index);
-                          if (index < image.length) {
-                              return InkWell(
-                                onTap: () {
+                      child: ListView.builder(
+                        // shrinkWrap: true,
+                        itemCount: image.length.clamp(1, 5)+1,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                        print(index);
+                        if (index < image.length) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  mainImage = index;
+                                });
+                              },
+                              child: Container(
+                                height: 60,
+                                width: 70,
+                                margin: EdgeInsets.all(3).copyWith(right:9),
+                                decoration: ContainerDecoration().copyWith(
+                                  border: Border.all(color: index == mainImage ? Colors.blue : Colors.transparent, width: 3)
+                                ),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                child: Stack(
+                                              
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    Container(
+                                      // padding: EdgeInsets.all(10),
+                                      child: Image.file(File(image[index].path), height: 60, width: 70),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if (mainImage==index) {
+                                            mainImage = (index - 1).clamp(0, 5);
+                                          }
+                                        image.removeAt(index);
+                                          
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(3),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          
+                                          borderRadius: BorderRadius.circular(20)),
+                                        child: Icon(Icons.delete, color: Colors.red, size: 14)),
+                                    ),
+                                  ],
+                                ),
+                                                      ),
+                            );
+                  
+                        } else {
+                            return InkWell(
+                              onTap: () async {
+                                  XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
+                                  if (_image==null) {
+                                    return;
+                                  }
                                   setState(() {
-                                    mainImage = index;
+                                    image.add(_image);
                                   });
                                 },
-                                child: Container(
-                                  height: 60,
-                                  width: 70,
-                                  margin: EdgeInsets.all(3).copyWith(right:9),
-                                  decoration: ContainerDecoration().copyWith(
-                                    border: Border.all(color: index == mainImage ? Colors.blue : Colors.transparent, width: 3)
-                                  ),
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  child: Stack(
-                                                
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      Container(
-                                        // padding: EdgeInsets.all(10),
-                                        child: Image.file(File(image[index].path), height: 60, width: 70),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            if (mainImage==index) {
-                                              mainImage = (index - 1).clamp(0, 5);
-                                            }
-                                          image.removeAt(index);
-                                            
-                                          });
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.all(3),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            
-                                            borderRadius: BorderRadius.circular(20)),
-                                          child: Icon(Icons.delete, color: Colors.red, size: 14)),
-                                      ),
-                                    ],
-                                  ),
-                                                        ),
-                              );
-                  
-                          } else {
-                              return InkWell(
-                                onTap: () async {
-                                    XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
-                                    if (_image==null) {
-                                      return;
-                                    }
-                                    setState(() {
-                                      image.add(_image);
-                                    });
-                                  },
-                                child: Container(
-                                  height: 60,
-                                  width: 70,
-                                margin: EdgeInsets.all(3),
-                                  decoration: ContainerDecoration(),
-                                  child: Center(child: Flexible(child: Text('+ Add Image', textAlign: TextAlign.center, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w600, color: Colors.grey)))),),
-                              );
-                          }
-                        } 
-                        
-                        ),
+                              child: Container(
+                                height: 60,
+                                width: 70,
+                              margin: EdgeInsets.all(3),
+                                decoration: ContainerDecoration(),
+                                child: Center(child: Text('+ Add Image', textAlign: TextAlign.center, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w600, color: Colors.grey))),),
+                            );
+                        }
+                      } 
+                      
                       ),
                     ),
                   ),

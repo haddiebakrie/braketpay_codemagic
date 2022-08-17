@@ -226,7 +226,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                     
                     );
                     product['PRODUCT'].forEach((key) {
-                      key.keys.forEach((value) => print(value));
+                      // key.keys.forEach((value) => print(value));
                       
                       });
                   // final service = await fetchMarketServiceContracts(
@@ -386,7 +386,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                               if (a
                                                             .containsKey('Payload')) {
                                                           a['Payload'].addEntries({
-                                                            'merchant_id': '',
                                                             'product_id': _templates[index]['Payload']['product_id']
                                                           }.entries);
                                                           // Navigator.of(context).pop();
@@ -438,7 +437,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                             
                                             },
                                             child: Container(
-                                                height: 180,
+                                                height: height * 0.25,
                                                 width: 140,
                                                 margin: EdgeInsets.all(10),
                                                 clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -446,7 +445,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                                       padding: EdgeInsets.all(5),
                                                 child: Column(
                                                   children: [
-                                                  
                                                     Container(
                                                       decoration: BoxDecoration(
                                                         borderRadius: BorderRadius.circular(20),
@@ -472,7 +470,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                                                 SizedBox(height:4),
                                                         ],
                                                       ),
-                                                      height: 110,
+                                                      height: height * 0.15,
                                                       width: double.infinity,
                                                     ),
                                                                 SizedBox(height:10),
@@ -641,7 +639,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                               if (a
                                                             .containsKey('Payload')) {
                                                           a['Payload'].addEntries({
-                                                            'merchant_id': '',
                                                             'service_id': _templates[index]['Payload']['service_id']
                                                           }.entries);
                                                           // Navigator.of(context).pop();
@@ -693,7 +690,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                             
                                             },
                                             child: Container(
-                                                height: 180,
+                                                height: height * 0.25,
                                                 width: 140,
                                                 margin: EdgeInsets.all(10),
                                           
@@ -730,7 +727,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                                                 SizedBox(height:4),
                                                         ],
                                                       ),
-                                                      height: 110,
+                                                      height: height * 0.15,
                                                       width: double.infinity,
                                                     ),
                                                                 SizedBox(height:10),
@@ -947,7 +944,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                             
                                             },
                                             child: Container(
-                                                height: 180,
+                                                height: height * 0.25,
                                                 width: 140,
                                                 margin: EdgeInsets.all(10),
                                                 clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -980,7 +977,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                                                 SizedBox(height:4),
                                                         ],
                                                       ),
-                                                      height: 110,
+                                                      height: height * 0.15,
                                                       width: double.infinity,
                                                     ),
                                                                 SizedBox(height:10),

@@ -7,6 +7,7 @@ import 'package:convert/convert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
@@ -241,18 +242,30 @@ class _MerchantProductDetailState extends State<MerchantProductDetail> {
                                 //     width: double.infinity)
                               ])),
                             
-                            ListSeparated(
-                                text: widget.product['Payload']['contract_title'],
-                                title: 'Contract Title'),
                             // ListSeparated(
-                            //     text: '${widget.product['Payload']['contract_type'].toUpperCase()} CONTRACT',
-                            //     title: 'Contract Type'),
-                            ListSeparated(
-                                text: widget.product['Payload']['product_name'],
-                                title: 'Product Name'),
-                            ListSeparated(
-                                text: widget.product['Payload']['product_details'],
-                                title: 'Product Detail'),
+                            //     text: widget.product['Payload']['contract_title'],
+                            //     title: 'Contract Title'),
+                            // // ListSeparated(
+                            // //     text: '${widget.product['Payload']['contract_type'].toUpperCase()} CONTRACT',
+                            // //     title: 'Contract Type'),
+                            // ListSeparated(
+                            //     text: widget.product['Payload']['product_name'],
+                            //     title: 'Product Name'),
+                            ListTile(title: Text('Contract title', style: TextStyle(fontWeight: FontWeight.bold),), subtitle: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical:10),
+                                  child: MarkdownBody(data: widget.product['Payload']['contract_title']),
+                                ),
+                            ),
+                            ListTile(title: Text('Product Name', style: TextStyle(fontWeight: FontWeight.bold),), subtitle: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical:10),
+                                  child: MarkdownBody(data: widget.product['Payload']['product_name']),
+                                ),
+                            ),
+                            ListTile(title: Text('Product Detail', style: TextStyle(fontWeight: FontWeight.bold),), subtitle: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical:10),
+                                  child: MarkdownBody(data: widget.product['Payload']['product_details']),
+                                ),
+                            ),
                             ListSeparated(
                                 text: '${formatAmount((widget.product['Payload']['product_amount'].toString()))}',
                                 title: 'Product Amount'),

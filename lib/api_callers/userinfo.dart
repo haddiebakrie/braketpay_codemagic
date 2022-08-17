@@ -511,16 +511,18 @@ Future<List<Message>> fetchChats(
   String transactionPin,  
   String volume,  
   String customerWalletAddress,  
+  String chatID,
+  String chartType
   ) async {
     
   String param = Uri(queryParameters: {
       "wallet_address" : walletAddress,
       "password" : password,
       "transaction_pin": transactionPin,
-      "chart_type": "",
-      "volume": "all",
-      "customer_wallet_address": "",
-      "contract_id":"",
+      "chart_type": volume == 'single' ? chartType : 'all' ,
+      "volume": volume,
+      "customer_wallet_address": customerWalletAddress,
+      "contract_id": chatID,
       // ""
     }).query;
 
@@ -541,7 +543,7 @@ Future<List<Message>> fetchChats(
     if (!jsonDecode(response.body).containsKey('Payload')) {
       throw [];
     }
-    dynamic payloads = jsonDecode(response.body)['Payload'].values;
+    dynamic payloads = jsonDecode(response.body)['Payload'] is List ? jsonDecode(response.body)['Payload'] : jsonDecode(response.body)['Payload'].values;
     List<Message> newPayloads = [];
     for (dynamic item in payloads) {
       Map<String, dynamic> newItem = jsonDecode(item.split('\n').join('\\n'));

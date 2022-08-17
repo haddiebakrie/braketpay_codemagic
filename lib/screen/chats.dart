@@ -28,6 +28,8 @@ class _ChatHistoryState extends State<ChatHistory> {
       brakey.user.value!.payload!.password ?? "",
       '',
       "all",
+      "",
+      "",
       "");
       
   @override
@@ -111,6 +113,8 @@ class _ChatHistoryState extends State<ChatHistory> {
                  brakey.user.value!.payload!.password ?? "",
                  '',
                  "all",
+                 "",
+                 "",
                  "");
                         // if (transactions.isNotEmpty) {
                     setState(() {

@@ -79,7 +79,7 @@ class SquareShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: ContainerDecoration(),
+      // decoration: ContainerDecoration(),
         margin: const EdgeInsets.all(10),
       child: Shimmer.fromColors(
         baseColor: Colors.grey.shade300.withOpacity(0.3),
@@ -134,23 +134,31 @@ class SquareShimmer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: AbsorbPointer(
-                        child: Container(
-                        width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 215, 214, 214),
-                              borderRadius: BorderRadius.circular(10)),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                            width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 215, 214, 214),
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            // Icon(Icons.settings, color: Color.fromARGB(255, 255, 0, 0),),
+                            // Icon(Icons.settings, color: Color.fromARGB(255, 255, 0, 0),),
+                          ],
                         ),
                       ),
                     ),
-                    // SizedBox(height:10),
-                    // AbsorbPointer(
-                    //   child: Container(
-                    //     height: 20,
-                    //     decoration: BoxDecoration(
-                    //         color: const Color.fromARGB(255, 215, 214, 214),
-                    //         borderRadius: BorderRadius.circular(5)),
-                    //   ),
-                    // ),
+                    SizedBox(height:5),
+                    AbsorbPointer(
+                      child: Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 215, 214, 214),
+                            // borderRadius: BorderRadius.circular(5)),
+                        )
+                      ),
+                    ),
                   ],
                 ),
               ),

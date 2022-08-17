@@ -29,6 +29,7 @@ class Message {
     senderName = json['sender_name'];
     receiverName = json['receiver_name'];
     contractID = json['contract_id'];
+    contractType = json['contract_type'];
     productID = json['product_id'];
     receiverAddr = json['receiver_address'];
     senderAddr = json['sender_address'];

@@ -23,7 +23,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late String? secondPartyName = widget.messages?.first.receiverAddr == widget.user.payload?.walletAddress ? widget.messages?.first.receiverName : widget.messages?.first.senderName;
+  late String? secondPartyName = widget.messages?.first.receiverAddr == widget.user.payload?.walletAddress ? widget.messages?.first.senderName : widget.messages?.first.receiverName;
   String msg = '';
   TextEditingController composerController = TextEditingController();
   late List<Message>? chatHistory = widget.messages;
@@ -89,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                     Text(
-                      message.dateTime(),
+                      message.time.toString(),
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         color: Colors.white54,
@@ -169,7 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     });
                   },
                   decoration: InputDecoration.collapsed(
-                    hintText: 'Type a message...',
+                    hintText: 'Send message...',
                     hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)
                   ),
                 ),
@@ -189,6 +189,13 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: Colors.white,
                 onPressed: ()
                 {
+                // print(widget.contract.keys.toList());
+                // print(widget.contract.values.toList().elementAt(15));
+                // print(widget.contract['merchant_logo_link']);
+                  if (msg.trim() == ''){
+                    return;
+
+                  }
                 //  final msg = Message(text: 'Hello', time: '12:00', isLiked: false);
                 // setState(() {
                 // chatHistory.add(msg);
@@ -197,15 +204,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 chatHistory!.add(Message(senderAddr: widget.user.payload?.walletAddress, message: {'text':msg}, time: '2022-08-08 14:22:51.945555', ));
                 composerController.clear();
                 });
+                print(widget.contract.keys.toList().toString());
                 messageSeller(
-                  widget.messages?.first.contractID??'', 
+                  widget.contract.isNotEmpty ? widget.contract['${widget.contract['contract_type']}_id'] : widget.messages?.first.contractID??widget.contract['${widget.contract['contract_type']}_id'], 
                   widget.user.payload?.walletAddress??'', 
-                  widget.user.payload?.walletAddress == widget.messages?.first.senderAddr ? widget.messages?.first.receiverAddr??'' : widget.messages?.first.senderAddr??'', 
+                  widget.user.payload?.walletAddress == widget.contract['seller_address'] ?  widget.messages?.first.senderAddr : widget.contract['seller_address']??widget.messages?.first.receiverAddr, 
+                  // widget.messages?.length != 1 && widget.user.payload?.walletAddress == widget.messages?.first.senderAddr ? widget.messages?.first.receiverAddr??'' : widget.messages?.first.senderAddr??widget.contract['seller_address'], 
                   widget.user.payload?.password??'', 
-                  'merchant product',
+                  widget.contract.isEmpty ? widget.messages?.first.contractType??'' : 'merchant ${widget.contract['contract_type']}',
                   msg, 
-                  'customer', 
+                  widget.user.payload?.walletAddress == widget.contract['seller_address'] ?  "merchant" : "customer", 
                   );
+               
                 }
               ),
             ),
@@ -217,15 +227,17 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // brakey.refreshSingleChat.value?.currentState?.show();
+    brakey.refreshSingleChat.value?.currentState?.show();
     return Scaffold(
-      appBar: AppBar(elevation: 0, automaticallyImplyLeading: false, toolbarHeight: 5,),
+      appBar: AppBar(elevation: 0, titleSpacing: 0,
+      title: CircleAvatar(backgroundImage: NetworkImage(widget.contract['merchant_logo_link']??brokenImageUrl)),
+      ),
       backgroundColor: Theme.of(context).primaryColor,
       body: Column(
         children: [
           Container(
       // height: kToolbarHeight + MediaQuery.of(context).padding.top,
-      padding: EdgeInsets.all(10).copyWith(bottom:10, left: 0),
+      padding: EdgeInsets.all(10).copyWith(bottom:0, left: 0),
     ),
           Expanded(
             child: Container(
@@ -295,20 +307,25 @@ class _ChatScreenState extends State<ChatScreen> {
                                             // if (transactions.isNotEmpty) {
                                             // }
                                             // print(chats);
-                                            widget.contract.keys.forEach((element) {print(element);});
-
+                                            // widget.contract.keys.forEach((element) {print(element);});
+                                        // print(
+                                        // widget.contract['${widget.contract['contract_type']}_id']+"askldfjasl"
+                                        // );
                                         final chats = await uinfo.fetchChats(
                                         brakey.user.value!.payload!.walletAddress ?? "",
                                         brakey.user.value!.payload!.password ?? "",
                                         "",
                                         "single",
-                                        widget.messages!.length > 1 ? widget.messages!.first.senderAddr == widget.user.payload!.walletAddress ? widget.messages!.first.receiverAddr??'' : widget.messages!.first.senderAddr??'': widget.contract['seller_address']);
+                                        widget.messages!.isEmpty ? widget.contract['seller_address'] != widget.user.payload?.walletAddress ? widget.user.payload?.walletAddress : widget.contract['seller_address'] : widget.messages!.isNotEmpty ? widget.messages!.first.senderAddr??'' : widget.contract.isEmpty ? '' : widget.user.payload?.walletAddress??'',
+                                        widget.contract.isNotEmpty ? widget.contract['${widget.contract['contract_type']}_id'] :  widget.messages!.length > 0 ? widget.messages!.first.contractID??widget.contract['contract_id']??'' : '',
+                                        widget.contract.isEmpty ? widget.messages?.first.contractType??'' : 'merchant ${widget.contract['contract_type']}',
+                                        );
                                                                                 // chats.then((value) {
                                             setState(() {
                                               // if (chatHistory!.length <= chats.length) {
                                               //   return;
                                               // }
-                                              print('Loading chat');
+                                              // print(chat);
                                               chatHistory = chats;
                                             });                                        
                                                                               },

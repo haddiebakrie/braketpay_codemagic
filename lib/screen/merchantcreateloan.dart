@@ -266,7 +266,7 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                                             await fetchMerchantContract(
                                                                 '',
                                                                 'loan',
-                                                                'MID1587498137',
+                                                                widget.loan['merchant_id'],
                                                                 brakey
                                                                         .user
                                                                         .value!
@@ -339,14 +339,14 @@ class _MerchantCreateLoanFromScanState extends State<MerchantCreateLoanFromScan>
                                       
                                       // width: 30,
                                       // height: 30,
-                                      decoration: ContainerDecoration(),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      margin: EdgeInsets.only(right: 5),
+                                      // decoration: ContainerDecoration(),
+                                      // clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      // margin: EdgeInsets.only(right: 5),
                                       padding: EdgeInsets.all(5),
                                       
                                       // child: Image.asset('assets/merchant_placeholder.png', fit: BoxFit.cover,)),
-                                      child: (Icon(Icons.storefront_rounded, color: Colors.indigo,size: 13,))),
-                                    Text("Lender: ${widget.loan['Payload']["merchant_name"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                                      child: CircleAvatar(backgroundImage: NetworkImage(widget.loan["merchant_logo_link"]??''), radius: 10,)),
+                                    Text("Lender: ${widget.loan['Payload']["merchant_name"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo, decoration: TextDecoration.underline)),
                                   ],
                                 ),
                               ),

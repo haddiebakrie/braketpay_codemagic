@@ -82,11 +82,11 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
         
       });
       };
-    widget.product.keys.forEach((element) {print(element);});
+    // widget.product.keys.forEach((element) {print(element);});
     // print(widget.product.keys);
     return Scaffold(  
-      backgroundColor: Theme.of(context).primaryColor,
-          appBar: AppBar(toolbarHeight: 1, elevation: 0, automaticallyImplyLeading: false),
+      // backgroundColor: Theme.of(context).primaryColor,
+          appBar: AppBar(toolbarHeight: 1, elevation: 0, automaticallyImplyLeading: false, backgroundColor: Colors.transparent),
         floatingActionButton: FloatingActionButton (
           // backgroundColor: Theme.of(context).textTheme.bodyLarge!.color,
           child: AbsorbPointer(
@@ -113,18 +113,18 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              BackButton(color: Colors.white,),
+              BackButton(),
             ],
           ),
               Container(
                 decoration: BoxDecoration(
-                      color: Colors.white24,
+                      // color: Colors.white24,
                       borderRadius: BorderRadius.circular(20)
                     ),
                     margin: EdgeInsets.only(right: 15),
                 child: IconButton(
                 onPressed: () {},
-                icon: Icon(CupertinoIcons.heart, color: Colors.white)),
+                icon: Icon(CupertinoIcons.heart, )),
               ),
             
         ],
@@ -134,7 +134,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  decoration: ContainerBackgroundDecoration(),
+                  // decoration: ContainerBackgroundDecoration(),
                   padding: EdgeInsets.all(10).copyWith(top: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,8 +256,8 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                               // ),
                               InkWell(
                                 onTap: () async {
-                                              widget.product.forEach((k, v) => print('$k => $v'));
-
+                                              // print(widget.product.values.toList().elementAt(7)+'adflkajsdlfasdlfasdlfa');
+                                              widget.product.forEach((key, value) {print("$key - $value");});
                                               Get.bottomSheet(
                                                   
                                                 BottomSheet(
@@ -284,25 +284,22 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                                 ),
                                                 isDismissible: false
                                               );
+                                              // print(widget.product.keys.toList());
                                               Map a =
                                                             await fetchMerchantContract(
                                                                 '',
                                                                 'product',
-                                                                'MID1587498137',
-                                                                brakey
-                                                                        .user
-                                                                        .value!
-                                                                        .payload!
-                                                                        .walletAddress ??
-                                                                    '',
+                                                                widget.product['merchant_id'],
+                                                                brakey.user.value!.payload!.walletAddress ??'',
                                                                 brakey.user.value?.payload?.pin??'',
                                                                 'all',
                                                                 brakey.user.value?.payload?.password??'',
                                                                 
                                                                 );
+                                                                print(a);
                                               if (a
                                                             .containsKey('Merchant')) {
-                                                              print(a['Merchant']);
+                                                              // print(a['Merchant']);
                                                   Get.close(1);
                                                   Get.to(() => ViewMerchant(user: widget.user, merchant: a));
                                                           // a.addEntries({
@@ -361,14 +358,14 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                       
                                       // width: 30,
                                       // height: 30,
-                                      decoration: ContainerDecoration(),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      margin: EdgeInsets.only(right: 5),
+                                      // decoration: ContainerDecoration(),
+                                      // clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      // margin: EdgeInsets.only(right: 5),
                                       padding: EdgeInsets.all(5),
                                       
                                       // child: Image.asset('assets/merchant_placeholder.png', fit: BoxFit.cover,)),
-                                      child: (Icon(Icons.storefront_rounded, color: Colors.indigo,size: 13,))),
-                                    Text("Seller: ${widget.product["business_name"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                                      child: CircleAvatar(backgroundImage: NetworkImage(widget.product["merchant_logo_link"]??''), radius: 10,)),
+                                    Text("Seller: ${widget.product["business_name"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo, decoration: TextDecoration.underline )),
                                   ],
                                 ),
                               ),
@@ -548,7 +545,7 @@ class _MerchantCreateProductFromScanState extends State<MerchantCreateProductFro
                                               shipFee = shipFee.replaceAll('(', '-');
                                               Map data = widget.product['delivery_data'];
                                               data.forEach((key, value) {
-                                                print(value['name']+  shipAddr);
+                                                // print(value['name']+  shipAddr);
                                                 if (value['name'] == shipAddr) {
                                                     shipFee = value['amount'];
                                                     deliveryDays = value['delivery_days'];

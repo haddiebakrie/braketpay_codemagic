@@ -12,6 +12,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:icon_badge/icon_badge.dart';
@@ -56,6 +57,8 @@ class _MerchantState extends State<Merchant> {
   String merchantID = '';
   String bizLoc = '';
   String website = '';
+  String description = '';
+  String phone = '';
   String selectedTab = 'all';
   List _tabs = ['all', 'product', 'service', 'loan'];
   List _templates = [];
@@ -262,19 +265,21 @@ class _MerchantState extends State<Merchant> {
                                                       EdgeInsets.only(right: 5),
                                                   // padding: EdgeInsets.all(10),
 
-                                                  // child: Image.asset('assets/merchant_placeholder.png', fit: BoxFit.cover,)),
-                                                  child: Center(
-                                                      child: (Text(
-                                                          snapshot.data?['Payload']
-                                                                      ?['merchant_name']
-                                                                  [0] ??
-                                                              '',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 60,
-                                                              fontWeight: FontWeight.bold))))),
+                                                  child: Image.network(snapshot.data?['Payload']?['merchant_logo_link'] ??
+                                                    '', fit: BoxFit.contain,)),
+                                                  // child: Center(
+                                                  //     child: (Text(
+                                                  //         snapshot.data?['Payload']
+                                                  //                     ?['merchant_name']
+                                                  //                 [0] ??
+                                                  //             '',
+                                                  //         textAlign:
+                                                  //             TextAlign.center,
+                                                  //         style: TextStyle(
+                                                  //             color: Colors.red,
+                                                  //             fontSize: 60,
+                                                  //             fontWeight: FontWeight.bold))))),
+                                              
                                               SizedBox(height: 10),
                                               Text(
                                                 snapshot.data?['Payload']
@@ -301,7 +306,7 @@ class _MerchantState extends State<Merchant> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(Icons.diamond_sharp,
+                                                  Icon(Icons.place,
                                                       color: Colors.teal),
                                                   SizedBox(width: 2),
                                                   Text(
@@ -323,8 +328,7 @@ class _MerchantState extends State<Merchant> {
                                                         size: 5),
                                                   ),
                                                   Icon(
-                                                      CupertinoIcons
-                                                          .map_pin_ellipse,
+                                                      Icons.language_rounded,
                                                       color: Colors.teal),
                                                   SizedBox(width: 2),
                                                   Text(
@@ -337,18 +341,24 @@ class _MerchantState extends State<Merchant> {
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Text(
-                                                    (snapshot.data?['Payload']?[
-                                                            'merchant_description'] ??
-                                                        ''),
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        color: Colors.grey,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
                                                 ],
                                               ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Center(
+                                                      child: Text(
+                                                        (snapshot.data?['Payload']?[
+                                                                'merchant_description'] ??
+                                                            ''),
+                                                            textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                            fontSize: 13,
+                                                            color: Colors.grey,
+                                                            fontWeight:
+                                                                FontWeight.bold),
+                                                      ),
+                                                    ),
+                                                  ),
                                               // ListItemSeparated(
                                               //     text:
                                               //         snapshot.data?['Payload']?['merchant_id']??'_ollo_ventures',
@@ -941,7 +951,7 @@ class _MerchantState extends State<Merchant> {
                                                           const EdgeInsets.only(
                                                               bottom: 10),
                                                       child: const Text(
-                                                        'Business Name*',
+                                                        'Business Name',
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w600,
@@ -949,6 +959,8 @@ class _MerchantState extends State<Merchant> {
                                                       ),
                                                     ),
                                                     TextFormField(
+                                                      minLines: null,
+                                                      maxLines: null,
                                                       cursorColor: Colors.grey,
                                                       decoration:
                                                           const InputDecoration(
@@ -965,7 +977,9 @@ class _MerchantState extends State<Merchant> {
                                                                         .circular(
                                                                             10))),
                                                         hintText:
-                                                            'Eg, King store',
+                                                            'Eg. King store\n',
+                                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+                                                          
                                                         border: OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
@@ -976,9 +990,7 @@ class _MerchantState extends State<Merchant> {
                                                                             10))),
                                                         contentPadding:
                                                             EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10),
+                                                                .all(10),
                                                       ),
                                                       onChanged: (text) {
                                                         bizName = text.trim();
@@ -1012,7 +1024,7 @@ class _MerchantState extends State<Merchant> {
                                                                         .only(
                                                                     bottom: 10),
                                                             child: const Text(
-                                                              'Business Email*',
+                                                              'Business Email',
                                                               style: TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
@@ -1021,6 +1033,8 @@ class _MerchantState extends State<Merchant> {
                                                             ),
                                                           ),
                                                           TextFormField(
+                                                            minLines: null,
+                                                            maxLines: null,
                                                             keyboardType:
                                                                 TextInputType
                                                                     .emailAddress,
@@ -1044,7 +1058,8 @@ class _MerchantState extends State<Merchant> {
                                                                           Radius.circular(
                                                                               10))),
                                                               hintText:
-                                                                  'Eg, king@store.com',
+                                                                  'Eg. king@store.com\n',
+                                                              hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
                                                               border: OutlineInputBorder(
                                                                   borderSide:
                                                                       BorderSide
@@ -1054,9 +1069,7 @@ class _MerchantState extends State<Merchant> {
                                                                           Radius.circular(
                                                                               10))),
                                                               contentPadding:
-                                                                  EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          10),
+                                                                  EdgeInsets.all(10),
                                                             ),
                                                             onChanged: (text) {
                                                               email =
@@ -1093,7 +1106,7 @@ class _MerchantState extends State<Merchant> {
                                                                       .only(
                                                                   bottom: 10),
                                                           child: const Text(
-                                                            'Location*',
+                                                            'Location',
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
@@ -1102,6 +1115,8 @@ class _MerchantState extends State<Merchant> {
                                                           ),
                                                         ),
                                                         TextFormField(
+                                                          minLines: null,
+                                                          maxLines: null,
                                                           keyboardType:
                                                               TextInputType
                                                                   .streetAddress,
@@ -1124,7 +1139,8 @@ class _MerchantState extends State<Merchant> {
                                                                     BorderRadius.all(
                                                                         Radius.circular(
                                                                             10))),
-                                                            hintText: 'Eg, Epe',
+                                                            hintText: 'Eg. Epe\n',
+                                                            hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
                                                             border: OutlineInputBorder(
                                                                 borderSide:
                                                                     BorderSide
@@ -1135,9 +1151,7 @@ class _MerchantState extends State<Merchant> {
                                                                             10))),
                                                             contentPadding:
                                                                 EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            10),
+                                                                    .all(10),
                                                           ),
                                                           onChanged: (text) {
                                                             bizLoc =
@@ -1156,6 +1170,80 @@ class _MerchantState extends State<Merchant> {
                                                   ),
                                                 ],
                                               ),
+                                                                                            Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              bottom: 10),
+                                                      child: const Text(
+                                                        'Business Phone',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 15),
+                                                      ),
+                                                    ),
+                                                    TextFormField(
+                                                      minLines: null,
+                                                      maxLines: null,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      inputFormatters: [
+                                                          FilteringTextInputFormatter.digitsOnly
+                                                        ],
+                                                      cursorColor: Colors.grey,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        fillColor:
+                                                            Color.fromARGB(24,
+                                                                158, 158, 158),
+                                                        filled: true,
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide.none,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            10))),
+                                                        hintText:
+                                                            '09012345678',
+                                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+                                                        border: OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide.none,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            10))),
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                      ),
+                                                      onChanged: (text) {
+                                                        phone = text.trim();
+                                                      },
+                                                      // validator: (value) {
+                                                      //   if (value == null || value.isEmpty) {
+                                                      //     return 'Business name is required';
+                                                      //   }
+                                                      //   return null;
+                                                      // },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              
                                               Container(
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -1177,6 +1265,8 @@ class _MerchantState extends State<Merchant> {
                                                       ),
                                                     ),
                                                     TextFormField(
+                                                      minLines: null,
+                                                      maxLines: null,
                                                       keyboardType:
                                                           TextInputType.url,
 
@@ -1196,7 +1286,8 @@ class _MerchantState extends State<Merchant> {
                                                                         .circular(
                                                                             10))),
                                                         hintText:
-                                                            'Eg, www.mybusiness.com',
+                                                            'Eg. www.mybusiness.com\n',
+                                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
                                                         border: OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
@@ -1224,6 +1315,75 @@ class _MerchantState extends State<Merchant> {
                                                   ],
                                                 ),
                                               ),
+                                              
+                                              Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              bottom: 10),
+                                                      child: const Text(
+                                                        'Business Description',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 15),
+                                                      ),
+                                                    ),
+                                                    TextFormField(
+                                                      minLines: null,
+                                                      maxLines: null,
+                                                      cursorColor: Colors.grey,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        fillColor:
+                                                            Color.fromARGB(24,
+                                                                158, 158, 158),
+                                                        filled: true,
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide.none,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            10))),
+                                                        hintText:
+                                                            'Enter a short description\n\n',
+                                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+
+                                                        border: OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide.none,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            10))),
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .all(10),
+                                                      ),
+                                                      onChanged: (text) {
+                                                        description = text.trim();
+                                                      },
+                                                      // validator: (value) {
+                                                      //   if (value == null || value.isEmpty) {
+                                                      //     return 'Business name is required';
+                                                      //   }
+                                                      //   return null;
+                                                      // },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              
                                               Container(
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -1601,6 +1761,33 @@ class _MerchantState extends State<Merchant> {
                                                                 ErrorAnimationType>();
                                                         final _pinEditController =
                                                             TextEditingController();
+
+                                                        if (businessLogoLink == '') {
+                                                              showDialog(
+                                                                  context: context,
+                                                                  barrierDismissible: false,
+                                                                  builder: (context) {
+                                                                    return AlertDialog(
+                                                                  shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(20),
+                                                                ),
+                                                                        actions: [
+                                                                          TextButton(
+                                                                            child: const Text('Okay'),
+                                                                            onPressed: () {
+                                                                              Navigator.of(context).pop();
+                                                                              // Navigator.of(context).pop();
+                                                                              // Navigator.of(context).pop();
+                                                                            },
+                                                                          )
+                                                                        ],
+                                                                        title: const Text("Upload Picture"),
+                                                                        content:  Text(toTitleCase('Please add Business Logo.')));
+                                                                  });
+                                                                  _loginButtonController.reset();
+                                                                  return;
+                                                            }
+
                                                         Map? pin = await askPin(
                                                             _pinEditController,
                                                             _pinErrorController);
@@ -1611,16 +1798,17 @@ class _MerchantState extends State<Merchant> {
                                                           _loginButtonController
                                                               .reset();
                                                           return;
-                                                        }
-                                                        ;
-
+                                                        };
+                                                      
                                                         Future<List> imageLink =
                                                             uploadToFireStore(
                                                                 'merchants/${widget.user.payload?.email}',
                                                                 [
                                                               XFile(businessLogoLink),
-                                                              XFile(cacImageLink),
-                                                              XFile(cacMematImageLink),
+                                                              if (isBusinessRegistered) {
+                                                                XFile(cacImageLink),
+                                                                XFile(cacMematImageLink),
+                                                              }
                                                             ]);
 
                                                             imageLink.whenComplete(() {
@@ -1646,8 +1834,8 @@ shape: RoundedRectangleBorder(
                                           },
                                         )
                                       ],
-                                      title: const Text("Couldn't Add Product Image!"),
-                                      content:  Text(toTitleCase('')));
+                                      title: const Text("Failed"),
+                                      content:  Text(toTitleCase('Something went wrong, Please try again.')));
                                 });
                           }
                           // Get.close(1);
@@ -1661,7 +1849,7 @@ shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
                                     title: const Text(
-                                      'Registering Product',
+                                      'Creating Business',
                                       textAlign: TextAlign.center,
                                     ),
                                     // content: SizedBox(width: 50, height: 50, child: Center(child: CircularProgressIndicator()))
@@ -1692,11 +1880,13 @@ shape: RoundedRectangleBorder(
                                             '',
                                         pin['pin'],
                                         bizLoc,
+                                        description,
+                                        phone,
                                         isBusinessRegistered,
                                         value[0],
                                         cacRegNumber,
-                                        value[1],
-                                        value[2]
+                                        isBusinessRegistered ? value[1] : '',
+                                        isBusinessRegistered ? value[2] : '',
                                         );
                   
                         if (a.containsKey('Payload')) {
@@ -1716,13 +1906,13 @@ shape: RoundedRectangleBorder(
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
+                                            // Navigator.of(context).pop();
                                             brakey.refreshUserDetail();
                                           },
                                         )
                                       ],
-                                      title: const Text("Product Registered!"),
-                                      content:  Text('Your Product has been created.'));
+                                      title: const Text("Business Registered!"),
+                                      content:  Text('Your Business Account has been created.'));
                                 });
                           } else {
                             _loginButtonController.reset();

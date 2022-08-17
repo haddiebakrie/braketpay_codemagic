@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:braketpay/api_callers/merchant.dart';
 import 'package:braketpay/brakey.dart';
 import 'package:braketpay/constants.dart';
+import 'package:braketpay/screen/viewmerchant.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +41,8 @@ class MerchantCreateServiceFromScan extends StatefulWidget {
 
 class _MerchantCreateServiceFromScanState
     extends State<MerchantCreateServiceFromScan> {
+        bool hasLoadError = false;
+  String loadErrorMsg = '';
       Brakey brakey = Get.put(Brakey());
   late String shipDest;
   final imageController = PageController();
@@ -242,26 +245,126 @@ class _MerchantCreateServiceFromScanState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(children: [
-                                  Container(
-            
+                                  
+                                  InkWell(
+                                onTap: () async {
+                                              // widget.loan.forEach((k, v) => print('$k => $v'));
+
+                                              Get.bottomSheet(
+                                                  
+                                                BottomSheet(
+                                                  onClosing: () {
+                                                    setState(() {
+                                                      hasLoadError = false;
+                                                      loadErrorMsg = '';
+                                                    });
+                                                  },
+                                                  builder: (_) {
+                                                    return Container(
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            hasLoadError ? Icon(Icons.close, color: Colors.redAccent, size: 25,) : CircularProgressIndicator(),
+                                                            SizedBox(height:20),
+                                                            Flexible(child: Text(hasLoadError ? loadErrorMsg : "Fetching ${toTitleCase(widget.product['merchant_name']??'')}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey, fontSize: 23),))
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                ),
+                                                isDismissible: false
+                                              );
+                                              Map a =
+                                                            await fetchMerchantContract(
+                                                                '',
+                                                                'service',
+                                                                widget.product['merchant_id'],
+                                                                brakey
+                                                                        .user
+                                                                        .value!
+                                                                        .payload!
+                                                                        .walletAddress ??
+                                                                    '',
+                                                                brakey.user.value?.payload?.pin??'',
+                                                                'all',
+                                                                brakey.user.value?.payload?.password??'',
+                                                                
+                                                                );
+                                              if (a
+                                                            .containsKey('Merchant')) {
+                                                              print(a['Merchant']);
+                                                  Get.close(1);
+                                                  Get.to(() => ViewMerchant(user: widget.user, merchant: a));
+                                                          // a.addEntries({
+                                                          //   'merchant_id': '',
+                                                          //   'loan_id': _templates[index]['loan_id']
+                                                          // }.entries);
+                                                          // Navigator.of(context).pop();
+                                                          // hasLoadError = false;
+                                                          // Navigator.of(context).push(
+                                                          //     MaterialPageRoute(
+                                                          //         builder: ((context) =>
+                                                          //             MerchantCreateLoanFromScan(
+                                                          //                 loan: a,
+                                                          //                 user: brakey
+                                                          //                     .user
+                                                          //                     .value!,
+                                                          //                 pin: brakey.user.value?.payload?.pin??''))));
+                                            } else {
+                                              Get.close(1);
+                                              Get.bottomSheet(
+                                                  
+                                                BottomSheet(
+                                                  onClosing: () {
+                                                    setState(() {
+                                                      hasLoadError = false;
+                                                      loadErrorMsg = '';
+                                                    });
+                                                  },
+                                                  builder: (_) {
+                                                    return Container(
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            hasLoadError ? Icon(Icons.close, color: Colors.redAccent, size: 25,) : CircularProgressIndicator(),
+                                                            SizedBox(height:20),
+                                                            Flexible(child: Text(hasLoadError ? loadErrorMsg : "Fetching ${toTitleCase(widget.product['merchant_name']??'')}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey, fontSize: 23),))
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                ),
+                                                isDismissible: false
+                                              );
+                                              setState(() {
+                                                hasLoadError = true;
+                                                loadErrorMsg = a['Message'] ?? 'Failed, Please check your Internet and Try again.';
+                                              });
+                                            }
+                                            
+                                            },
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      
                                       // width: 30,
                                       // height: 30,
-                                      decoration: ContainerDecoration(),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      margin: EdgeInsets.only(right: 5),
+                                      // decoration: ContainerDecoration(),
+                                      // clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      // margin: EdgeInsets.only(right: 5),
                                       padding: EdgeInsets.all(5),
-            
+                                      
                                       // child: Image.asset('assets/merchant_placeholder.png', fit: BoxFit.cover,)),
-                                      child: (Icon(
-                                        Icons.storefront_rounded,
-                                        color: Colors.indigo,
-                                        size: 13,
-                                      ))),
-                                  Text("Seller: ${widget.product["provider_business_name"]}",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.indigo)),
+                                      child: CircleAvatar(backgroundImage: NetworkImage(widget.product["merchant_logo_link"]??''), radius: 10,)),
+                                    Text("Provider: ${widget.product["provider_business_name"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo, decoration: TextDecoration.underline)),
+                                  ],
+                                ),
+                              ),
+                              
                                   SizedBox(height: 5),
                                 ]),
                                 Row(

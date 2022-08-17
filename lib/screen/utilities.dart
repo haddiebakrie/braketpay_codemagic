@@ -132,6 +132,7 @@ class _UtilitiesState extends State<Utilities> {
                                       color: Colors.teal),
                                   onTap: () {
                                     Get.to(() => SmartTransfer());
+                                    // Get.to(() => SendMoney(user: widget.user, pin: widget.pin));
                                   },
                                 ),
                                 ActionButton(
@@ -150,6 +151,7 @@ class _UtilitiesState extends State<Utilities> {
                                       color: Color.fromARGB(255, 61, 9, 110)),
                                   onTap: () {
                                     // loanPrompt();
+                                    Get.to(() => SendMoney(user: widget.user, pin: widget.pin));
                                   },
                                 ),
                                 ActionButton(
@@ -157,6 +159,8 @@ class _UtilitiesState extends State<Utilities> {
                                   icon: const Icon(CupertinoIcons.qrcode_viewfinder,
                                       size: 30, ),
                                   onTap: () {
+                                    Get.to(() => SendMoney(user: widget.user, pin: widget.pin));
+
                                     // Navigator.push(
                                     //     context,
                                     //     MaterialPageRoute(

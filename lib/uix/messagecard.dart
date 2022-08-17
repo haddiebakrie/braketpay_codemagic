@@ -56,13 +56,13 @@ class MessageCard extends StatelessWidget {
               
               children: [
                 Text(product!.last.dateTime(), style: TextStyle(color: Colors.grey, fontSize: 10),),
-                Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.teal,
-                    borderRadius: BorderRadius.circular(20)
-                  ),
-                  child: Text('15', style: TextStyle(color: Colors.white, fontSize:9, fontWeight: FontWeight.bold),))
+                // Container(
+                //   padding: EdgeInsets.all(4),
+                //   decoration: BoxDecoration(
+                //     color: Colors.teal,
+                //     borderRadius: BorderRadius.circular(20)
+                //   ),
+                //   child: Text('15', style: TextStyle(color: Colors.white, fontSize:9, fontWeight: FontWeight.bold),))
                 // Text(state, style: TextStyle(fontWeight: FontWeight.bold, color: this.colors[state]??Theme.of(context).textTheme.labelMedium?.color, fontSize: 12))
               ],
             ),
@@ -74,7 +74,7 @@ class MessageCard extends StatelessWidget {
             title: RichText(
               maxLines: 1,
               text: TextSpan(
-                  text: product!.last.senderName, 
+                  text: product!.last.senderAddr == user.payload!.walletAddress ? product!.last.receiverName : product!.last.senderName , 
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).textTheme.bodyLarge?.color,

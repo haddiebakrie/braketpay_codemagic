@@ -162,7 +162,6 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       
-
       themeMode: widget.pref!.get('darkMode') ? ThemeMode.dark:ThemeMode.light,
       // home: Manager(user: User(message: '', payload: Payload(), responseCode: 00, status: ''), pin: '1222'),
       // // List<String> 0=username, 1=password, 3=pin,

@@ -175,9 +175,11 @@ class MarketPlaceSearchState extends State<MarketPlaceSearch> {
                                   // itemCount: 10,
                                             itemBuilder: (builder, index) {
                                                       return Container(
-                                                        height: 140,
-                                                        width: 180,
-                                                        child: const SquareShimmer());
+                                      height: height * 0.25,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Center(child: Text('No internet Access, Pull down to refresh', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 20))),
+                                      ));
                                                     }))));
                             }
                             case ConnectionState.done:

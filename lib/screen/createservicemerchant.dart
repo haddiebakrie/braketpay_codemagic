@@ -252,7 +252,7 @@ class _MerchantCreateServiceState extends State<MerchantCreateService> {
                                         width: 70,
                                       margin: EdgeInsets.all(3),
                                         decoration: ContainerDecoration(),
-                                        child: Center(child: Flexible(child: Text('+ Add Image', textAlign: TextAlign.center, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w600, color: Colors.grey)))),),
+                                        child: Center(child: Text('+ Add Image', textAlign: TextAlign.center, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w600, color: Colors.grey))),),
                                     );
                                 }
                               } 

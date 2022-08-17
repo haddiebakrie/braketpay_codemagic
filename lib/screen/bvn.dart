@@ -320,7 +320,7 @@ class _AskBVNState extends State<AskBVN> {
                                                       );
                                                     //   print(a);
                                                       if (a.containsKey('Status') || a.containsKey('response')) {
-                                                        if (a['Status'] == 'successfull' || a['Status'] == 'successful' || a['Response Code'] == 404 || a['Response Code'] == 422 || a['Response Code'] == 406 || (a.containsKey('response') && a['response']['Status'] == 'successfull')) {
+                                                        if (a['Status'] == 'successfull' || a['Status'] == 'successful' || a['Response Code'] == 404 || a['Response Code'] == 422 || a['Response Code'] == 406 || (a.containsKey('response') && a['response']['Status'] == 'successful')) {
                                                           _loginButtonController.success();
                                                           showDialog(
                                                               context: context,

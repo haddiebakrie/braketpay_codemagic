@@ -850,6 +850,8 @@ class _MerchantState extends State<Merchant> {
                                                           '',
                                                       pin['pin'],
                                                       bizLoc,
+                                                      "",
+                                                      "",
                                                       false,
                                                       "",
                                                       "",

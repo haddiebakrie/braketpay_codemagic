@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class RoundButton extends StatelessWidget {
   const RoundButton({
-    Key? key, this.text='', this.textSize=0, this.icon, this.width = 70, this.height = 40, this.color1 = const Color.fromARGB(255, 0, 13, 194),
+    Key? key, this.text='', this.textSize=0, this.icon, this.width = 0, this.height = 40, this.color1 = const Color.fromARGB(255, 0, 13, 194),
     this.color2 = const Color.fromARGB(255, 0, 13, 194), this.textColor = Colors.white, this.onTap , this.radius = 20.0,
   }) : super(key: key);
 
@@ -25,7 +25,9 @@ class RoundButton extends StatelessWidget {
     return Container(
       padding: textSize==0 ? EdgeInsets.symmetric(vertical: 10, horizontal:16) :  EdgeInsets.symmetric(vertical: 5, horizontal:10),
       // height: height,
-      // width: width,
+      // if (width: != 0,)  {
+
+      // }
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius),
           gradient: LinearGradient(colors: [
