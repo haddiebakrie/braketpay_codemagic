@@ -349,9 +349,9 @@ backgroundColor: Colors.transparent,
                               } else if (index == 6) {
                                 return InkWell(
                                   onTap: (() async {
-                                    // Get.to(() => ReferralBonus());
-                                    final cameras = await availableCameras();
-                                    Get.to(UploadProfilePicture(cameras: cameras));
+                                    Get.to(() => ReferralBonus());
+                                    // final cameras = await availableCameras();
+                                    // Get.to(UploadProfilePicture(cameras: cameras));
                                     
                                   }),
                                   child: Container(

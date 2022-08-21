@@ -136,7 +136,7 @@ class _SignupState extends State<SignUp> {
                         lineColor: Colors.white,
                         lineLength: 40,
                         enableNextPreviousButtons: false,
-                        enableStepTapping: true,
+                        enableStepTapping: false,
                         activeStepColor: Colors.white,
                         stepColor: Colors.white24,
                         icons: [
@@ -205,7 +205,8 @@ class _SignupState extends State<SignUp> {
                                         height: 20,
                                       ),
                                       Text(
-                                        'Enter the Phone number linked to (${widget.payload?['bvn'] ?? widget.payload?['nin'] ?? ''})',
+                                        
+                                        'Enter the Phone number linked to ${ widget.payload?['bvn_nin']?.startsWith('2')??widget.payload?['bvn']?.startsWith('2')??false ? 'your BVN' : !widget.payload?['bvn_nin']?.startsWith('2')??!widget.payload?['bvn']?.startsWith('2')??false ? 'your NIN' : widget.payload?['bvn_nin']  ?? widget.payload?['nin'] ?? widget.payload?['bvn'] ?? ''}',
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,

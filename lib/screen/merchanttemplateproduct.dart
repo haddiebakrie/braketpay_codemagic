@@ -154,42 +154,40 @@ class _MerchantProductDetailState extends State<MerchantProductDetail> {
                       SizedBox(height: 10,),
                         Container(
                           height: 80,
-                          child: Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: widget.product['Payload']['product_picture_links'].length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                // print(imageController.page);
-                              return InkWell(
-                                onTap: () {
-                                      imageController.animateToPage(
-                                        index,
-                                        duration: Duration(milliseconds: 1),
-                                        curve: Curves.linear
-                                      );
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: widget.product['Payload']['product_picture_links'].length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              // print(imageController.page);
+                            return InkWell(
+                              onTap: () {
+                                    imageController.animateToPage(
+                                      index,
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.linear
+                                    );
           
+                                
                                   
-                                    
-                                    // PhotoView(
-                                    // imageProvider: NetworkImage(widget.product['product_picture_links'][widget.product['product_picture_links'].keys.toList()[index]]??'',))
-                                    // );
-                                  },
-                                child: Container(
-                                  height: 80,
-                                  width: 80,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  decoration: ContainerDecoration().copyWith(
-                                    // border: Border.all(width: 3, color: imageController.page!.toInt()+1 == index ? Colors.blue : Colors.transparent)
-                                  ),
-                                  margin: EdgeInsets.all(5),
-                                  // padding: EdgeInsets.all(5),
-                                  child: Image.network(widget.product['Payload']['product_picture_links'][widget.product['Payload']['product_picture_links'].keys.toList()[index]], height: double.infinity, width: double.infinity, fit: BoxFit.cover),
+                                  // PhotoView(
+                                  // imageProvider: NetworkImage(widget.product['product_picture_links'][widget.product['product_picture_links'].keys.toList()[index]]??'',))
+                                  // );
+                                },
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                decoration: ContainerDecoration().copyWith(
+                                  // border: Border.all(width: 3, color: imageController.page!.toInt()+1 == index ? Colors.blue : Colors.transparent)
                                 ),
-                              );
-                            } 
-                            
-                            ),
+                                margin: EdgeInsets.all(5),
+                                // padding: EdgeInsets.all(5),
+                                child: Image.network(widget.product['Payload']['product_picture_links'][widget.product['Payload']['product_picture_links'].keys.toList()[index]], height: double.infinity, width: double.infinity, fit: BoxFit.cover),
+                              ),
+                            );
+                          } 
+                          
                           ),
                         ),
                         

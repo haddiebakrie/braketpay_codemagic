@@ -663,6 +663,9 @@ class _LoginState extends State<Login> {
                                       textColor: Colors.white,
                                       radius: 10,
                                       height: 90,
+                                    onTap: () {
+                                        askLogin();
+                                      },
                                       ),
                                 ),
                               ),
@@ -683,6 +686,9 @@ class _LoginState extends State<Login> {
                                       color2: Theme.of(context).primaryColor,
                                       radius: 10.0,
                                       textColor: Colors.white,
+                                      onTap: () {
+                                        Get.to(() => AskBVN());
+                                      },
                                       ),
                                 ),
                               ),

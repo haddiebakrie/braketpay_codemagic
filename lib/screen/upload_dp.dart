@@ -40,6 +40,7 @@ class _UploadProfilePictureState
 
   @override
   void dispose() {
+    _camera.stopImageStream();
     _camera.dispose();
     timer.cancel();
     super.dispose();
@@ -58,7 +59,7 @@ class _UploadProfilePictureState
 
   void _initializeCamera() async {
 
-    _camera = CameraController(widget.cameras[1], ResolutionPreset.medium,);
+    _camera = CameraController(widget.cameras[1], ResolutionPreset.low, enableAudio:false);
 
       _camera.initialize().then((_) {
       if (!mounted) {
@@ -294,7 +295,7 @@ shape: RoundedRectangleBorder(
           child: Center(child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Make sure your Face is within the Box.\n', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+              Text('Make sure your Face is within the Circle.\n', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
               Text(currentObjective, textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -444,7 +445,7 @@ class OverlayWithHolePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white;
+      ..color = Colors.black;
 
     canvas.drawPath(
       Path.combine(

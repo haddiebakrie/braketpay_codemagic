@@ -152,7 +152,7 @@ class _AskBVNState extends State<AskBVN> {
                                                         borderSide: BorderSide.none,
                                                         borderRadius:
                                                             BorderRadius.all(Radius.circular(10))),
-                                                    hintText: 'Email address\n',
+                                                    hintText: 'Email address',
                                                     hintStyle:
                                                         const TextStyle(fontWeight: FontWeight.w600, ),
                                                     border: OutlineInputBorder(
@@ -195,7 +195,6 @@ class _AskBVNState extends State<AskBVN> {
                                                   cursorColor: Colors.grey,
                                                   minLines: null,
                                                   maxLines: null,
-                                                  
                                                   keyboardType: TextInputType.number,
                                                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                                   decoration: const InputDecoration(
@@ -204,13 +203,14 @@ class _AskBVNState extends State<AskBVN> {
                                                     counter: SizedBox(),
                                                     hintMaxLines: 2,
                                                     helperMaxLines: 2,
+                                                    prefix: Text('+234  '),
                                                     errorMaxLines: 2,
                                                     focusedBorder: OutlineInputBorder(
                                                       
                                                         borderSide: BorderSide.none,
                                                         borderRadius:
                                                             BorderRadius.all(Radius.circular(10))),
-                                                    hintText: 'Phone number\n',
+                                                    hintText: 'Phone number',
                                                     hintStyle:
                                                     const TextStyle(fontWeight: FontWeight.w600),
                                                     border: OutlineInputBorder(
@@ -266,7 +266,7 @@ class _AskBVNState extends State<AskBVN> {
                                                         borderSide: BorderSide.none,
                                                         borderRadius:
                                                             BorderRadius.all(Radius.circular(10))),
-                                                    hintText: 'XXXXXXXXXXX\n',
+                                                    hintText: 'XXXXXXXXXXX',
                                                     hintStyle:
                                                     const TextStyle(fontWeight: FontWeight.w600),
                                                     // helperText: 'Leave empty to continue without NIN or BVN',
@@ -281,8 +281,8 @@ class _AskBVNState extends State<AskBVN> {
                                                     bvn = text.trim();
                                                   },
                                                   validator: (value) {
-                                                    if ( value == null || value.isEmpty && value.trim().length < 11) {
-                                                      return 'This field is required';
+                                                    if ( value == null || value.isEmpty || value.trim().length < 11) {
+                                                      return 'Enter your BVN or NIN';
                                                     }
                                                     return null;
                                                   },

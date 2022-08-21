@@ -25,7 +25,7 @@ class ListItemSeparated extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             minLeadingWidth: 0,
             horizontalTitleGap: leadingText == '' ? 0 : 8,
-            title: Flexible(child: Text(title, style: TextStyle(fontWeight: FontWeight.bold,))), trailing: Flexible(child: Text(text, style: TextStyle(fontFamily: '', color: Colors.grey, fontWeight: FontWeight.w600)))),
+            title: Text(title, style: TextStyle(fontWeight: FontWeight.bold,)), trailing: Text(text, style: TextStyle(fontFamily: '', color: Colors.grey, fontWeight: FontWeight.w600))),
           // Container(
           //     color: isLast ? Colors.transparent : Colors.grey.withOpacity(.5),
           //     height: 1,
