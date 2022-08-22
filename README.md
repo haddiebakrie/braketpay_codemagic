@@ -1,2 +1,1 @@
-# braketpay_codemagic
-For buiding IOS
+# Braketpay Mobile app for CODEMAGIC
